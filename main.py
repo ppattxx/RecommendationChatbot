@@ -16,10 +16,12 @@ def run_cli_interface(data_path: str = None):
         print(f"Error menjalankan CLI: {e}")
         logger.error(f"Error running CLI: {e}")
         sys.exit(1)
-def run_web_interface(data_path: str = None):
+def run_web_interface(data_path: str = None, auto_open_browser: bool = False):
     try:
         print("Memulai Chatbot Rekomendasi Restoran (Web)")
         from interfaces.web_interface import run_web_interface
+        import os
+        os.environ['CHATBOT_AUTO_OPEN_BROWSER'] = str(auto_open_browser)
         run_web_interface()
     except ImportError as e:
         print("Flask tidak terinstall. Install dependencies dengan:")
@@ -116,6 +118,11 @@ def main():
         action='store_true',
         help='Output verbose'
     )
+    parser.add_argument(
+        '--open-browser',
+        action='store_true', 
+        help='Buka browser otomatis ke halaman /chat (hanya untuk mode web)'
+    )
     args = parser.parse_args()
     
     if args.check:
@@ -129,7 +136,8 @@ def main():
         if args.mode == 'cli':
             run_cli_interface(data_path)
         elif args.mode == 'web':
-            run_web_interface(data_path)
+            auto_open_browser = args.open_browser
+            run_web_interface(data_path, auto_open_browser)
         elif args.mode == 'test':
             run_test_mode(data_path)
     except KeyboardInterrupt:

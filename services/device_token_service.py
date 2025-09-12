@@ -46,11 +46,25 @@ class DeviceTokenService:
             
         except Exception as e:
             logger.error(f"Error generating device token: {e}")
-            return f"dev_{str(uuid.uuid4().hex[:16])}"
+            fallback_token = f"dev_{str(uuid.uuid4().hex[:16])}"
+            try:
+                basic_device_info = {
+                    'user_agent': "fallback",
+                    'ip_address': "unknown",
+                    'platform': "unknown",
+                    'platform_version': "unknown", 
+                    'timestamp': datetime.now().isoformat(),
+                    'is_fallback': True
+                }
+                self._save_token_metadata(fallback_token, basic_device_info)
+            except Exception as save_error:
+                logger.error(f"Error saving fallback token: {save_error}")
+            return fallback_token
     
     def _save_token_metadata(self, token: str, device_info: Dict):
-        """Save token metadata for tracking"""
         try:
+            self.tokens_dir.mkdir(exist_ok=True)
+            
             token_file = self.tokens_dir / f"{token}.json"
             metadata = {
                 'token': token,
@@ -62,12 +76,20 @@ class DeviceTokenService:
             
             with open(token_file, 'w', encoding='utf-8') as f:
                 json.dump(metadata, f, indent=2, ensure_ascii=False)
+            
+            logger.info(f"Device token metadata saved: {token_file}")
                 
         except Exception as e:
-            logger.error(f"Error saving token metadata: {e}")
+            logger.error(f"Error saving token metadata for {token}: {e}")
+            try:
+                self.tokens_dir.mkdir(parents=True, exist_ok=True)
+                with open(token_file, 'w', encoding='utf-8') as f:
+                    json.dump(metadata, f, indent=2, ensure_ascii=False)
+                logger.info(f"Device token metadata saved on retry: {token_file}")
+            except Exception as retry_error:
+                logger.error(f"Failed to save token metadata on retry: {retry_error}")
     
     def update_token_activity(self, token: str):
-        """Update last seen timestamp for token"""
         try:
             token_file = self.tokens_dir / f"{token}.json"
             if token_file.exists():
@@ -79,9 +101,29 @@ class DeviceTokenService:
                 
                 with open(token_file, 'w', encoding='utf-8') as f:
                     json.dump(metadata, f, indent=2, ensure_ascii=False)
+                
+                logger.debug(f"Updated token activity: {token}")
+            else:
+                logger.warning(f"Token file not found for update: {token_file}")
+                self._create_missing_token_file(token)
                     
         except Exception as e:
-            logger.error(f"Error updating token activity: {e}")
+            logger.error(f"Error updating token activity for {token}: {e}")
+    
+    def _create_missing_token_file(self, token: str):
+        try:
+            basic_device_info = {
+                'user_agent': "recreated",
+                'ip_address': "unknown",
+                'platform': "unknown",
+                'platform_version': "unknown",
+                'timestamp': datetime.now().isoformat(),
+                'is_recreated': True
+            }
+            self._save_token_metadata(token, basic_device_info)
+            logger.info(f"Created missing token file: {token}")
+        except Exception as e:
+            logger.error(f"Failed to create missing token file: {e}")
     
     def get_or_create_user_history(self, device_token: str) -> Dict:
         """Get or create user history for device token"""

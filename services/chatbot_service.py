@@ -9,6 +9,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 from services.device_token_service import DeviceTokenService
+from utils.session_manager import SessionManager
 
 class ChatbotService:
     def __init__(self, data_path: str = None):
@@ -16,7 +17,8 @@ class ChatbotService:
         self.restaurants_data = None
         self.tfidf_vectorizer = None
         self.tfidf_matrix = None
-        self.sessions = {}
+        self.sessions = {}  # Keep for backward compatibility
+        self.session_manager = SessionManager()  # New persistent session manager
         self.device_token_service = DeviceTokenService()
         self._load_restaurant_data()
         self._initialize_nlp()
@@ -65,7 +67,30 @@ class ChatbotService:
             self.tfidf_vectorizer = None
             self.tfidf_matrix = None
     def start_conversation(self, user_id: str = None, device_token: str = None):
-        session_id = f"session_{uuid.uuid4().hex[:8]}"
+        # Check if device already has an active session
+        if device_token:
+            existing_session_id = self.session_manager.get_active_session_for_device(device_token)
+            if existing_session_id:
+                session_info = self.session_manager.get_session(existing_session_id)
+                if session_info:
+                    # Return existing session
+                    greeting = "Selamat datang kembali! Mari lanjutkan percakapan kita."
+                    
+                    # Add to memory sessions for compatibility
+                    self.sessions[existing_session_id] = {
+                        'user_id': session_info['device_token'],  # Use device_token as user_id
+                        'device_token': device_token,
+                        'messages': session_info['session_data'].get('messages', []),
+                        'context': {},
+                        'preferences': session_info['history_data'].get('preferences', {})
+                    }
+                    
+                    return existing_session_id, greeting
+        
+        # Create new session
+        session_id, greeting = self.session_manager.create_session(device_token, user_id)
+        
+        # Also add to memory sessions for backward compatibility
         if not user_id:
             user_id = f"user_{uuid.uuid4().hex[:8]}"
         
@@ -76,21 +101,32 @@ class ChatbotService:
             'context': {},
             'preferences': {}
         }
-        greeting = "Halo! Saya siap membantu Anda mencari restoran yang pas!\n\nCeritakan apa yang Anda inginkan, misalnya:\n- 'Cari pizza enak di Kuta'\n- 'Restoran seafood murah'\n- 'Tempat romantis untuk dinner'"
+        
         return session_id, greeting
     def process_message(self, message: str, session_id: str):
         try:
             if not message or not message.strip():
                 return "Silakan berikan kriteria restoran yang Anda cari."
             
+            # Try to get session from persistent storage first
+            session_info = self.session_manager.get_session(session_id)
+            
+            if not session_info:
+                # Session not found or expired
+                print(f"Warning: Session {session_id} not found or expired")
+                return "Maaf, sesi Anda telah berakhir. Silakan mulai percakapan baru."
+            
+            # Ensure session exists in memory for backward compatibility
             if session_id not in self.sessions:
-                print(f"Warning: Session {session_id} not found, creating new session")
                 self.sessions[session_id] = {
-                    'user_id': session_id,
-                    'messages': [],
-                    'start_time': datetime.now()
+                    'user_id': session_info['device_token'],  # Use device_token as user_id
+                    'device_token': session_info['device_token'],
+                    'messages': session_info['session_data'].get('messages', []),
+                    'context': {},
+                    'preferences': session_info['history_data'].get('preferences', {})
                 }
             
+            # Add message to memory session
             self.sessions[session_id]['messages'].append({
                 'user': message,
                 'timestamp': datetime.now().isoformat()
@@ -119,18 +155,28 @@ class ChatbotService:
             print(f"Intent: {intent}, Entities: {entities}")
             
             if intent == 'restaurant_search':
-                return self._get_restaurant_recommendations_nlp(message, entities, session_id)
+                bot_response = self._get_restaurant_recommendations_nlp(message, entities, session_id)
             elif intent == 'restaurant_details':
                 restaurant_name = entities.get('restaurant_name', '')
-                return self.get_restaurant_details(restaurant_name)
+                bot_response = self.get_restaurant_details(restaurant_name)
             else:
-                return self._get_restaurant_recommendations_nlp(message, entities, session_id)
+                bot_response = self._get_restaurant_recommendations_nlp(message, entities, session_id)
+            
+            # Save conversation to persistent storage
+            self._save_conversation_to_session(session_id, message, bot_response)
+            
+            return bot_response
                 
         except Exception as e:
             print(f"Error in processing intent/entities: {e}")
             # Fallback to simple keyword search
             fallback_entities = {'cuisine': [], 'location': [], 'price': []}
-            return self._get_restaurant_recommendations_nlp(message, fallback_entities, session_id)
+            bot_response = self._get_restaurant_recommendations_nlp(message, fallback_entities, session_id)
+            
+            # Save conversation to persistent storage
+            self._save_conversation_to_session(session_id, message, bot_response)
+            
+            return bot_response
     def _get_greeting_response(self):
         responses = [
             "Halo! Saya siap membantu Anda mencari restoran yang pas!\n\nCoba ceritakan apa yang Anda inginkan, misalnya:\n- 'Pizza yang romantis di Kuta'\n- 'Seafood murah di Gili Trawangan'\n- 'Tempat makan keluarga yang santai'",
@@ -527,6 +573,13 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
             'rating': restaurant.get('rating', 0)
         }
         return restaurant_data
+    
+    def _save_conversation_to_session(self, session_id: str, user_message: str, bot_response: str):
+        """Save conversation to persistent session storage"""
+        try:
+            self.session_manager.update_session(session_id, user_message, bot_response)
+        except Exception as e:
+            print(f"Error saving conversation to session: {e}")
     
     def get_user_preferences_summary(self, session_id: str) -> Dict:
         if session_id not in self.sessions:

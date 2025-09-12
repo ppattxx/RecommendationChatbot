@@ -23,22 +23,3 @@ pytest-cov>=4.0.0
 
 # Network requests (untuk test_api.py)
 requests>=2.28.0
-
-# ===============================
-# PACKAGE YANG TIDAK DIGUNAKAN DAN DIHAPUS:
-# ===============================
-# sentence-transformers - Tidak ada import di codebase
-# transformers - Tidak ada import di codebase  
-# torch - Tidak ada import di codebase
-# fastapi - Tidak ada import di codebase
-# uvicorn - Tidak ada import di codebase
-# sqlalchemy - Tidak ada import di codebase
-# matplotlib - Tidak ada import di codebase
-# seaborn - Tidak ada import di codebase
-# plotly - Tidak ada import di codebase
-# black - Development tool, tidak diperlukan untuk production
-# flake8 - Development tool, tidak diperlukan untuk production
-# mypy - Development tool, tidak diperlukan untuk production
-# colorlog - Tidak ada import di codebase
-# nltk - Tidak ada import di codebase
-# textblob - Tidak ada import di codebase

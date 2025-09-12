@@ -29,6 +29,12 @@ def initialize_chatbot():
         raise
 @app.route('/')
 def index():
+    from flask import redirect, url_for
+    logger.info("Redirecting root URL to /chat")
+    return redirect(url_for('chat_page'))
+
+@app.route('/index')
+def index_page():
     try:
         logger.info("Rendering index.html template")
         return render_template('index.html')
@@ -54,18 +60,59 @@ def test_page():
 def health_check():
     try:
         stats = chatbot_service.get_statistics() if chatbot_service else {}
+        session_stats = chatbot_service.session_manager.get_session_stats() if chatbot_service else {}
+        
         return jsonify({
             'status': 'healthy',
             'version': '1.0.0',
             'service': 'chatbot_recommendation',
             'timestamp': datetime.now().isoformat(),
-            'statistics': stats
+            'statistics': stats,
+            'session_stats': session_stats
         })
     except Exception as e:
         logger.error(f"Health check failed: {e}")
         return jsonify({
             'status': 'error',
             'error': str(e)
+        }), 500
+
+@app.route('/api/session_info')
+def get_session_info():
+    try:
+        session_id = session.get('session_id')
+        device_token = session.get('device_token')
+        
+        if not session_id or not device_token:
+            return jsonify({
+                'success': False,
+                'error': 'No active session'
+            }), 400
+        
+        # Get session data
+        session_data = chatbot_service.session_manager.get_session(session_id)
+        
+        if not session_data:
+            return jsonify({
+                'success': False,
+                'error': 'Session not found or expired'
+            }), 404
+        
+        return jsonify({
+            'success': True,
+            'session_id': session_id,
+            'device_token': device_token,
+            'created_at': session_data['created_at'],
+            'last_activity': session_data['last_activity'],
+            'message_count': len(session_data['messages']),
+            'is_active': session_data.get('is_active', False)
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting session info: {e}")
+        return jsonify({
+            'success': False,
+            'error': 'Failed to get session info'
         }), 500
 
 @app.route('/api/generate_device_token', methods=['POST'])
@@ -116,10 +163,17 @@ def start_conversation():
     try:
         device_token = session.get('device_token')
         if not device_token:
-            device_token = f"dev_{str(uuid.uuid4().hex[:16])}"
+            user_agent = request.headers.get('User-Agent', '')
+            ip_address = request.remote_addr or 'unknown'
+            
+            device_token = device_token_service.generate_device_token(
+                user_agent=user_agent,
+                ip_address=ip_address
+            )
             session['device_token'] = device_token
-        
-        device_token_service.update_token_activity(device_token)
+            logger.info(f"Generated new device token: {device_token}")
+        else:
+            device_token_service.update_token_activity(device_token)
         
         user_history = device_token_service.get_or_create_user_history(device_token)
         user_preferences = device_token_service.get_user_preferences(device_token)
@@ -129,13 +183,17 @@ def start_conversation():
         
         if user_history.get('interaction_stats', {}).get('total_sessions', 0) > 0:
             total_sessions = user_history['interaction_stats']['total_sessions']
-            greeting = f"Selamat datang kembali! Ini adalah sesi ke-{total_sessions + 1} Anda.\n\n{greeting}"
+            
+            if "Selamat datang kembali! Mari lanjutkan percakapan kita." in greeting:
+                greeting = f"Sesi dilanjutkan! Ini adalah sesi ke-{total_sessions + 1} Anda.\n\n{greeting}"
+            else:
+                greeting = f"Selamat datang kembali! Ini adalah sesi ke-{total_sessions + 1} Anda.\n\n{greeting}"
             
             if user_preferences.get('preferred_cuisines'):
                 cuisines = ', '.join(user_preferences['preferred_cuisines'][:3])
                 greeting += f"\n\nSaya ingat Anda suka: {cuisines}"
         
-        logger.info(f"Started conversation for device {device_token}, session {session_id}")
+        logger.info(f"Started/continued conversation for device {device_token}, session {session_id}")
         
         return jsonify({
             'success': True,
@@ -427,9 +485,8 @@ def run_web_interface():
     try:
         initialize_chatbot()
         config = API_CONFIG
-        print(f"URL: http://{config['host']}:{config['port']}")
-        print(f"Chat: http://{config['host']}:{config['port']}/chat")
-        print(f"Health: http://{config['host']}:{config['port']}/api/health")
+        chat_url = f"http://{config['host']}:{config['port']}/chat"
+        
         app.run(
             host=config['host'],
             port=config['port'],
