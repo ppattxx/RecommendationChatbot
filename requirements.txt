@@ -1,0 +1,47 @@
+# Core libraries
+pandas>=1.5.0
+numpy>=1.21.0
+scikit-learn>=1.2.0
+
+# Text processing
+Sastrawi>=1.0.1
+unidecode>=1.3.0
+nltk>=3.8
+textblob>=0.17.1
+
+# Machine Learning & NLP
+sentence-transformers>=2.2.0
+transformers>=4.20.0
+torch>=1.12.0
+
+# API and web framework (untuk future development)
+flask>=2.3.0
+flask-cors>=4.0.0
+fastapi>=0.95.0
+uvicorn>=0.20.0
+
+# Database (untuk future development)
+# sqlite3 is built-in with Python, no need to install
+sqlalchemy>=2.0.0
+
+# Utilities
+python-dotenv>=1.0.0
+pydantic>=2.0.0
+typing-extensions>=4.5.0
+
+# Logging and monitoring
+colorlog>=6.7.0
+
+# Testing
+pytest>=7.2.0
+pytest-cov>=4.0.0
+
+# Data visualization (optional)
+matplotlib>=3.6.0
+seaborn>=0.12.0
+plotly>=5.14.0
+
+# Development tools
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.0.0

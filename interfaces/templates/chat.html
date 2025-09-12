@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LombokEats Bot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #4f4f4f 0%, #2c2c2c 50%, #1a1a1a 100%);
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .chat-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+
+
+        .messages {
+            flex: 1;
+            padding: 20px 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+            transition: box-shadow 0.3s ease;
+        }
+
+        /* Old box-shadow removed - now using fixed positioned shadows on chat-container */
+
+        .message {
+            display: flex;
+            gap: 12px;
+            max-width: 85%;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s ease forwards;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOutDown {
+            from {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(10px) scale(0.95);
+            }
+        }
+
+        .message.fade-out {
+            animation: fadeOutDown 0.8s ease forwards;
+        }
+
+        .message.animate-in {
+            animation-duration: 0.6s;
+            animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Shadow khusus untuk area input textfield - Removed chat-container shadows */
+
+        .messages.scrolled::before,
+        .messages.scrolled::after {
+            opacity: 1;
+        }
+
+        /* Smooth text selection highlight */
+        .message-content::selection {
+            background: rgba(96, 165, 250, 0.3);
+            color: white;
+        }
+
+        .message-content::-moz-selection {
+            background: rgba(96, 165, 250, 0.3);
+            color: white;
+        }
+
+        /* Enhanced typing cursor */
+        .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.2em;
+            background: rgba(96, 165, 250, 0.8);
+            margin-left: 2px;
+            animation: blink 1s infinite;
+            vertical-align: text-bottom;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* Smooth scroll behavior */
+        .messages {
+            scroll-behavior: smooth;
+        }
+
+        /* Message hover effects */
+        .message:hover .message-content {
+            transform: translateY(-1px);
+        }
+
+        .message:hover .message-avatar {
+            transform: scale(1.05);
+            transition: transform 0.2s ease;
+        }
+
+        /* Kecilkan bubble bot response agar tidak terlalu lebar */
+        .ai-message {
+            max-width: 65%; /* Lebih kecil dari default 85% */
+        }
+
+        /* User message positioning dan ukuran */
+        .user-message {
+            margin-left: auto;
+            flex-direction: row-reverse;
+            max-width: 75%; /* Sedikit lebih kecil dari default */
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .user-avatar {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .ai-avatar {
+            background: rgba(96, 165, 250, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(96, 165, 250, 0.5);
+            color: white;
+        }
+
+        .message-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 12px 16px;
+            border-radius: 16px;
+            color: white;
+            line-height: 1.5;
+            font-size: 14px;
+            flex: 1;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .message-content:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 8px 25px rgba(0, 0, 0, 0.15),
+                0 4px 10px rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .ai-message .message-content {
+            background: rgba(96, 165, 250, 0.15);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            box-shadow: 
+                0 4px 15px rgba(96, 165, 250, 0.2),
+                0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .ai-message .message-content:hover {
+            box-shadow: 
+                0 8px 30px rgba(96, 165, 250, 0.3),
+                0 4px 15px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+            transition: all 0.3s ease;
+        }
+
+        /* Fade out effects for message removal */
+        .message.removing {
+            opacity: 0;
+            transform: translateY(-10px) scale(0.98);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+        }
+
+        .message.removing .message-content {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .message.removing .ai-message .message-content {
+            background: rgba(96, 165, 250, 0.05);
+            border-color: rgba(96, 165, 250, 0.1);
+            box-shadow: 0 1px 3px rgba(96, 165, 250, 0.05);
+        }
+
+        .user-message .message-content {
+            background: rgba(96, 165, 250, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(96, 165, 250, 0.5);
+            color: white;
+        }
+
+        .suggestions {
+            padding: 16px 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: transparent;
+        }
+
+        .suggestions-title {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .suggestion-chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .suggestion-chip {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 13px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .suggestion-chip:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px) scale(1.05);
+        }
+
+        .suggestion-chip:active {
+            transform: translateY(0) scale(0.98);
+            transition: all 0.1s ease;
+        }
+
+        .suggestion-chip.fade-out {
+            opacity: 0;
+            transform: translateY(10px) scale(0.9);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Shadow langsung menempel dengan textfield input seperti Gemini */
+        .input-container {
+            padding: 20px 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: transparent;
+            position: relative;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        /* Shadow menempel langsung di atas input field */
+        .input-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: -10px;
+            right: -10px;
+            height: 20px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+            background: linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.3) 0%,
+                rgba(0, 0, 0, 0.15) 50%,
+                transparent 100%
+            );
+            filter: blur(8px);
+        }
+
+        /* Show shadow when scrolled - menempel langsung dengan input */
+        .chat-container.scrolled .input-wrapper::before {
+            opacity: 1;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: rgba(96, 165, 250, 0.6);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.2);
+        }
+
+        /* Shadow tambahan saat scrolled - seperti Gemini */
+        .chat-container.scrolled .input-wrapper {
+            box-shadow: 
+                0 0 0 4px rgba(96, 165, 250, 0.1),
+                0 -10px 25px rgba(0, 0, 0, 0.15),
+                0 -5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-container.scrolled .input-wrapper:focus-within {
+            box-shadow: 
+                0 0 0 4px rgba(96, 165, 250, 0.2),
+                0 -10px 25px rgba(0, 0, 0, 0.2),
+                0 -5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        #messageInput {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 14px 20px;
+            font-size: 16px;
+            background: transparent;
+            color: white;
+        }
+
+        #messageInput::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .send-button {
+            background: rgba(96, 165, 250, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(96, 165, 250, 0.8);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .send-button:hover {
+            transform: scale(1.05);
+            background: rgba(96, 165, 250, 0.8);
+            box-shadow: 0 4px 12px rgba(96, 165, 250, 0.4);
+        }
+
+        .send-button:active {
+            transform: scale(0.95);
+        }
+
+        .send-icon {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            padding: 16px 0;
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .typing-indicator.fade-out {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .typing-cursor {
+            color: #00d4aa;
+            font-weight: bold;
+            animation: blink 1s infinite;
+            margin-left: 2px;
+        }
+
+        @keyframes blink {
+
+            0%,
+            50% {
+                opacity: 1;
+            }
+
+            51%,
+            100% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes typing {
+
+            0%,
+            60%,
+            100% {
+                transform: translateY(0);
+                opacity: 0.4;
+            }
+
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+
+        .initial-screen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .logo {
+            font-size: 64px;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #f472b6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+        }
+
+        .initial-screen h2 {
+            font-size: 28px;
+            font-weight: 400;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            margin-bottom: 32px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="chat-container">
+        <div class="initial-screen" id="initialScreen">
+            <div class="logo">✨</div>
+            <h2>Tanyakan tentang semua restoran di Lombok</h2>
+            <div class="suggestions" id="suggestions">
+                <div class="suggestions-title">Saran tentang apa yang harus ditanyakan pada AI</div>
+                <div class="suggestion-chips">
+                    <div class="suggestion-chip" onclick="sendSuggestion('Cari restoran pizza di Kuta')">Cari restoran
+                        pizza di Kuta</div>
+                    <div class="suggestion-chip" onclick="sendSuggestion('Tempat makan seafood murah')">Tempat makan
+                        seafood murah</div>
+                    <div class="suggestion-chip" onclick="sendSuggestion('Rekomendasi restoran romantis')">Rekomendasi
+                        restoran romantis</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="messages" id="messages" style="display: none;">
+        </div>
+
+        <div class="typing-indicator" id="typingIndicator">
+            <div class="message-avatar ai-avatar">AI</div>
+            <div class="typing-dots">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+        </div>
+
+        <div class="input-container">
+            <div class="input-wrapper">
+                <input type="text" id="messageInput" placeholder="Ask me anything about your restaurant preferences" />
+                <button id="sendBtn" class="send-button" onclick="sendMessage()">
+                    <svg class="send-icon" viewBox="0 0 24 24">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let sessionId = null;
+        let userId = null;
+        let isFirstMessage = true;
+
+        const messagesDiv = document.getElementById('messages');
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const initialScreen = document.getElementById('initialScreen');
+        const typingIndicator = document.getElementById('typingIndicator');
+
+        function getDeviceFingerprint() {
+            return {
+                screen_info: {
+                    resolution: `${screen.width}x${screen.height}`,
+                    color_depth: screen.colorDepth,
+                    pixel_ratio: window.devicePixelRatio
+                },
+                timezone_info: {
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    offset: new Date().getTimezoneOffset()
+                },
+                language_info: {
+                    languages: navigator.languages || [navigator.language],
+                    language: navigator.language
+                },
+                platform_info: {
+                    platform: navigator.platform,
+                    user_agent: navigator.userAgent,
+                    cookieEnabled: navigator.cookieEnabled,
+                    doNotTrack: navigator.doNotTrack,
+                    hardwareConcurrency: navigator.hardwareConcurrency,
+                    maxTouchPoints: navigator.maxTouchPoints
+                }
+            };
+        }
+
+        async function getOrCreateDeviceToken() {
+            let deviceToken = localStorage.getItem('chatbot_device_token');
+
+            if (!deviceToken) {
+                try {
+                    const fingerprint = getDeviceFingerprint();
+
+                    const response = await fetch('/api/generate_device_token', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(fingerprint)
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        deviceToken = data.device_token;
+                        localStorage.setItem('chatbot_device_token', deviceToken);
+                        console.log('Generated new device token:', deviceToken);
+                    }
+                } catch (error) {
+                    console.error('Error generating device token:', error);
+                }
+            } else {
+                console.log('Using existing device token:', deviceToken);
+            }
+
+            return deviceToken;
+        }
+
+        async function initializeChat() {
+            try {
+                const deviceToken = await getOrCreateDeviceToken();
+
+                const response = await fetch('/api/start_conversation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ device_token: deviceToken })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    sessionId = data.session_id;
+                    userId = data.device_token;
+                    messageInput.disabled = false;
+                    sendBtn.disabled = false;
+                } else {
+                    console.error('Failed to initialize chat');
+                }
+            } catch (error) {
+                console.error('Error initializing chat:', error);
+            }
+        }
+
+        function showChatInterface() {
+            if (isFirstMessage) {
+                initialScreen.style.display = 'none';
+                messagesDiv.style.display = 'flex';
+                isFirstMessage = false;
+            }
+        }
+
+        function addMessage(text, sender) {
+            showChatInterface();
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message' + (sender === 'user' ? ' user-message' : '');
+
+            const avatarDiv = document.createElement('div');
+            avatarDiv.className = 'message-avatar ' + (sender === 'user' ? 'user-avatar' : 'ai-avatar');
+            avatarDiv.textContent = sender === 'user' ? 'ME' : 'AI';
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.innerHTML = text.replace(/\n/g, '<br>');
+
+            messageDiv.appendChild(avatarDiv);
+            messageDiv.appendChild(contentDiv);
+
+            // Add fade in animation
+            messageDiv.style.opacity = '0';
+            messageDiv.style.transform = 'translateY(20px)';
+            
+            messagesDiv.appendChild(messageDiv);
+            
+            // Trigger fade in animation
+            requestAnimationFrame(() => {
+                messageDiv.style.transition = 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                messageDiv.style.opacity = '1';
+                messageDiv.style.transform = 'translateY(0)';
+            });
+            
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function removeMessageWithFadeOut(messageElement) {
+            return new Promise((resolve) => {
+                messageElement.classList.add('removing');
+                
+                // Wait for animation to complete before removing from DOM
+                setTimeout(() => {
+                    if (messageElement.parentNode) {
+                        messageElement.parentNode.removeChild(messageElement);
+                    }
+                    resolve();
+                }, 800); // Match the CSS transition duration
+            });
+        }
+
+        function clearMessagesWithAnimation() {
+            const messages = Array.from(messagesDiv.querySelectorAll('.message'));
+            const promises = messages.map((message, index) => {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        removeMessageWithFadeOut(message).then(resolve);
+                    }, index * 100); // Stagger the animations
+                });
+            });
+            return Promise.all(promises);
+        }
+
+        function showTyping() {
+            typingIndicator.style.display = 'flex';
+            typingIndicator.style.opacity = '0';
+            typingIndicator.style.transform = 'translateY(10px)';
+            
+            requestAnimationFrame(() => {
+                typingIndicator.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                typingIndicator.style.opacity = '1';
+                typingIndicator.style.transform = 'translateY(0)';
+            });
+            
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function hideTyping() {
+            if (typingIndicator.style.display !== 'none') {
+                typingIndicator.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                typingIndicator.style.opacity = '0';
+                typingIndicator.style.transform = 'translateY(-10px)';
+                
+                setTimeout(() => {
+                    typingIndicator.style.display = 'none';
+                }, 400);
+            }
+        }
+
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            addMessage(message, 'user');
+            messageInput.value = '';
+
+            showTyping();
+            messageInput.disabled = true;
+            sendBtn.disabled = true;
+
+            try {
+                await sendMessageStream(message);
+            } catch (error) {
+                console.error('Error sending message:', error);
+                hideTyping();
+                addMessage('Terjadi kesalahan jaringan. Silakan coba lagi.', 'bot');
+            } finally {
+                messageInput.disabled = false;
+                sendBtn.disabled = false;
+                messageInput.focus();
+            }
+        }
+
+        async function sendMessageStream(message) {
+            try {
+                const response = await fetch('/api/send_message_stream', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: message
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                hideTyping();
+
+                const botMessageDiv = document.createElement('div');
+                botMessageDiv.className = 'message bot-message';
+                botMessageDiv.innerHTML = `
+                    <div class="message-avatar ai-avatar">AI</div>
+                    <div class="message-content">
+                        <div class="message-text"></div>
+                        <div class="timestamp">${new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</div>
+                    </div>
+                `;
+
+                messagesDiv.appendChild(botMessageDiv);
+                const messageTextDiv = botMessageDiv.querySelector('.message-text');
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+
+                while (true) {
+                    const { done, value } = await reader.read();
+
+                    if (done) break;
+
+                    const chunk = decoder.decode(value);
+                    const lines = chunk.split('\n');
+
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            try {
+                                const data = JSON.parse(line.slice(6));
+                                const formattedText = data.text.replace(/\n/g, '<br>');
+
+                                messageTextDiv.innerHTML = formattedText;
+                                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+                                if (!data.is_complete) {
+                                    messageTextDiv.innerHTML = formattedText + '<span class="typing-cursor">|</span>';
+                                } else {
+                                    messageTextDiv.innerHTML = formattedText;
+                                }
+                            } catch (e) {
+                            }
+                        }
+                    }
+                }
+            } catch (error) {
+                hideTyping();
+                addMessage('Maaf, terjadi kesalahan saat memproses pesan Anda.', 'bot');
+                throw error;
+            }
+        }
+
+        async function sendMessageRegular(message) {
+            try {
+                const response = await fetch('/api/send_message', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: message
+                    })
+                });
+
+                const data = await response.json();
+
+                setTimeout(() => {
+                    hideTyping();
+
+                    if (data.success) {
+                        addMessage(data.response, 'bot');
+                    } else {
+                        addMessage('Maaf, terjadi kesalahan saat memproses pesan Anda.', 'bot');
+                    }
+                }, 1000);
+
+            } catch (error) {
+                hideTyping();
+                addMessage('Maaf, terjadi kesalahan saat memproses pesan Anda.', 'bot');
+                throw error;
+            }
+        }
+        function sendSuggestion(suggestion) {
+            // Add fade out effect to all suggestion chips
+            const suggestionChips = document.querySelectorAll('.suggestion-chip');
+            suggestionChips.forEach((chip, index) => {
+                setTimeout(() => {
+                    chip.classList.add('fade-out');
+                }, index * 50); // Stagger the fade out
+            });
+            
+            // Set the input value and send message after fade animation
+            setTimeout(() => {
+                messageInput.value = suggestion;
+                sendMessage();
+            }, 300);
+        }
+
+        function fadeOutSuggestions() {
+            return new Promise((resolve) => {
+                const suggestions = document.querySelector('.suggestions');
+                if (suggestions) {
+                    suggestions.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    suggestions.style.opacity = '0';
+                    suggestions.style.transform = 'translateY(-10px)';
+                    
+                    setTimeout(() => {
+                        suggestions.style.display = 'none';
+                        resolve();
+                    }, 500);
+                } else {
+                    resolve();
+                }
+            });
+        }
+
+        function showSuggestionsWithFadeIn() {
+            const suggestions = document.querySelector('.suggestions');
+            if (suggestions) {
+                suggestions.style.display = 'block';
+                suggestions.style.opacity = '0';
+                suggestions.style.transform = 'translateY(10px)';
+                
+                requestAnimationFrame(() => {
+                    suggestions.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    suggestions.style.opacity = '1';
+                    suggestions.style.transform = 'translateY(0)';
+                });
+            }
+        }
+        messageInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+        window.addEventListener('load', function () {
+            initializeChat();
+            messageInput.focus();
+            initializeScrollEffects();
+        });
+
+        function initializeScrollEffects() {
+            const messagesContainer = document.querySelector('.messages');
+            const chatContainer = document.querySelector('.chat-container');
+            
+            // Add scroll shadow effect with fixed positioning
+            messagesContainer.addEventListener('scroll', function() {
+                const scrollTop = this.scrollTop;
+                const scrollHeight = this.scrollHeight;
+                const clientHeight = this.clientHeight;
+                const scrollBottom = scrollHeight - clientHeight - scrollTop;
+                
+                // Add scrolled class to chat-container when messages are scrolled
+                if (scrollTop > 10 || scrollBottom > 10) {
+                    chatContainer.classList.add('scrolled');
+                } else {
+                    chatContainer.classList.remove('scrolled');
+                }
+            });
+
+            // Add intersection observer for message animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const messageObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationDelay = '0s';
+                        entry.target.classList.add('animate-in');
+                    }
+                });
+            }, observerOptions);
+
+            // Observe existing messages
+            document.querySelectorAll('.message').forEach(message => {
+                messageObserver.observe(message);
+            });
+
+            // Store observer for new messages
+            window.messageObserver = messageObserver;
+        }
+
+        // Update addMessage function to include observer
+        const originalAddMessage = window.addMessage || function() {};
+        window.addMessage = function(text, sender) {
+            originalAddMessage.call(this, text, sender);
+            
+            // Observe new message if observer exists
+            if (window.messageObserver) {
+                const messages = document.querySelectorAll('.message:not(.observed)');
+                messages.forEach(message => {
+                    message.classList.add('observed');
+                    window.messageObserver.observe(message);
+                });
+            }
+        };
+
+        // Demo function for testing fade-out animation
+        window.testFadeOut = function() {
+            console.log('🎭 Testing fade-out animations...');
+            
+            // Test message fade-out
+            const messages = document.querySelectorAll('.message');
+            if (messages.length > 0) {
+                console.log('Fading out messages...');
+                clearMessagesWithAnimation().then(() => {
+                    console.log('✅ Messages fade-out complete!');
+                });
+            }
+            
+            // Test suggestion chips fade-out
+            const chips = document.querySelectorAll('.suggestion-chip');
+            if (chips.length > 0) {
+                console.log('Fading out suggestion chips...');
+                chips.forEach((chip, index) => {
+                    setTimeout(() => {
+                        chip.classList.add('fade-out');
+                    }, index * 100);
+                });
+            }
+        };
+
+        // Initialize everything
+        initializeChat();
+        initializeScrollEffects();
+        
+        console.log('🚀 Chat interface loaded with smooth fade-out animations!');
+        console.log('💡 Commands available in console:');
+        console.log('  • testFadeOut() - Demo fade-out animations');
+        console.log('  • clearMessagesWithAnimation() - Clear all messages smoothly');        
+    </script>
+</body>
+
+</html>

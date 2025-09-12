@@ -1,0 +1,14 @@
+{
+  "token": "dev_ae51aa9e2da0f2e6_5bc3e7a9",
+  "created_at": "2025-09-11T23:06:18.523493",
+  "device_info": {
+    "user_agent": "Demo User Agent",
+    "ip_address": "127.0.0.1",
+    "platform": "Windows",
+    "platform_version": "11",
+    "timestamp": "2025-09-11T23:06:18.523127",
+    "demo": "new_user"
+  },
+  "last_seen": "2025-09-11T23:06:18.523493",
+  "session_count": 1
+}

@@ -1,0 +1,99 @@
+{
+  "device_token": "dev_61443ff0cd455691_b38a6820",
+  "created_at": "2025-09-12T08:44:34.564619",
+  "chat_sessions": [
+    {
+      "session_id": "session_6168ee2c",
+      "timestamp": "2025-09-12T08:49:23.397723",
+      "messages": [
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-09-12T08:49:23.286781"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'tempat makan seafood murah' dengan masakan seafood dan harga cheap, saya menemukan 5 restoran terbaik:\n\n1. Ocean Blue Seafood Restaurant\n   Rating: 3.5/5.0 | Kecocokan: 40%\n   Outdoor Seating\n   Jenis masakan: ['Seafood', 'Asian', 'Indonesian']\n\n2. Warung Bule\n   Rating: 4.0/5.0 | Kecocokan: 32%\n   Lombok\n   Jenis masakan: ['Seafood', 'International', 'Asian', 'Indonesian']\n\n3. Seasalt Lombok\n   Rating: 4.5/5.0 | Kecocokan: 27%\n   Serving only the freshest locally sourced seafood from the nearby fishing villages and markets. Casu...\n   Jenis masakan: ['Seafood', 'International', 'Mediterranean', 'Grill', 'Healthy', 'Caucasian']\n\n4. Warung Amalia\n   Rating: 4.5/5.0 | Kecocokan: 27%\n   Outdoor Seating\n   Jenis masakan: ['Seafood', 'Asian', 'Indonesian']\n\n5. Ko-Ko-Mo Restaurant\n   Rating: 5.0/5.0 | Kecocokan: 25%\n   With its superb beachfront location our restaurant (headed by an Australian chef) focuses on local p...\n   Jenis masakan: ['Seafood', 'Mediterranean', 'European', 'Asian', 'Indonesian']\n\n---\n\nMau cari di lokasi tertentu?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_6168ee2c",
+      "timestamp": "2025-09-12T08:52:05.884320",
+      "messages": [
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-09-12T08:49:23.286781"
+        },
+        {
+          "user": "carikan sushi",
+          "timestamp": "2025-09-12T08:52:05.852832"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'carikan sushi' dengan masakan seafood, sushi, saya menemukan 4 restoran terbaik:\n\n1. Biraku Japanese Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 42%\n   only one japanese concept restaurant in Gili Trawangan. top of chef from Japan, we have sushi also.\n   Jenis masakan: ['Japanese', 'Seafood', 'Sushi', 'Asian']\n\n2. Camilla Beach Club\n   Rating: 4.5/5.0 | Kecocokan: 6%\n   If you are at Gili Air to experience the island’s grassroots level life and calmness then Camilla be...\n   Jenis masakan: ['Seafood', 'International', 'Sushi', 'Grill']\n\n3. Bask Beach Club and Restaurant, Gili Meno\n   Rating: 4.5/5.0 | Kecocokan: 15%\n   Discover the soul of BASK at the Beach Club… Luxuriate in a paradise of white sand, crystal clear wa...\n   Jenis masakan: ['Steakhouse', 'International', 'Sushi', 'Wine Bar']\n\n4. Evolution Bar Sushi Restaurant\n   Rating: 3.5/5.0 | Kecocokan: 38%\n   Live Music\n   Jenis masakan: ['Bar', 'Pub']\n\n---\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_6168ee2c",
+      "timestamp": "2025-09-12T08:52:21.905192",
+      "messages": [
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-09-12T08:49:23.286781"
+        },
+        {
+          "user": "carikan sushi",
+          "timestamp": "2025-09-12T08:52:05.852832"
+        },
+        {
+          "user": "restoran jepang",
+          "timestamp": "2025-09-12T08:52:21.827157"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'restoran jepang' dengan masakan sushi, saya menemukan 4 restoran terbaik:\n\n1. Biraku Japanese Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 30%\n   only one japanese concept restaurant in Gili Trawangan. top of chef from Japan, we have sushi also.\n   Jenis masakan: ['Japanese', 'Seafood', 'Sushi', 'Asian']\n\n2. Camilla Beach Club\n   Rating: 4.5/5.0 | Kecocokan: 30%\n   If you are at Gili Air to experience the island’s grassroots level life and calmness then Camilla be...\n   Jenis masakan: ['Seafood', 'International', 'Sushi', 'Grill']\n\n3. Bask Beach Club and Restaurant, Gili Meno\n   Rating: 4.5/5.0 | Kecocokan: 30%\n   Discover the soul of BASK at the Beach Club… Luxuriate in a paradise of white sand, crystal clear wa...\n   Jenis masakan: ['Steakhouse', 'International', 'Sushi', 'Wine Bar']\n\n4. Italo Pizza Cafe & Mart\n   Rating: 4.5/5.0 | Kecocokan: 10%\n   Restoran Italia\n   Jenis masakan: ['Italian', 'Pizza']\n\n---\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_6168ee2c",
+      "timestamp": "2025-09-12T09:05:42.995650",
+      "messages": [
+        {
+          "user": "restoran jepang dengan suasana pantai",
+          "timestamp": "2025-09-12T09:05:42.923717"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'restoran jepang dengan suasana pantai' dengan masakan sushi dan suasana beachside, saya menemukan 4 restoran terbaik:\n\n1. Biraku Japanese Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 30%\n   only one japanese concept restaurant in Gili Trawangan. top of chef from Japan, we have sushi also.\n   Jenis masakan: ['Japanese', 'Seafood', 'Sushi', 'Asian']\n\n2. Camilla Beach Club\n   Rating: 4.5/5.0 | Kecocokan: 30%\n   If you are at Gili Air to experience the island’s grassroots level life and calmness then Camilla be...\n   Jenis masakan: ['Seafood', 'International', 'Sushi', 'Grill']\n\n3. Bask Beach Club and Restaurant, Gili Meno\n   Rating: 4.5/5.0 | Kecocokan: 30%\n   Discover the soul of BASK at the Beach Club… Luxuriate in a paradise of white sand, crystal clear wa...\n   Jenis masakan: ['Steakhouse', 'International', 'Sushi', 'Wine Bar']\n\n4. Italo Pizza Cafe & Mart\n   Rating: 4.5/5.0 | Kecocokan: 10%\n   Restoran Italia\n   Jenis masakan: ['Italian', 'Pizza']\n\n---\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_6168ee2c",
+      "timestamp": "2025-09-12T09:06:08.999271",
+      "messages": [
+        {
+          "user": "restoran jepang dengan suasana pantai",
+          "timestamp": "2025-09-12T09:05:42.923717"
+        },
+        {
+          "user": "saya ingin pizza",
+          "timestamp": "2025-09-12T09:06:08.947188"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'saya ingin pizza' dengan masakan pizza, saya menemukan 5 restoran terbaik:\n\n1. Italo Pizza Cafe & Mart\n   Rating: 4.5/5.0 | Kecocokan: 64%\n   Restoran Italia\n   Jenis masakan: ['Italian', 'Pizza']\n\n2. Oasi Italian Pizza & Bungalows\n   Rating: 4.5/5.0 | Kecocokan: 44%\n   Near to Wiwin Cafe\n   Jenis masakan: ['Italian', 'Pizza', 'European']\n\n3. Coral Beach 1\n   Rating: 3.5/5.0 | Kecocokan: 37%\n   Outdoor Seating\n   Jenis masakan: ['Pizza', 'Asian', 'Indonesian']\n\n4. Warung Aldi's\n   Rating: 3.0/5.0 | Kecocokan: 35%\n   Warung Aldy's\n   Jenis masakan: ['Pizza', 'Indonesian']\n\n5. Little Italy\n   Rating: 4.0/5.0 | Kecocokan: 32%\n   Delivery\n   Jenis masakan: ['Italian', 'Pizza']\n\n---\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    }
+  ],
+  "preferences": {
+    "preferred_cuisines": [
+      "seafood",
+      "japanese"
+    ],
+    "preferred_locations": [],
+    "price_preference": null,
+    "mood_preferences": [],
+    "dietary_restrictions": []
+  },
+  "interaction_stats": {
+    "total_messages": 9,
+    "total_sessions": 5,
+    "favorite_restaurants": [],
+    "search_patterns": {}
+  },
+  "last_updated": "2025-09-12T09:06:09.004421"
+}
