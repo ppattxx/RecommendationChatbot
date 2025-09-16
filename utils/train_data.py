@@ -14,7 +14,7 @@ def train_dataset():
     stemmer = factory.create_stemmer()
     print("Menggabungkan kolom 'preferences' dan 'about'...")
     konten_gabungan = (df['preferences'] + ' ' + df['about']).fillna('').str.lower()
-    print("Memulai proses stemming... Ini mungkin akan memakan waktu beberapa menit.")
+    print("Memulai proses stemming...")
     start_time = time.time()
     df['konten_stemmed'] = konten_gabungan.apply(stemmer.stem)
     end_time = time.time()

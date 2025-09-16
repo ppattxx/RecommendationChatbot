@@ -17,9 +17,9 @@ class ChatbotService:
         self.restaurants_data = None
         self.tfidf_vectorizer = None
         self.tfidf_matrix = None
-        self.sessions = {}  # Keep for backward compatibility
-        self.session_manager = SessionManager()  # New persistent session manager
+        self.sessions = {} 
         self.device_token_service = DeviceTokenService()
+        self.session_manager = SessionManager(device_token_service=self.device_token_service) 
         self._load_restaurant_data()
         self._initialize_nlp()
     def _load_restaurant_data(self):
@@ -73,8 +73,8 @@ class ChatbotService:
             if existing_session_id:
                 session_info = self.session_manager.get_session(existing_session_id)
                 if session_info:
-                    # Return existing session
-                    greeting = "Selamat datang kembali! Mari lanjutkan percakapan kita."
+                    # Generate personalized greeting based on user history
+                    greeting = self._get_personalized_greeting(device_token, session_info)
                     
                     # Add to memory sessions for compatibility
                     self.sessions[existing_session_id] = {
@@ -145,8 +145,12 @@ class ChatbotService:
         )
         if is_greeting_only:
             return self._get_greeting_response()
-        if any(word in message for word in ['bye', 'keluar', 'selesai', 'exit', 'sampai jumpa']):
+        
+        import re
+        exit_pattern = r'\b(' + '|'.join(['bye', 'keluar', 'selesai', 'exit', 'sampai jumpa']) + r')\b'
+        if re.search(exit_pattern, message.lower()):
             return "Terima kasih telah menggunakan layanan kami! Sampai jumpa!"
+        
         if any(word in message for word in ['help', 'bantuan', 'gimana', 'cara']):
             return self._get_help_response()
         
@@ -177,6 +181,40 @@ class ChatbotService:
             self._save_conversation_to_session(session_id, message, bot_response)
             
             return bot_response
+    
+    def _get_personalized_greeting(self, device_token: str, session_info: dict):
+        """Generate personalized greeting based on user's history and preferences"""
+        try:
+            preferences = session_info.get('history_data', {}).get('preferences', {})
+            
+            greeting_parts = ["Selamat datang kembali! "]
+            
+            # Add personalized content based on preferences
+            preferred_cuisines = preferences.get('preferred_cuisines', [])
+            mood_preferences = preferences.get('mood_preferences', [])
+            
+            if preferred_cuisines:
+                if len(preferred_cuisines) == 1:
+                    greeting_parts.append(f"Saya ingat Anda suka masakan {preferred_cuisines[0]}. ")
+                else:
+                    greeting_parts.append(f"Saya ingat preferensi Anda untuk masakan {', '.join(preferred_cuisines[:2])}. ")
+            
+            if mood_preferences:
+                if 'family' in mood_preferences and 'romantic' in mood_preferences:
+                    greeting_parts.append("Apakah kali ini untuk acara keluarga atau momen romantis? ")
+                elif 'family' in mood_preferences:
+                    greeting_parts.append("Ada rencana makan bersama keluarga lagi? ")
+                elif 'romantic' in mood_preferences:
+                    greeting_parts.append("Sedang mencari tempat yang romantis? ")
+            
+            greeting_parts.append("\n\nApa yang Anda cari hari ini?")
+            
+            return "".join(greeting_parts)
+            
+        except Exception as e:
+            print(f"Error generating personalized greeting: {e}")
+            return "Selamat datang kembali! Mari lanjutkan percakapan kita."
+    
     def _get_greeting_response(self):
         responses = [
             "Halo! Saya siap membantu Anda mencari restoran yang pas!\n\nCoba ceritakan apa yang Anda inginkan, misalnya:\n- 'Pizza yang romantis di Kuta'\n- 'Seafood murah di Gili Trawangan'\n- 'Tempat makan keluarga yang santai'",
@@ -273,7 +311,7 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
                 top_indices = similarities.argsort()[-15:][::-1]
                 
                 for idx in top_indices:
-                    if similarities[idx] > 0:
+                    if similarities[idx] > 0.01:  # Lower threshold to be more inclusive
                         restaurant = self.restaurants_data.iloc[idx]
                         bonus_score = self._calculate_entity_bonus(restaurant, entities)
                         
@@ -284,30 +322,37 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
                             restaurant_data = self._extract_restaurant_data(restaurant)
                             preference_boost = self.device_token_service.get_personalized_boost(device_token, restaurant_data)
                         
-                        total_score = similarities[idx] + bonus_score + (preference_boost * 0.3)
+                        total_score = similarities[idx] + bonus_score + (preference_boost * 0.5)  # Increased personal weight
                         
                         recommendations.append({
                             'restaurant': restaurant,
                             'similarity': similarities[idx],
                             'bonus_score': bonus_score,
                             'preference_boost': preference_boost,
-                            'total_score': total_score
+                            'total_score': total_score,
+                            'device_token': device_token,
+                            'base_score': similarities[idx] + bonus_score  # Add base score for percentage calculation
                         })
                 
-                # Update user preferences using device token system
-                device_token = self.sessions.get(session_id, {}).get('device_token')
-                if device_token:
-                    self.device_token_service.update_user_preferences_from_interaction(device_token, query)
             if not recommendations:
-                recommendations = self._get_keyword_based_recommendations(query, entities)
+                print(f"TF-IDF found no matches for '{query}', falling back to keyword search")
+                recommendations = self._get_keyword_based_recommendations(query, entities, session_id)
+            else:
+                print(f"TF-IDF found {len(recommendations)} matches for '{query}'")
+            
+            # Update user preferences using device token system (always run this)
+            device_token = self.sessions.get(session_id, {}).get('device_token')
+            if device_token:
+                self.device_token_service.update_user_preferences_from_interaction(device_token, query)
+            
             recommendations.sort(key=lambda x: x.get('total_score', x.get('score', 0)), reverse=True)
             if recommendations:
-                return self._format_recommendations_nlp(recommendations[:5], query, entities)
+                return self._format_recommendations_nlp(recommendations[:5], query, entities, session_id)
             else:
                 return self._get_smart_fallback_response(query, entities)
         except Exception as e:
             print(f"Error getting NLP recommendations: {e}")
-            return self._get_keyword_based_recommendations(query, entities)
+            return self._get_keyword_based_recommendations(query, entities, session_id)
     def _calculate_entity_bonus(self, restaurant, entities):
         bonus = 0.0
         for cuisine in entities.get('cuisine', []):
@@ -328,12 +373,18 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
                        (price == 'expensive' and any(word in price_text for word in ['$$$', 'premium', 'expensive'])):
                         bonus += 0.2
         return bonus
-    def _get_keyword_based_recommendations(self, query: str, entities: dict):
+    def _get_keyword_based_recommendations(self, query: str, entities: dict, session_id: str = None):
         recommendations = []
         query_words = query.split()
+        
+        device_token = None
+        if session_id and session_id in self.sessions:
+            device_token = self.sessions[session_id].get('device_token')
+        
         for idx, restaurant in self.restaurants_data.iterrows():
             score = 0
             match_reasons = []
+            
             for cuisine in entities.get('cuisine', []):
                 if pd.notna(restaurant.get('cuisines')):
                     cuisine_text = str(restaurant['cuisines']).lower()
@@ -359,14 +410,28 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
                 if pd.notna(restaurant.get('about')) and word in str(restaurant['about']).lower():
                     score += 1
                     match_reasons.append("deskripsi")
+            
             if score > 0:
+                preference_boost = 0.0
+                if device_token:
+                    restaurant_data = self._extract_restaurant_data(restaurant)
+                    preference_boost = self.device_token_service.get_personalized_boost(device_token, restaurant_data)
+                
+                total_score = score + (preference_boost * 2.0)  
+                
                 recommendations.append({
                     'restaurant': restaurant,
                     'score': score,
-                    'reasons': match_reasons
+                    'preference_boost': preference_boost,
+                    'total_score': total_score,
+                    'device_token': device_token,
+                    'reasons': match_reasons,
+                    'base_score': score  
                 })
+        
+        recommendations.sort(key=lambda x: x['score'], reverse=True)
         return recommendations
-    def _format_recommendations_nlp(self, recommendations, query, entities):
+    def _format_recommendations_nlp(self, recommendations, query, entities, session_id: str = None):
         entity_summary = []
         if entities.get('cuisine'):
             entity_summary.append(f"masakan {', '.join(entities['cuisine'])}")
@@ -378,11 +443,20 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
             entity_summary.append(f"harga {', '.join(entities['price'])}")
         
         context = " dengan " + " dan ".join(entity_summary) if entity_summary else ""
-        response = f"Berdasarkan pencarian '{query}'{context}, saya menemukan {len(recommendations)} restoran terbaik:\n\n"
+        
+        has_personal_recs = any(rec.get('preference_boost', 0) > 0.1 for rec in recommendations)
+        
+        response = f"Berdasarkan pencarian '{query}'{context}, saya menemukan {len(recommendations)} restoran terbaik"
+        if has_personal_recs:
+            response += " (sesuai preferensi Anda)"
+        response += ":\n\n"
         
         for i, rec in enumerate(recommendations, 1):
             restaurant = rec['restaurant']
-            similarity = rec.get('similarity', rec.get('score', 0))
+            total_score = rec.get('total_score', rec.get('similarity', rec.get('score', 0)))
+            preference_boost = rec.get('preference_boost', 0)
+            base_score = rec.get('base_score', rec.get('score', 0))
+            similarity = rec.get('similarity', 0)
             
             response += f"{i}. {restaurant.get('name', 'Unknown')}\n"
             
@@ -392,8 +466,18 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
             else:
                 response += f"   Rating: Belum tersedia"
             
-            match_percentage = min(int(similarity * 100) if isinstance(similarity, float) else min(similarity * 10, 100), 100)
-            response += f" | Kecocokan: {match_percentage}%\n"
+            if similarity > 0:  
+                match_percentage = min(int((similarity + preference_boost) * 100), 100)
+            else: 
+                max_possible_score = 15 
+                normalized_score = min(base_score / max_possible_score, 1.0)
+                match_percentage = min(int((normalized_score + preference_boost) * 100), 100)
+            
+            response += f" | Kecocokan: {match_percentage}%"
+            
+            if preference_boost > 0.1:
+                response += ""
+            response += "\n"
             
             if pd.notna(restaurant.get('about')):
                 desc = str(restaurant['about'])
@@ -404,6 +488,13 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
             if pd.notna(restaurant.get('cuisines')):
                 cuisines = str(restaurant['cuisines'])
                 response += f"   Jenis masakan: {cuisines}\n"
+                
+                if preference_boost > 0.1:
+                    device_token = rec.get('device_token')
+                    if device_token:
+                        personal_reason = self._get_personal_recommendation_reason(device_token, restaurant)
+                        if personal_reason:
+                            response += f"  {personal_reason}\n"
             
             if pd.notna(restaurant.get('location')):
                 location = str(restaurant['location'])
@@ -414,9 +505,7 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
                 response += f"   Harga: {price}\n"
             
             response += "\n"
-        
-        response += "---\n\n"
-        
+                
         follow_ups = []
         if not entities.get('location'):
             follow_ups.append("Mau cari di lokasi tertentu?")
@@ -580,6 +669,56 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
             self.session_manager.update_session(session_id, user_message, bot_response)
         except Exception as e:
             print(f"Error saving conversation to session: {e}")
+    
+    def _get_personal_recommendation_reason(self, device_token: str, restaurant) -> str:
+        """Generate explanation for why this restaurant matches user preferences"""
+        try:
+            history = self.device_token_service.get_or_create_user_history(device_token)
+            preferences = history.get('preferences', {})
+            
+            reasons = []
+            
+            restaurant_cuisines = str(restaurant.get('cuisines', '')).lower()
+            preferred_cuisines = preferences.get('preferred_cuisines', [])
+            matching_cuisines = []
+            for cuisine in preferred_cuisines:
+                if cuisine.lower() in restaurant_cuisines:
+                    matching_cuisines.append(cuisine)
+            
+            if matching_cuisines:
+                if len(matching_cuisines) == 1:
+                    reasons.append(f"Sesuai preferensi Anda, masakan {matching_cuisines[0]}")
+                else:
+                    reasons.append(f"Sesuai preferensi Anda, masakan {', '.join(matching_cuisines)}")
+            
+            restaurant_about = str(restaurant.get('about', '')).lower()
+            mood_preferences = preferences.get('mood_preferences', [])
+            matching_moods = []
+            
+            mood_indicators = {
+                'romantic': ['romantic', 'couple', 'intimate', 'cozy'],
+                'family': ['family', 'kids', 'children', 'playground'],
+                'casual': ['casual', 'relax', 'laid-back', 'informal'],
+                'formal': ['formal', 'elegant', 'fine dining', 'upscale'],
+                'scenic': ['view', 'beach', 'sunset', 'ocean', 'garden']
+            }
+            
+            for mood in mood_preferences:
+                if mood in mood_indicators:
+                    if any(indicator in restaurant_about for indicator in mood_indicators[mood]):
+                        matching_moods.append(mood)
+            
+            if matching_moods:
+                if 'family' in matching_moods:
+                    reasons.append("Cocok untuk acara keluarga")
+                if 'romantic' in matching_moods:
+                    reasons.append("Suasana romantis yang Anda suka")
+            
+            return ". ".join(reasons) if reasons else ""
+            
+        except Exception as e:
+            print(f"Error generating personal reason: {e}")
+            return ""
     
     def get_user_preferences_summary(self, session_id: str) -> Dict:
         if session_id not in self.sessions:

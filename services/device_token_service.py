@@ -340,7 +340,6 @@ class DeviceTokenService:
                 'search_patterns': {}
             }
             
-            # Analyze chat sessions for patterns
             cuisine_mentions = {}
             location_mentions = {}
             price_keywords = []
@@ -350,23 +349,18 @@ class DeviceTokenService:
                 for message in session.get('messages', []):
                     user_query = message.get('user', '').lower()
                     
-                    # Extract cuisine preferences
                     cuisines = self._extract_cuisines(user_query)
                     for cuisine in cuisines:
                         cuisine_mentions[cuisine] = cuisine_mentions.get(cuisine, 0) + 1
                     
-                    # Extract location preferences  
                     locations = self._extract_locations(user_query)
                     for location in locations:
                         location_mentions[location] = location_mentions.get(location, 0) + 1
                     
-                    # Extract price preferences
                     price_keywords.extend(self._extract_price_preferences(user_query))
                     
-                    # Extract mood preferences
                     mood_keywords.extend(self._extract_mood_preferences(user_query))
             
-            # Convert to sorted preferences
             preferences['preferred_cuisines'] = [cuisine for cuisine, count in 
                                                sorted(cuisine_mentions.items(), key=lambda x: x[1], reverse=True)[:5]]
             preferences['preferred_locations'] = [location for location, count in 
@@ -374,7 +368,6 @@ class DeviceTokenService:
             preferences['price_preferences'] = list(set(price_keywords))
             preferences['mood_preferences'] = list(set(mood_keywords))
             
-            # Update user history with analyzed preferences
             history['preferences'] = preferences
             self._save_user_history(device_token, history)
             
@@ -385,26 +378,30 @@ class DeviceTokenService:
             return {}
     
     def _extract_cuisines(self, text: str) -> list:
-        """Extract cuisine types from text"""
+        """Extract cuisine types from text (improved with more keywords and substring matching)"""
         cuisine_keywords = {
-            'italian': ['italian', 'italia', 'pizza', 'pasta', 'spaghetti'],
-            'chinese': ['chinese', 'china', 'dimsum', 'noodle', 'mie'],
-            'japanese': ['japanese', 'jepang', 'sushi', 'ramen', 'tempura'],
-            'indonesian': ['indonesian', 'indonesia', 'nasi', 'sate', 'rendang', 'gado'],
-            'western': ['western', 'barat', 'steak', 'burger', 'sandwich'],
-            'seafood': ['seafood', 'fish', 'ikan', 'udang', 'kepiting', 'lobster'],
-            'mexican': ['mexican', 'meksiko', 'burrito', 'taco'],
-            'indian': ['indian', 'india', 'curry', 'kari'],
-            'french': ['french', 'perancis'],
-            'mediterranean': ['mediterranean', 'mediterania'],
-            'asian': ['asian', 'asia'],
-            'barbecue': ['barbecue', 'bbq', 'bakar', 'panggang']
+            'italian': [
+                'itali', 'italian', 'italia', 'pizza', 'pasta', 'spaghetti', 'ristorante', 'italian food', 'masakan italia', 'italian cuisine', 'ristorante italiano'
+            ],
+            'chinese': ['chinese', 'china', 'dimsum', 'noodle', 'mie', 'chinatown', 'chinese food', 'masakan china'],
+            'japanese': ['japanese', 'jepang', 'sushi', 'ramen', 'tempura', 'japanese food', 'masakan jepang'],
+            'indonesian': ['indonesian', 'indonesia', 'nasi', 'sate', 'rendang', 'gado', 'masakan indonesia', 'indonesian food'],
+            'western': ['western', 'barat', 'steak', 'burger', 'sandwich', 'western food', 'masakan barat'],
+            'seafood': ['seafood', 'fish', 'ikan', 'udang', 'kepiting', 'lobster', 'seafood restaurant', 'masakan laut'],
+            'mexican': ['mexican', 'meksiko', 'burrito', 'taco', 'mexican food', 'masakan meksiko'],
+            'indian': ['indian', 'india', 'curry', 'kari', 'indian food', 'masakan india'],
+            'french': ['french', 'perancis', 'french food', 'masakan perancis'],
+            'mediterranean': ['mediterranean', 'mediterania', 'mediterranean food', 'masakan mediterania'],
+            'asian': ['asian', 'asia', 'asian food', 'masakan asia'],
+            'barbecue': ['barbecue', 'bbq', 'bakar', 'panggang', 'barbecue food', 'masakan bakar']
         }
-        
         found_cuisines = []
+        text_lower = text.lower()
         for cuisine, keywords in cuisine_keywords.items():
-            if any(keyword in text for keyword in keywords):
-                found_cuisines.append(cuisine)
+            for keyword in keywords:
+                if keyword in text_lower:
+                    found_cuisines.append(cuisine)
+                    break
         return found_cuisines
     
     def _extract_locations(self, text: str) -> list:
@@ -443,15 +440,15 @@ class DeviceTokenService:
     def _extract_mood_preferences(self, text: str) -> list:
         """Extract mood/atmosphere preferences from text"""
         mood_keywords = []
-        if any(word in text for word in ['romantic', 'romantis', 'couple']):
+        if any(word in text for word in ['romantic', 'romantis', 'couple', 'intimate', 'cozy', 'pasangan']):
             mood_keywords.append('romantic')
-        if any(word in text for word in ['family', 'keluarga', 'anak']):
+        if any(word in text for word in ['family', 'keluarga', 'anak', 'kids', 'child', 'children', 'family-friendly', 'family oriented', 'for family']):
             mood_keywords.append('family')
-        if any(word in text for word in ['casual', 'santai', 'rileks']):
+        if any(word in text for word in ['casual', 'santai', 'rileks', 'laid-back', 'nonformal']):
             mood_keywords.append('casual')
-        if any(word in text for word in ['formal', 'business', 'meeting']):
+        if any(word in text for word in ['formal', 'business', 'meeting', 'elegant', 'fine dining', 'upscale']):
             mood_keywords.append('formal')
-        if any(word in text for word in ['view', 'pemandangan', 'sunset']):
+        if any(word in text for word in ['view', 'pemandangan', 'sunset', 'sunrise', 'pantai', 'laut', 'garden']):
             mood_keywords.append('scenic')
         return mood_keywords
     
@@ -463,7 +460,6 @@ class DeviceTokenService:
             
             boost_score = 0.0
             
-            # Cuisine preference boost
             restaurant_cuisines = restaurant_data.get('cuisines', [])
             if isinstance(restaurant_cuisines, str):
                 restaurant_cuisines = [restaurant_cuisines]
@@ -472,13 +468,11 @@ class DeviceTokenService:
                 if any(cuisine.lower() in str(rest_cuisine).lower() for rest_cuisine in restaurant_cuisines):
                     boost_score += 0.3
             
-            # Location preference boost
             restaurant_location = str(restaurant_data.get('location', '')).lower()
             for location in preferences.get('preferred_locations', []):
                 if location.lower() in restaurant_location:
                     boost_score += 0.2
             
-            # Mood preference boost (based on restaurant description/about)
             restaurant_about = str(restaurant_data.get('about', '')).lower()
             for mood in preferences.get('mood_preferences', []):
                 mood_indicators = {
@@ -493,37 +487,45 @@ class DeviceTokenService:
                     if any(indicator in restaurant_about for indicator in mood_indicators[mood]):
                         boost_score += 0.15
             
-            return min(boost_score, 1.0)  # Cap at 1.0
+            return min(boost_score, 1.0)  
             
         except Exception as e:
             logger.error(f"Error calculating personalized boost: {e}")
             return 0.0
     
     def update_user_preferences_from_interaction(self, device_token: str, user_query: str, selected_restaurant: Dict = None):
-        """Update user preferences based on interaction"""
+        """Update user preferences based on interaction, now including dietary and price preferences"""
         try:
-            # Analyze current query for new preferences
+            logger.info(f"Updating preferences for device_token: {device_token}, query: '{user_query}'")
+            
             new_cuisines = self._extract_cuisines(user_query.lower())
             new_locations = self._extract_locations(user_query.lower())
             new_moods = self._extract_mood_preferences(user_query.lower())
+            new_dietary = self._extract_dietary_restrictions(user_query.lower())
+            new_price = self._extract_price_preferences(user_query.lower())
+            
+            logger.info(f"Extracted - cuisines: {new_cuisines}, locations: {new_locations}, moods: {new_moods}, dietary: {new_dietary}, price: {new_price}")
             
             history = self.get_or_create_user_history(device_token)
             current_prefs = history.get('preferences', {})
             
-            # Update preferences incrementally
+            logger.info(f"Current preferences before update: {current_prefs}")
+            
             if new_cuisines:
                 current_cuisines = current_prefs.get('preferred_cuisines', [])
                 for cuisine in new_cuisines:
                     if cuisine not in current_cuisines:
                         current_cuisines.append(cuisine)
                 current_prefs['preferred_cuisines'] = current_cuisines[:5]  # Keep top 5
+                logger.info(f"Updated cuisines: {current_prefs['preferred_cuisines']}")
             
             if new_locations:
                 current_locations = current_prefs.get('preferred_locations', [])
                 for location in new_locations:
                     if location not in current_locations:
                         current_locations.append(location)
-                current_prefs['preferred_locations'] = current_locations[:3]  # Keep top 3
+                current_prefs['preferred_locations'] = current_locations[:3] 
+                logger.info(f"Updated locations: {current_prefs['preferred_locations']}")
             
             if new_moods:
                 current_moods = current_prefs.get('mood_preferences', [])
@@ -531,17 +533,47 @@ class DeviceTokenService:
                     if mood not in current_moods:
                         current_moods.append(mood)
                 current_prefs['mood_preferences'] = current_moods
+                logger.info(f"Updated moods: {current_prefs['mood_preferences']}")
             
-            # If user selected a restaurant, learn from it
+            if new_dietary:
+                current_dietary = current_prefs.get('dietary_restrictions', [])
+                for diet in new_dietary:
+                    if diet not in current_dietary:
+                        current_dietary.append(diet)
+                current_prefs['dietary_restrictions'] = current_dietary
+                logger.info(f"Updated dietary restrictions: {current_prefs['dietary_restrictions']}")
+            
+            if new_price:
+                current_prefs['price_preference'] = new_price[-1]
+                logger.info(f"Updated price preference: {current_prefs['price_preference']}")
+            
             if selected_restaurant:
                 fav_restaurants = current_prefs.get('favorite_restaurants', [])
                 restaurant_id = selected_restaurant.get('id')
                 if restaurant_id and restaurant_id not in fav_restaurants:
                     fav_restaurants.append(restaurant_id)
-                    current_prefs['favorite_restaurants'] = fav_restaurants[-10:]  # Keep last 10
+                    current_prefs['favorite_restaurants'] = fav_restaurants[-10:]  
             
             history['preferences'] = current_prefs
+            logger.info(f"Final preferences after update: {current_prefs}")
             self._save_user_history(device_token, history)
+            logger.info(f"Preferences saved successfully for device_token: {device_token}")
             
         except Exception as e:
             logger.error(f"Error updating user preferences: {e}")
+    def _extract_dietary_restrictions(self, text: str) -> list:
+        """Extract dietary restrictions from text"""
+        dietary_keywords = []
+        if any(word in text for word in ['vegan', 'vegetarian', 'plant-based']):
+            dietary_keywords.append('vegan')
+        if any(word in text for word in ['vegetarian', 'ovo-lacto', 'ovo', 'lacto']):
+            dietary_keywords.append('vegetarian')
+        if 'halal' in text:
+            dietary_keywords.append('halal')
+        if 'kosher' in text:
+            dietary_keywords.append('kosher')
+        if 'gluten' in text:
+            dietary_keywords.append('gluten-free')
+        if 'allergy' in text or 'alergi' in text:
+            dietary_keywords.append('allergy')
+        return list(set(dietary_keywords))

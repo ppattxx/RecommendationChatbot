@@ -1,0 +1,1771 @@
+{
+  "device_token": "dev_c702b69de61ee7ae_4d9f425b",
+  "created_at": "2025-09-15T11:17:27.669065",
+  "chat_sessions": [
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T15:50:49.716905",
+      "messages": [
+        {
+          "user": "vegan",
+          "timestamp": "2025-09-15T15:34:02.737229"
+        },
+        {
+          "user": "vegan",
+          "timestamp": "2025-09-15T15:34:02.815494"
+        },
+        {
+          "user": "saya ingin pizza",
+          "timestamp": "2025-09-15T15:43:36.503727"
+        },
+        {
+          "user": "saya ingin pizza",
+          "timestamp": "2025-09-15T15:43:36.575056"
+        },
+        {
+          "user": "saya ingin dinner pizza",
+          "timestamp": "2025-09-15T15:44:01.804191"
+        },
+        {
+          "user": "saya ingin dinner pizza",
+          "timestamp": "2025-09-15T15:44:01.856640"
+        },
+        {
+          "user": "saya suka masakan itali",
+          "timestamp": "2025-09-15T15:44:37.580522"
+        },
+        {
+          "user": "saya suka masakan itali",
+          "timestamp": "2025-09-15T15:44:37.697597"
+        },
+        {
+          "user": "saya ingin masakan italia",
+          "timestamp": "2025-09-15T15:45:42.344707"
+        },
+        {
+          "user": "saya ingin masakan italia",
+          "timestamp": "2025-09-15T15:45:42.448865"
+        },
+        {
+          "user": "saya ingin masakan khas itali",
+          "timestamp": "2025-09-15T15:48:43.856632"
+        },
+        {
+          "user": "saya ingin masakan khas itali",
+          "timestamp": "2025-09-15T15:48:43.955016"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-09-15T15:49:36.310992"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-09-15T15:49:36.383464"
+        },
+        {
+          "user": "saya ingin makanan vegetarian",
+          "timestamp": "2025-09-15T15:50:49.654970"
+        },
+        {
+          "user": "saya ingin makanan vegetarian",
+          "timestamp": "2025-09-15T15:50:49.716905"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'saya ingin makanan vegetarian', saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. The Hut Restaurant Kuta\n   Rating: 5.0/5.0 | Kecocokan: 49%\n   Cafe Restaurant International Vegetarian Friendly Vegan Options Healthy Food Food Made Good Board Ga...\n   Jenis masakan: ['Cafe', 'International', 'Asian', 'Fusion', 'Healthy']\n  Sesuai preferensi Anda, masakan asian\n\n2. Felice's Vegetarian Restaurant\n   Rating: 4.0/5.0 | Kecocokan: 56%\n   This restaurant started with a mission: we want to share with the people who are in need. Many child...\n   Jenis masakan: ['Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan asian. Cocok untuk acara keluarga\n\n3. Warung Grand Kuta Lombok\n   Rating: 4.5/5.0 | Kecocokan: 46%\n   We have european food,Mexico,asia,indonesian and local food,vegetarian. Fresh food,fresh drink,fresh...\n   Jenis masakan: ['Mexican', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan asian\n\n4. HonkyTonks Blues Bar and Grill\n   Rating: 4.5/5.0 | Kecocokan: 44%\n   A bar restaurant with a charcoal grill and extensive bar. Kitchen is able to cater to many needs and...\n   Jenis masakan: ['International', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan asian\n\n5. Knalpot\n   Rating: 4.5/5.0 | Kecocokan: 41%\n   Extraordinary Asian Fusion restaurant in Kuta, Lombok with focus on exquisite pescetarian and vegeta...\n   Jenis masakan: ['Asian', 'Fusion']\n  Sesuai preferensi Anda, masakan asian\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T11:17:29.864282",
+      "messages": [
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-09-15T11:17:29.824292"
+        },
+        {
+          "user": "tempat makan seafood murah",
+          "timestamp": "2025-09-15T11:17:29.851024"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'tempat makan seafood murah' dengan masakan seafood dan harga cheap, saya menemukan 5 restoran terbaik:\n\n1. Ocean Blue Seafood Restaurant\n   Rating: 3.5/5.0 | Kecocokan: 40%\n   Outdoor Seating\n   Jenis masakan: ['Seafood', 'Asian', 'Indonesian']\n\n2. Warung Bule\n   Rating: 4.0/5.0 | Kecocokan: 32%\n   Lombok\n   Jenis masakan: ['Seafood', 'International', 'Asian', 'Indonesian']\n\n3. Seasalt Lombok\n   Rating: 4.5/5.0 | Kecocokan: 27%\n   Serving only the freshest locally sourced seafood from the nearby fishing villages and markets. Casu...\n   Jenis masakan: ['Seafood', 'International', 'Mediterranean', 'Grill', 'Healthy', 'Caucasian']\n\n4. Warung Amalia\n   Rating: 4.5/5.0 | Kecocokan: 27%\n   Outdoor Seating\n   Jenis masakan: ['Seafood', 'Asian', 'Indonesian']\n\n5. Ko-Ko-Mo Restaurant\n   Rating: 5.0/5.0 | Kecocokan: 25%\n   With its superb beachfront location our restaurant (headed by an Australian chef) focuses on local p...\n   Jenis masakan: ['Seafood', 'Mediterranean', 'European', 'Asian', 'Indonesian']\n\n---\n\nMau cari di lokasi tertentu?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T11:17:45.410251",
+      "messages": [
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-09-15T11:17:29.824292"
+        },
+        {
+          "user": "tempat makan seafood murah",
+          "timestamp": "2025-09-15T11:17:29.851024"
+        },
+        {
+          "user": "saya ingin sushi",
+          "timestamp": "2025-09-15T11:17:45.362578"
+        },
+        {
+          "user": "saya ingin sushi",
+          "timestamp": "2025-09-15T11:17:45.362578"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'saya ingin sushi' dengan masakan sushi, saya menemukan 4 restoran terbaik:\n\n1. Biraku Japanese Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 42%\n   only one japanese concept restaurant in Gili Trawangan. top of chef from Japan, we have sushi also.\n   Jenis masakan: ['Japanese', 'Seafood', 'Sushi', 'Asian']\n\n2. Camilla Beach Club\n   Rating: 4.5/5.0 | Kecocokan: 6%\n   If you are at Gili Air to experience the island’s grassroots level life and calmness then Camilla be...\n   Jenis masakan: ['Seafood', 'International', 'Sushi', 'Grill']\n\n3. Bask Beach Club and Restaurant, Gili Meno\n   Rating: 4.5/5.0 | Kecocokan: 15%\n   Discover the soul of BASK at the Beach Club… Luxuriate in a paradise of white sand, crystal clear wa...\n   Jenis masakan: ['Steakhouse', 'International', 'Sushi', 'Wine Bar']\n\n4. Evolution Bar Sushi Restaurant\n   Rating: 3.5/5.0 | Kecocokan: 38%\n   Live Music\n   Jenis masakan: ['Bar', 'Pub']\n\n---\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T11:19:35.441308",
+      "messages": [
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-09-15T11:17:29.824292"
+        },
+        {
+          "user": "tempat makan seafood murah",
+          "timestamp": "2025-09-15T11:17:29.851024"
+        },
+        {
+          "user": "saya ingin sushi",
+          "timestamp": "2025-09-15T11:17:45.362578"
+        },
+        {
+          "user": "saya ingin sushi",
+          "timestamp": "2025-09-15T11:17:45.362578"
+        },
+        {
+          "user": "restoran western untuk makan keluarga",
+          "timestamp": "2025-09-15T11:19:35.441308"
+        }
+      ],
+      "recommendations_given": "Terima kasih telah menggunakan layanan kami! Sampai jumpa!",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T11:19:56.363189",
+      "messages": [
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-09-15T11:17:29.824292"
+        },
+        {
+          "user": "tempat makan seafood murah",
+          "timestamp": "2025-09-15T11:17:29.851024"
+        },
+        {
+          "user": "saya ingin sushi",
+          "timestamp": "2025-09-15T11:17:45.362578"
+        },
+        {
+          "user": "saya ingin sushi",
+          "timestamp": "2025-09-15T11:17:45.362578"
+        },
+        {
+          "user": "restoran western untuk makan keluarga",
+          "timestamp": "2025-09-15T11:19:35.441308"
+        },
+        {
+          "user": "restoran western untuk makan keluarga",
+          "timestamp": "2025-09-15T11:19:56.363189"
+        }
+      ],
+      "recommendations_given": "Terima kasih telah menggunakan layanan kami! Sampai jumpa!",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T11:20:24.885194",
+      "messages": [
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-09-15T11:17:29.824292"
+        },
+        {
+          "user": "tempat makan seafood murah",
+          "timestamp": "2025-09-15T11:17:29.851024"
+        },
+        {
+          "user": "saya ingin sushi",
+          "timestamp": "2025-09-15T11:17:45.362578"
+        },
+        {
+          "user": "saya ingin sushi",
+          "timestamp": "2025-09-15T11:17:45.362578"
+        },
+        {
+          "user": "restoran western untuk makan keluarga",
+          "timestamp": "2025-09-15T11:19:35.441308"
+        },
+        {
+          "user": "restoran western untuk makan keluarga",
+          "timestamp": "2025-09-15T11:19:56.363189"
+        },
+        {
+          "user": "halo",
+          "timestamp": "2025-09-15T11:20:24.869660"
+        }
+      ],
+      "recommendations_given": "Halo! Saya siap membantu Anda mencari restoran yang pas!\n\nCoba ceritakan apa yang Anda inginkan, misalnya:\n- 'Pizza yang romantis di Kuta'\n- 'Seafood murah di Gili Trawangan'\n- 'Tempat makan keluarga yang santai'",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T11:20:27.427077",
+      "messages": [
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-09-15T11:17:29.824292"
+        },
+        {
+          "user": "tempat makan seafood murah",
+          "timestamp": "2025-09-15T11:17:29.851024"
+        },
+        {
+          "user": "saya ingin sushi",
+          "timestamp": "2025-09-15T11:17:45.362578"
+        },
+        {
+          "user": "saya ingin sushi",
+          "timestamp": "2025-09-15T11:17:45.362578"
+        },
+        {
+          "user": "restoran western untuk makan keluarga",
+          "timestamp": "2025-09-15T11:19:35.441308"
+        },
+        {
+          "user": "restoran western untuk makan keluarga",
+          "timestamp": "2025-09-15T11:19:56.363189"
+        },
+        {
+          "user": "halo",
+          "timestamp": "2025-09-15T11:20:24.869660"
+        },
+        {
+          "user": "restoran western untuk makan keluarga",
+          "timestamp": "2025-09-15T11:20:27.427077"
+        }
+      ],
+      "recommendations_given": "Terima kasih telah menggunakan layanan kami! Sampai jumpa!",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T11:24:13.077494",
+      "messages": [
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-09-15T11:17:29.824292"
+        },
+        {
+          "user": "tempat makan seafood murah",
+          "timestamp": "2025-09-15T11:17:29.851024"
+        },
+        {
+          "user": "saya ingin sushi",
+          "timestamp": "2025-09-15T11:17:45.362578"
+        },
+        {
+          "user": "saya ingin sushi",
+          "timestamp": "2025-09-15T11:17:45.362578"
+        },
+        {
+          "user": "restoran western untuk makan keluarga",
+          "timestamp": "2025-09-15T11:19:35.441308"
+        },
+        {
+          "user": "restoran western untuk makan keluarga",
+          "timestamp": "2025-09-15T11:19:56.363189"
+        },
+        {
+          "user": "halo",
+          "timestamp": "2025-09-15T11:20:24.869660"
+        },
+        {
+          "user": "restoran western untuk makan keluarga",
+          "timestamp": "2025-09-15T11:20:27.427077"
+        },
+        {
+          "user": "restoran western untuk keluarga",
+          "timestamp": "2025-09-15T11:24:12.994907"
+        },
+        {
+          "user": "restoran western untuk keluarga",
+          "timestamp": "2025-09-15T11:24:13.040947"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'restoran western untuk keluarga' dengan masakan western dan suasana family, saya menemukan 5 restoran terbaik:\n\n1. Sendok Restaurant & Bar\n   Rating: 4.0/5.0 | Kecocokan: 12%\n   Following “Sendok Restaurant’s”theme of “olde” Dutch Colonial style served you for Breakfast, Lunch ...\n   Jenis masakan: ['Seafood', 'International', 'Asian', 'Indonesian']\n\n2. Zipp Bar Restaurant & Bungalows\n   Rating: 4.0/5.0 | Kecocokan: 10%\n   Zipp is located on southeast beach of Gili Air in front of best swimming and snorkeling area. Restau...\n   Jenis masakan: ['Bar', 'Seafood', 'International', 'Barbecue', 'Asian', 'Indonesian', 'Soups']\n\n3. Mia Mia's Kitchen\n   Rating: 4.0/5.0 | Kecocokan: 19%\n   we are a small family owned business,we have a Western,Indonesian or lokal food available in our kit...\n   Jenis masakan: ['International', 'Asian', 'Australian', 'Indonesian']\n\n4. Warung Flora\n   Rating: 4.5/5.0 | Kecocokan: 19%\n   Amazing freshly Local and Western Food All shakes are made with high quality drink water\n   Jenis masakan: ['Asian', 'Indonesian']\n\n5. Chili Bar & Segar\n   Rating: 5.0/5.0 | Kecocokan: 9%\n   Beach restaurant and bar on the East side of Gili Air. Open for breakfast, lunch and dinner. Indones...\n   Jenis masakan: ['Mexican', 'American', 'Bar', 'Seafood', 'Indonesian']\n\n---\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T11:26:40.460253",
+      "messages": [
+        {
+          "user": "saya ingin sushi",
+          "timestamp": "2025-09-15T11:17:45.362578"
+        },
+        {
+          "user": "saya ingin sushi",
+          "timestamp": "2025-09-15T11:17:45.362578"
+        },
+        {
+          "user": "restoran western untuk makan keluarga",
+          "timestamp": "2025-09-15T11:19:35.441308"
+        },
+        {
+          "user": "restoran western untuk makan keluarga",
+          "timestamp": "2025-09-15T11:19:56.363189"
+        },
+        {
+          "user": "halo",
+          "timestamp": "2025-09-15T11:20:24.869660"
+        },
+        {
+          "user": "restoran western untuk makan keluarga",
+          "timestamp": "2025-09-15T11:20:27.427077"
+        },
+        {
+          "user": "restoran western untuk keluarga",
+          "timestamp": "2025-09-15T11:24:12.994907"
+        },
+        {
+          "user": "restoran western untuk keluarga",
+          "timestamp": "2025-09-15T11:24:13.040947"
+        },
+        {
+          "user": "restoran western untuk keluarga",
+          "timestamp": "2025-09-15T11:26:40.406129"
+        },
+        {
+          "user": "restoran western untuk keluarga",
+          "timestamp": "2025-09-15T11:26:40.440085"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'restoran western untuk keluarga' dengan masakan western dan suasana family, saya menemukan 5 restoran terbaik:\n\n1. Mia Mia's Kitchen\n   Rating: 4.0/5.0 | Kecocokan: 23%\n   we are a small family owned business,we have a Western,Indonesian or lokal food available in our kit...\n   Jenis masakan: ['International', 'Asian', 'Australian', 'Indonesian']\n\n2. Family Cafe\n   Rating: 5.0/5.0 | Kecocokan: 22%\n   We are family cafe, serve for breakfast ,lunch and dinner. We have Asian food, western, and vegan\n   Jenis masakan: ['Asian', 'Indonesian']\n\n3. Sendok Restaurant & Bar\n   Rating: 4.0/5.0 | Kecocokan: 21%\n   Following “Sendok Restaurant’s”theme of “olde” Dutch Colonial style served you for Breakfast, Lunch ...\n   Jenis masakan: ['Seafood', 'International', 'Asian', 'Indonesian']\n\n4. Zipp Bar Restaurant & Bungalows\n   Rating: 4.0/5.0 | Kecocokan: 19%\n   Zipp is located on southeast beach of Gili Air in front of best swimming and snorkeling area. Restau...\n   Jenis masakan: ['Bar', 'Seafood', 'International', 'Barbecue', 'Asian', 'Indonesian', 'Soups']\n\n5. Warung Flora\n   Rating: 4.5/5.0 | Kecocokan: 19%\n   Amazing freshly Local and Western Food All shakes are made with high quality drink water\n   Jenis masakan: ['Asian', 'Indonesian']\n\n---\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T11:27:34.136957",
+      "messages": [
+        {
+          "user": "restoran western untuk makan keluarga",
+          "timestamp": "2025-09-15T11:19:35.441308"
+        },
+        {
+          "user": "restoran western untuk makan keluarga",
+          "timestamp": "2025-09-15T11:19:56.363189"
+        },
+        {
+          "user": "halo",
+          "timestamp": "2025-09-15T11:20:24.869660"
+        },
+        {
+          "user": "restoran western untuk makan keluarga",
+          "timestamp": "2025-09-15T11:20:27.427077"
+        },
+        {
+          "user": "restoran western untuk keluarga",
+          "timestamp": "2025-09-15T11:24:12.994907"
+        },
+        {
+          "user": "restoran western untuk keluarga",
+          "timestamp": "2025-09-15T11:24:13.040947"
+        },
+        {
+          "user": "restoran western untuk keluarga",
+          "timestamp": "2025-09-15T11:26:40.406129"
+        },
+        {
+          "user": "restoran western untuk keluarga",
+          "timestamp": "2025-09-15T11:26:40.440085"
+        },
+        {
+          "user": "restoran asia yang romantis",
+          "timestamp": "2025-09-15T11:27:34.042411"
+        },
+        {
+          "user": "restoran asia yang romantis",
+          "timestamp": "2025-09-15T11:27:34.112767"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'restoran asia yang romantis' dengan suasana romantic, saya menemukan 5 restoran terbaik:\n\n1. Quali Asian Dining\n   Rating: 4.5/5.0 | Kecocokan: 50%\n   Quali restaurant specializes in popular Asian and Indonesian dishes and is set in relaxed, outdoor s...\n   Jenis masakan: ['Asian', 'Indonesian']\n\n2. Fat Cats Bar & Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 30%\n   Whether you prefer to sit on the beach with your feet in the sand, or in our cool and breezy elevate...\n   Jenis masakan: ['Italian', 'Mexican', 'Japanese', 'Bar', 'International', 'Asian', 'Indonesian']\n\n3. Knalpot\n   Rating: 4.5/5.0 | Kecocokan: 30%\n   Extraordinary Asian Fusion restaurant in Kuta, Lombok with focus on exquisite pescetarian and vegeta...\n   Jenis masakan: ['Asian', 'Fusion']\n\n4. Kemangi Bar & Kitchen\n   Rating: 5.0/5.0 | Kecocokan: 30%\n   Kemangi is located right in the heart of Kuta Lombok, 100 M from Kuta beach, which is about 20 minut...\n   Jenis masakan: ['International', 'Asian', 'Indonesian']\n\n5. Family Cafe\n   Rating: 5.0/5.0 | Kecocokan: 30%\n   We are family cafe, serve for breakfast ,lunch and dinner. We have Asian food, western, and vegan\n   Jenis masakan: ['Asian', 'Indonesian']\n\n---\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T11:32:34.120941",
+      "messages": [
+        {
+          "user": "halo",
+          "timestamp": "2025-09-15T11:20:24.869660"
+        },
+        {
+          "user": "restoran western untuk makan keluarga",
+          "timestamp": "2025-09-15T11:20:27.427077"
+        },
+        {
+          "user": "restoran western untuk keluarga",
+          "timestamp": "2025-09-15T11:24:12.994907"
+        },
+        {
+          "user": "restoran western untuk keluarga",
+          "timestamp": "2025-09-15T11:24:13.040947"
+        },
+        {
+          "user": "restoran western untuk keluarga",
+          "timestamp": "2025-09-15T11:26:40.406129"
+        },
+        {
+          "user": "restoran western untuk keluarga",
+          "timestamp": "2025-09-15T11:26:40.440085"
+        },
+        {
+          "user": "restoran asia yang romantis",
+          "timestamp": "2025-09-15T11:27:34.042411"
+        },
+        {
+          "user": "restoran asia yang romantis",
+          "timestamp": "2025-09-15T11:27:34.112767"
+        },
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-09-15T11:32:34.063465"
+        },
+        {
+          "user": "tempat makan seafood murah",
+          "timestamp": "2025-09-15T11:32:34.106957"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'tempat makan seafood murah' dengan masakan seafood dan harga cheap, saya menemukan 5 restoran terbaik (⭐ = sesuai preferensi Anda):\n\n1. Ocean Blue Seafood Restaurant\n   Rating: 3.5/5.0 | Kecocokan: 100% ⭐\n   Outdoor Seating\n   Jenis masakan: ['Seafood', 'Asian', 'Indonesian']\n   💡 Sesuai preferensi masakan seafood, asian Anda\n\n2. Warung Bule\n   Rating: 4.0/5.0 | Kecocokan: 92% ⭐\n   Lombok\n   Jenis masakan: ['Seafood', 'International', 'Asian', 'Indonesian']\n   💡 Sesuai preferensi masakan seafood, asian Anda\n\n3. Seasalt Lombok\n   Rating: 4.5/5.0 | Kecocokan: 87% ⭐\n   Serving only the freshest locally sourced seafood from the nearby fishing villages and markets. Casu...\n   Jenis masakan: ['Seafood', 'International', 'Mediterranean', 'Grill', 'Healthy', 'Caucasian']\n   💡 Sesuai preferensi masakan seafood, asian Anda\n\n4. Warung Amalia\n   Rating: 4.5/5.0 | Kecocokan: 87% ⭐\n   Outdoor Seating\n   Jenis masakan: ['Seafood', 'Asian', 'Indonesian']\n   💡 Sesuai preferensi masakan seafood, asian Anda\n\n5. Ko-Ko-Mo Restaurant\n   Rating: 5.0/5.0 | Kecocokan: 85% ⭐\n   With its superb beachfront location our restaurant (headed by an Australian chef) focuses on local p...\n   Jenis masakan: ['Seafood', 'Mediterranean', 'European', 'Asian', 'Indonesian']\n   💡 Sesuai preferensi masakan seafood, asian Anda\n\n---\n\nMau cari di lokasi tertentu?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T11:33:09.732606",
+      "messages": [
+        {
+          "user": "restoran western untuk keluarga",
+          "timestamp": "2025-09-15T11:24:12.994907"
+        },
+        {
+          "user": "restoran western untuk keluarga",
+          "timestamp": "2025-09-15T11:24:13.040947"
+        },
+        {
+          "user": "restoran western untuk keluarga",
+          "timestamp": "2025-09-15T11:26:40.406129"
+        },
+        {
+          "user": "restoran western untuk keluarga",
+          "timestamp": "2025-09-15T11:26:40.440085"
+        },
+        {
+          "user": "restoran asia yang romantis",
+          "timestamp": "2025-09-15T11:27:34.042411"
+        },
+        {
+          "user": "restoran asia yang romantis",
+          "timestamp": "2025-09-15T11:27:34.112767"
+        },
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-09-15T11:32:34.063465"
+        },
+        {
+          "user": "tempat makan seafood murah",
+          "timestamp": "2025-09-15T11:32:34.106957"
+        },
+        {
+          "user": "saya ingin ayam taliwang",
+          "timestamp": "2025-09-15T11:33:09.641186"
+        },
+        {
+          "user": "saya ingin ayam taliwang",
+          "timestamp": "2025-09-15T11:33:09.704115"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'saya ingin ayam taliwang', saya menemukan 3 restoran terbaik (⭐ = sesuai preferensi Anda):\n\n1. Taliwang Irama\n   Rating: 4.0/5.0 | Kecocokan: 100% ⭐\n   Authentic 'Ayam Taliwang' Cuisine\n   Jenis masakan: ['Asian', 'Indonesian']\n   💡 Sesuai preferensi masakan asian Anda\n\n2. Taliwang Khas Pak Udin\n   Rating: 4.0/5.0 | Kecocokan: 78% ⭐\n   Seating\n   Jenis masakan: ['Asian', 'Indonesian']\n   💡 Sesuai preferensi masakan asian Anda\n\n3. Ayam Taliwang Raya\n   Rating: 4.0/5.0 | Kecocokan: 73% ⭐\n   Reservations\n   Jenis masakan: ['Asian', 'Indonesian']\n   💡 Sesuai preferensi masakan asian Anda\n\n---\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T11:34:23.016037",
+      "messages": [
+        {
+          "user": "restoran western untuk keluarga",
+          "timestamp": "2025-09-15T11:26:40.406129"
+        },
+        {
+          "user": "restoran western untuk keluarga",
+          "timestamp": "2025-09-15T11:26:40.440085"
+        },
+        {
+          "user": "restoran asia yang romantis",
+          "timestamp": "2025-09-15T11:27:34.042411"
+        },
+        {
+          "user": "restoran asia yang romantis",
+          "timestamp": "2025-09-15T11:27:34.112767"
+        },
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-09-15T11:32:34.063465"
+        },
+        {
+          "user": "tempat makan seafood murah",
+          "timestamp": "2025-09-15T11:32:34.106957"
+        },
+        {
+          "user": "saya ingin ayam taliwang",
+          "timestamp": "2025-09-15T11:33:09.641186"
+        },
+        {
+          "user": "saya ingin ayam taliwang",
+          "timestamp": "2025-09-15T11:33:09.704115"
+        },
+        {
+          "user": "ayam yang pedas ada dimana",
+          "timestamp": "2025-09-15T11:34:22.920667"
+        },
+        {
+          "user": "ayam yang pedas ada dimana",
+          "timestamp": "2025-09-15T11:34:22.974368"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'ayam yang pedas ada dimana', saya menemukan 5 restoran terbaik:\n\n1. Kayangan Restaurant\n   Rating: 5.0/5.0 | Kecocokan: 30%\n   Located within the stunning Holiday Resort Lombok, Kayangan Restaurant offers a sophisticated dining...\n   Jenis masakan: ['Chinese', 'Pizza', 'Seafood', 'International', 'Indonesian']\n\n2. Begadang Bar & Restaurant\n   Rating: 5.0/5.0 | Kecocokan: 20%\n   All day breakfast, coffee, sandwiches, burgers, pasta, Asian, healthy food, Heineken draft beer, win...\n   Jenis masakan: ['European', 'Grill', 'Healthy', 'Gastropub']\n\n3. Ayam Taliwang Raya\n   Rating: 4.0/5.0 | Kecocokan: 20%\n   Reservations\n   Jenis masakan: ['Asian', 'Indonesian']\n\n4. RM. Nada Alam Nyaman\n   Rating: 4.0/5.0 | Kecocokan: 20%\n   Accepts Credit Cards\n   Jenis masakan: ['Asian', 'Indonesian']\n\n5. Taliwang Irama\n   Rating: 4.0/5.0 | Kecocokan: 10%\n   Authentic 'Ayam Taliwang' Cuisine\n   Jenis masakan: ['Asian', 'Indonesian']\n\n---\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T11:34:45.749067",
+      "messages": [
+        {
+          "user": "restoran asia yang romantis",
+          "timestamp": "2025-09-15T11:27:34.042411"
+        },
+        {
+          "user": "restoran asia yang romantis",
+          "timestamp": "2025-09-15T11:27:34.112767"
+        },
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-09-15T11:32:34.063465"
+        },
+        {
+          "user": "tempat makan seafood murah",
+          "timestamp": "2025-09-15T11:32:34.106957"
+        },
+        {
+          "user": "saya ingin ayam taliwang",
+          "timestamp": "2025-09-15T11:33:09.641186"
+        },
+        {
+          "user": "saya ingin ayam taliwang",
+          "timestamp": "2025-09-15T11:33:09.704115"
+        },
+        {
+          "user": "ayam yang pedas ada dimana",
+          "timestamp": "2025-09-15T11:34:22.920667"
+        },
+        {
+          "user": "ayam yang pedas ada dimana",
+          "timestamp": "2025-09-15T11:34:22.974368"
+        },
+        {
+          "user": "saya ingin ayam taliwang",
+          "timestamp": "2025-09-15T11:34:45.657206"
+        },
+        {
+          "user": "saya ingin ayam taliwang",
+          "timestamp": "2025-09-15T11:34:45.712005"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'saya ingin ayam taliwang', saya menemukan 3 restoran terbaik (sesuai preferensi Anda):\n\n1. Taliwang Irama\n   Rating: 4.0/5.0 | Kecocokan: 100%\n   Authentic 'Ayam Taliwang' Cuisine\n   Jenis masakan: ['Asian', 'Indonesian']\n  Sesuai preferensi masakan asian Anda\n\n2. Taliwang Khas Pak Udin\n   Rating: 4.0/5.0 | Kecocokan: 78%\n   Seating\n   Jenis masakan: ['Asian', 'Indonesian']\n  Sesuai preferensi masakan asian Anda\n\n3. Ayam Taliwang Raya\n   Rating: 4.0/5.0 | Kecocokan: 73%\n   Reservations\n   Jenis masakan: ['Asian', 'Indonesian']\n  Sesuai preferensi masakan asian Anda\n\n---\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T11:36:40.112523",
+      "messages": [
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-09-15T11:32:34.063465"
+        },
+        {
+          "user": "tempat makan seafood murah",
+          "timestamp": "2025-09-15T11:32:34.106957"
+        },
+        {
+          "user": "saya ingin ayam taliwang",
+          "timestamp": "2025-09-15T11:33:09.641186"
+        },
+        {
+          "user": "saya ingin ayam taliwang",
+          "timestamp": "2025-09-15T11:33:09.704115"
+        },
+        {
+          "user": "ayam yang pedas ada dimana",
+          "timestamp": "2025-09-15T11:34:22.920667"
+        },
+        {
+          "user": "ayam yang pedas ada dimana",
+          "timestamp": "2025-09-15T11:34:22.974368"
+        },
+        {
+          "user": "saya ingin ayam taliwang",
+          "timestamp": "2025-09-15T11:34:45.657206"
+        },
+        {
+          "user": "saya ingin ayam taliwang",
+          "timestamp": "2025-09-15T11:34:45.712005"
+        },
+        {
+          "user": "restoran ayam taliwang yang romantis",
+          "timestamp": "2025-09-15T11:36:39.993995"
+        },
+        {
+          "user": "restoran ayam taliwang yang romantis",
+          "timestamp": "2025-09-15T11:36:40.063559"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'restoran ayam taliwang yang romantis' dengan suasana romantic, saya menemukan 3 restoran terbaik (sesuai preferensi Anda):\n\n1. Taliwang Irama\n   Rating: 4.0/5.0 | Kecocokan: 100%\n   Authentic 'Ayam Taliwang' Cuisine\n   Jenis masakan: ['Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan asian\n\n2. Taliwang Khas Pak Udin\n   Rating: 4.0/5.0 | Kecocokan: 78%\n   Seating\n   Jenis masakan: ['Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan asian\n\n3. Ayam Taliwang Raya\n   Rating: 4.0/5.0 | Kecocokan: 73%\n   Reservations\n   Jenis masakan: ['Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan asian\n\n---\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T11:36:57.646463",
+      "messages": [
+        {
+          "user": "saya ingin ayam taliwang",
+          "timestamp": "2025-09-15T11:33:09.641186"
+        },
+        {
+          "user": "saya ingin ayam taliwang",
+          "timestamp": "2025-09-15T11:33:09.704115"
+        },
+        {
+          "user": "ayam yang pedas ada dimana",
+          "timestamp": "2025-09-15T11:34:22.920667"
+        },
+        {
+          "user": "ayam yang pedas ada dimana",
+          "timestamp": "2025-09-15T11:34:22.974368"
+        },
+        {
+          "user": "saya ingin ayam taliwang",
+          "timestamp": "2025-09-15T11:34:45.657206"
+        },
+        {
+          "user": "saya ingin ayam taliwang",
+          "timestamp": "2025-09-15T11:34:45.712005"
+        },
+        {
+          "user": "restoran ayam taliwang yang romantis",
+          "timestamp": "2025-09-15T11:36:39.993995"
+        },
+        {
+          "user": "restoran ayam taliwang yang romantis",
+          "timestamp": "2025-09-15T11:36:40.063559"
+        },
+        {
+          "user": "ikan bakar dengan suasana pantai ada dimana",
+          "timestamp": "2025-09-15T11:36:57.511695"
+        },
+        {
+          "user": "ikan bakar dengan suasana pantai ada dimana",
+          "timestamp": "2025-09-15T11:36:57.606901"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'ikan bakar dengan suasana pantai ada dimana' dengan masakan seafood dan suasana beachside, saya menemukan 5 restoran terbaik:\n\n1. Biraku Japanese Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 30%\n   only one japanese concept restaurant in Gili Trawangan. top of chef from Japan, we have sushi also.\n   Jenis masakan: ['Japanese', 'Seafood', 'Sushi', 'Asian']\n\n2. Seasalt Lombok\n   Rating: 4.5/5.0 | Kecocokan: 30%\n   Serving only the freshest locally sourced seafood from the nearby fishing villages and markets. Casu...\n   Jenis masakan: ['Seafood', 'International', 'Mediterranean', 'Grill', 'Healthy', 'Caucasian']\n\n3. Dolcemare Italian restaurant\n   Rating: 5.0/5.0 | Kecocokan: 30%\n   Dolcemare italian restaurant is original on the recipe on a fine dining set-up, with a good internat...\n   Jenis masakan: ['Italian', 'Seafood', 'Mediterranean', 'European']\n\n4. Danima Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 30%\n   Beach\n   Jenis masakan: ['Italian', 'Seafood', 'Mediterranean', 'Barbecue', 'European']\n\n5. Ko Ko Mo Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 30%\n   Elegant restaurant set on the beach with stunning views to Lombok. An innovative mix of Asian, Frenc...\n   Jenis masakan: ['Seafood', 'Mediterranean', 'European', 'Indonesian']\n\n---\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T11:38:00.392285",
+      "messages": [
+        {
+          "user": "ayam yang pedas ada dimana",
+          "timestamp": "2025-09-15T11:34:22.920667"
+        },
+        {
+          "user": "ayam yang pedas ada dimana",
+          "timestamp": "2025-09-15T11:34:22.974368"
+        },
+        {
+          "user": "saya ingin ayam taliwang",
+          "timestamp": "2025-09-15T11:34:45.657206"
+        },
+        {
+          "user": "saya ingin ayam taliwang",
+          "timestamp": "2025-09-15T11:34:45.712005"
+        },
+        {
+          "user": "restoran ayam taliwang yang romantis",
+          "timestamp": "2025-09-15T11:36:39.993995"
+        },
+        {
+          "user": "restoran ayam taliwang yang romantis",
+          "timestamp": "2025-09-15T11:36:40.063559"
+        },
+        {
+          "user": "ikan bakar dengan suasana pantai ada dimana",
+          "timestamp": "2025-09-15T11:36:57.511695"
+        },
+        {
+          "user": "ikan bakar dengan suasana pantai ada dimana",
+          "timestamp": "2025-09-15T11:36:57.606901"
+        },
+        {
+          "user": "Rekomendasi restoran romantis",
+          "timestamp": "2025-09-15T11:38:00.090606"
+        },
+        {
+          "user": "rekomendasi restoran romantis",
+          "timestamp": "2025-09-15T11:38:00.141362"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'rekomendasi restoran romantis' dengan suasana romantic, saya menemukan 1 restoran terbaik:\n\n1. Italo Pizza Cafe & Mart\n   Rating: 4.5/5.0 | Kecocokan: 10%\n   Restoran Italia\n   Jenis masakan: ['Italian', 'Pizza']\n\n---\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T11:42:19.822847",
+      "messages": [
+        {
+          "user": "saya ingin ayam taliwang",
+          "timestamp": "2025-09-15T11:34:45.657206"
+        },
+        {
+          "user": "saya ingin ayam taliwang",
+          "timestamp": "2025-09-15T11:34:45.712005"
+        },
+        {
+          "user": "restoran ayam taliwang yang romantis",
+          "timestamp": "2025-09-15T11:36:39.993995"
+        },
+        {
+          "user": "restoran ayam taliwang yang romantis",
+          "timestamp": "2025-09-15T11:36:40.063559"
+        },
+        {
+          "user": "ikan bakar dengan suasana pantai ada dimana",
+          "timestamp": "2025-09-15T11:36:57.511695"
+        },
+        {
+          "user": "ikan bakar dengan suasana pantai ada dimana",
+          "timestamp": "2025-09-15T11:36:57.606901"
+        },
+        {
+          "user": "Rekomendasi restoran romantis",
+          "timestamp": "2025-09-15T11:38:00.090606"
+        },
+        {
+          "user": "rekomendasi restoran romantis",
+          "timestamp": "2025-09-15T11:38:00.141362"
+        },
+        {
+          "user": "saya ingin ayam goreng yang enak",
+          "timestamp": "2025-09-15T11:42:19.690658"
+        },
+        {
+          "user": "saya ingin ayam goreng yang enak",
+          "timestamp": "2025-09-15T11:42:19.794360"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'saya ingin ayam goreng yang enak', saya menemukan 3 restoran terbaik (sesuai preferensi Anda):\n\n1. Kayangan Restaurant\n   Rating: 5.0/5.0 | Kecocokan: 100%\n   Located within the stunning Holiday Resort Lombok, Kayangan Restaurant offers a sophisticated dining...\n   Jenis masakan: ['Chinese', 'Pizza', 'Seafood', 'International', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood. Cocok untuk acara keluarga. Suasana romantis yang Anda suka\n\n2. Ayam Taliwang Raya\n   Rating: 4.0/5.0 | Kecocokan: 100%\n   Reservations\n   Jenis masakan: ['Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan asian\n\n3. Taliwang Irama\n   Rating: 4.0/5.0 | Kecocokan: 100%\n   Authentic 'Ayam Taliwang' Cuisine\n   Jenis masakan: ['Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan asian\n\n---\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T11:43:14.749712",
+      "messages": [
+        {
+          "user": "restoran ayam taliwang yang romantis",
+          "timestamp": "2025-09-15T11:36:39.993995"
+        },
+        {
+          "user": "restoran ayam taliwang yang romantis",
+          "timestamp": "2025-09-15T11:36:40.063559"
+        },
+        {
+          "user": "ikan bakar dengan suasana pantai ada dimana",
+          "timestamp": "2025-09-15T11:36:57.511695"
+        },
+        {
+          "user": "ikan bakar dengan suasana pantai ada dimana",
+          "timestamp": "2025-09-15T11:36:57.606901"
+        },
+        {
+          "user": "Rekomendasi restoran romantis",
+          "timestamp": "2025-09-15T11:38:00.090606"
+        },
+        {
+          "user": "rekomendasi restoran romantis",
+          "timestamp": "2025-09-15T11:38:00.141362"
+        },
+        {
+          "user": "saya ingin ayam goreng yang enak",
+          "timestamp": "2025-09-15T11:42:19.690658"
+        },
+        {
+          "user": "saya ingin ayam goreng yang enak",
+          "timestamp": "2025-09-15T11:42:19.794360"
+        },
+        {
+          "user": "ikan bakar yang murah",
+          "timestamp": "2025-09-15T11:43:14.542232"
+        },
+        {
+          "user": "ikan bakar yang murah",
+          "timestamp": "2025-09-15T11:43:14.725308"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'ikan bakar yang murah' dengan masakan seafood dan harga cheap, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Kayangan Restaurant\n   Rating: 5.0/5.0 | Kecocokan: 100%\n   Located within the stunning Holiday Resort Lombok, Kayangan Restaurant offers a sophisticated dining...\n   Jenis masakan: ['Chinese', 'Pizza', 'Seafood', 'International', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood. Cocok untuk acara keluarga. Suasana romantis yang Anda suka\n\n2. The Kliff\n   Rating: 4.5/5.0 | Kecocokan: 100%\n   Indulge in a delicious selection of grills, meat, and seafood with a stunning view overlooking the o...\n   Jenis masakan: ['Italian', 'Japanese', 'Seafood', 'European', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood, japanese, asian. Suasana romantis yang Anda suka\n\n3. Biraku Japanese Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 100%\n   only one japanese concept restaurant in Gili Trawangan. top of chef from Japan, we have sushi also.\n   Jenis masakan: ['Japanese', 'Seafood', 'Sushi', 'Asian']\n  Sesuai preferensi Anda, masakan seafood, japanese, asian\n\n4. Coco Beach\n   Rating: 4.5/5.0 | Kecocokan: 100%\n   Outdoor Seating\n   Jenis masakan: ['Seafood', 'Barbecue', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood, asian, barbecue\n\n5. Scallywags Beach Club\n   Rating: 4.0/5.0 | Kecocokan: 100%\n   Scallywags Beach Club is the perfect place to spend the day. We offer a large range of fresh, organi...\n   Jenis masakan: ['Bar', 'Seafood', 'Barbecue', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood, asian, barbecue\n\n---\n\nMau cari di lokasi tertentu?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T11:46:19.527043",
+      "messages": [
+        {
+          "user": "ikan bakar dengan suasana pantai ada dimana",
+          "timestamp": "2025-09-15T11:36:57.511695"
+        },
+        {
+          "user": "ikan bakar dengan suasana pantai ada dimana",
+          "timestamp": "2025-09-15T11:36:57.606901"
+        },
+        {
+          "user": "Rekomendasi restoran romantis",
+          "timestamp": "2025-09-15T11:38:00.090606"
+        },
+        {
+          "user": "rekomendasi restoran romantis",
+          "timestamp": "2025-09-15T11:38:00.141362"
+        },
+        {
+          "user": "saya ingin ayam goreng yang enak",
+          "timestamp": "2025-09-15T11:42:19.690658"
+        },
+        {
+          "user": "saya ingin ayam goreng yang enak",
+          "timestamp": "2025-09-15T11:42:19.794360"
+        },
+        {
+          "user": "ikan bakar yang murah",
+          "timestamp": "2025-09-15T11:43:14.542232"
+        },
+        {
+          "user": "ikan bakar yang murah",
+          "timestamp": "2025-09-15T11:43:14.725308"
+        },
+        {
+          "user": "ayam goreng yang murah",
+          "timestamp": "2025-09-15T11:46:19.438019"
+        },
+        {
+          "user": "ayam goreng yang murah",
+          "timestamp": "2025-09-15T11:46:19.505066"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'ayam goreng yang murah' dengan harga cheap, saya menemukan 3 restoran terbaik (sesuai preferensi Anda):\n\n1. Kayangan Restaurant\n   Rating: 5.0/5.0 | Kecocokan: 80%\n   Located within the stunning Holiday Resort Lombok, Kayangan Restaurant offers a sophisticated dining...\n   Jenis masakan: ['Chinese', 'Pizza', 'Seafood', 'International', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood. Cocok untuk acara keluarga. Suasana romantis yang Anda suka\n\n2. Ayam Taliwang Raya\n   Rating: 4.0/5.0 | Kecocokan: 43%\n   Reservations\n   Jenis masakan: ['Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan asian\n\n3. Taliwang Irama\n   Rating: 4.0/5.0 | Kecocokan: 36%\n   Authentic 'Ayam Taliwang' Cuisine\n   Jenis masakan: ['Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan asian\n\nMau cari di lokasi tertentu?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T15:08:21.157351",
+      "messages": [
+        {
+          "user": "Rekomendasi restoran romantis",
+          "timestamp": "2025-09-15T11:38:00.090606"
+        },
+        {
+          "user": "rekomendasi restoran romantis",
+          "timestamp": "2025-09-15T11:38:00.141362"
+        },
+        {
+          "user": "saya ingin ayam goreng yang enak",
+          "timestamp": "2025-09-15T11:42:19.690658"
+        },
+        {
+          "user": "saya ingin ayam goreng yang enak",
+          "timestamp": "2025-09-15T11:42:19.794360"
+        },
+        {
+          "user": "ikan bakar yang murah",
+          "timestamp": "2025-09-15T11:43:14.542232"
+        },
+        {
+          "user": "ikan bakar yang murah",
+          "timestamp": "2025-09-15T11:43:14.725308"
+        },
+        {
+          "user": "ayam goreng yang murah",
+          "timestamp": "2025-09-15T11:46:19.438019"
+        },
+        {
+          "user": "ayam goreng yang murah",
+          "timestamp": "2025-09-15T11:46:19.505066"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-09-15T15:08:20.955907"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-09-15T15:08:21.141733"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'cari restoran pizza di kuta' dengan masakan pizza dan di kuta, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Meno Mojo Restaurant\n   Rating: 3.5/5.0 | Kecocokan: 75%\n   Accepts Credit Cards\n   Jenis masakan: ['Pizza', 'Seafood', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood, asian\n\n2. Italo Pizza Cafe & Mart\n   Rating: 4.5/5.0 | Kecocokan: 41%\n   Restoran Italia\n   Jenis masakan: ['Italian', 'Pizza']\n\n3. Coral Beach 1\n   Rating: 3.5/5.0 | Kecocokan: 54%\n   Outdoor Seating\n   Jenis masakan: ['Pizza', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan asian\n\n4. Mama Pizza Kuta Lombok\n   Rating: 4.5/5.0 | Kecocokan: 33%\n   Reservations\n   Jenis masakan: ['Italian', 'Pizza', 'Cafe', 'European', 'Neapolitan', 'Campania', 'Southern-Italian']\n\n5. Oasi Italian Pizza & Bungalows\n   Rating: 4.5/5.0 | Kecocokan: 28%\n   Near to Wiwin Cafe\n   Jenis masakan: ['Italian', 'Pizza', 'European']\n\nAda budget khusus?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T15:08:44.408125",
+      "messages": [
+        {
+          "user": "rekomendasi restoran romantis",
+          "timestamp": "2025-09-15T11:38:00.141362"
+        },
+        {
+          "user": "saya ingin ayam goreng yang enak",
+          "timestamp": "2025-09-15T11:42:19.690658"
+        },
+        {
+          "user": "saya ingin ayam goreng yang enak",
+          "timestamp": "2025-09-15T11:42:19.794360"
+        },
+        {
+          "user": "ikan bakar yang murah",
+          "timestamp": "2025-09-15T11:43:14.542232"
+        },
+        {
+          "user": "ikan bakar yang murah",
+          "timestamp": "2025-09-15T11:43:14.725308"
+        },
+        {
+          "user": "ayam goreng yang murah",
+          "timestamp": "2025-09-15T11:46:19.438019"
+        },
+        {
+          "user": "ayam goreng yang murah",
+          "timestamp": "2025-09-15T11:46:19.505066"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-09-15T15:08:20.955907"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-09-15T15:08:21.141733"
+        },
+        {
+          "user": "hai",
+          "timestamp": "2025-09-15T15:08:44.404945"
+        }
+      ],
+      "recommendations_given": "Halo! Saya siap membantu Anda mencari restoran yang pas!\n\nCoba ceritakan apa yang Anda inginkan, misalnya:\n- 'Pizza yang romantis di Kuta'\n- 'Seafood murah di Gili Trawangan'\n- 'Tempat makan keluarga yang santai'",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T15:12:47.894309",
+      "messages": [
+        {
+          "user": "saya ingin ayam goreng yang enak",
+          "timestamp": "2025-09-15T11:42:19.794360"
+        },
+        {
+          "user": "ikan bakar yang murah",
+          "timestamp": "2025-09-15T11:43:14.542232"
+        },
+        {
+          "user": "ikan bakar yang murah",
+          "timestamp": "2025-09-15T11:43:14.725308"
+        },
+        {
+          "user": "ayam goreng yang murah",
+          "timestamp": "2025-09-15T11:46:19.438019"
+        },
+        {
+          "user": "ayam goreng yang murah",
+          "timestamp": "2025-09-15T11:46:19.505066"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-09-15T15:08:20.955907"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-09-15T15:08:21.141733"
+        },
+        {
+          "user": "hai",
+          "timestamp": "2025-09-15T15:08:44.404945"
+        },
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-09-15T15:12:47.831344"
+        },
+        {
+          "user": "tempat makan seafood murah",
+          "timestamp": "2025-09-15T15:12:47.880747"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'tempat makan seafood murah' dengan masakan seafood dan harga cheap, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Ocean Blue Seafood Restaurant\n   Rating: 3.5/5.0 | Kecocokan: 100%\n   Outdoor Seating\n   Jenis masakan: ['Seafood', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood, asian\n\n2. Coco Beach\n   Rating: 4.5/5.0 | Kecocokan: 100%\n   Outdoor Seating\n   Jenis masakan: ['Seafood', 'Barbecue', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood, asian, barbecue\n\n3. Gili Trawangan Night Market\n   Rating: 4.0/5.0 | Kecocokan: 100%\n   Outdoor Seating\n   Jenis masakan: ['Seafood', 'Barbecue', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood, asian, barbecue\n\n4. Warung Bule\n   Rating: 4.0/5.0 | Kecocokan: 92%\n   Lombok\n   Jenis masakan: ['Seafood', 'International', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood, asian\n\n5. Seasalt Lombok\n   Rating: 4.5/5.0 | Kecocokan: 87%\n   Serving only the freshest locally sourced seafood from the nearby fishing villages and markets. Casu...\n   Jenis masakan: ['Seafood', 'International', 'Mediterranean', 'Grill', 'Healthy', 'Caucasian']\n  Sesuai preferensi Anda, masakan seafood, asian\n\nMau cari di lokasi tertentu?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T15:17:34.103441",
+      "messages": [
+        {
+          "user": "ikan bakar yang murah",
+          "timestamp": "2025-09-15T11:43:14.542232"
+        },
+        {
+          "user": "ikan bakar yang murah",
+          "timestamp": "2025-09-15T11:43:14.725308"
+        },
+        {
+          "user": "ayam goreng yang murah",
+          "timestamp": "2025-09-15T11:46:19.438019"
+        },
+        {
+          "user": "ayam goreng yang murah",
+          "timestamp": "2025-09-15T11:46:19.505066"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-09-15T15:08:20.955907"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-09-15T15:08:21.141733"
+        },
+        {
+          "user": "hai",
+          "timestamp": "2025-09-15T15:08:44.404945"
+        },
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-09-15T15:12:47.831344"
+        },
+        {
+          "user": "tempat makan seafood murah",
+          "timestamp": "2025-09-15T15:12:47.880747"
+        },
+        {
+          "user": "halo",
+          "timestamp": "2025-09-15T15:17:34.103441"
+        }
+      ],
+      "recommendations_given": "Hai! Senang bisa membantu Anda!\n\nSilakan beri tahu saya kriteria restoran yang Anda cari. Saya bisa membantu berdasarkan:\n- Jenis masakan\n- Lokasi\n- Suasana\n- Budget",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T15:27:44.809978",
+      "messages": [
+        {
+          "user": "ayam goreng yang murah",
+          "timestamp": "2025-09-15T11:46:19.438019"
+        },
+        {
+          "user": "ayam goreng yang murah",
+          "timestamp": "2025-09-15T11:46:19.505066"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-09-15T15:08:20.955907"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-09-15T15:08:21.141733"
+        },
+        {
+          "user": "hai",
+          "timestamp": "2025-09-15T15:08:44.404945"
+        },
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-09-15T15:12:47.831344"
+        },
+        {
+          "user": "tempat makan seafood murah",
+          "timestamp": "2025-09-15T15:12:47.880747"
+        },
+        {
+          "user": "halo",
+          "timestamp": "2025-09-15T15:17:34.103441"
+        },
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-09-15T15:27:44.720983"
+        },
+        {
+          "user": "tempat makan seafood murah",
+          "timestamp": "2025-09-15T15:27:44.795841"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'tempat makan seafood murah' dengan masakan seafood dan harga cheap, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Ocean Blue Seafood Restaurant\n   Rating: 3.5/5.0 | Kecocokan: 100%\n   Outdoor Seating\n   Jenis masakan: ['Seafood', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood, asian\n\n2. Coco Beach\n   Rating: 4.5/5.0 | Kecocokan: 100%\n   Outdoor Seating\n   Jenis masakan: ['Seafood', 'Barbecue', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood, asian, barbecue\n\n3. Gili Trawangan Night Market\n   Rating: 4.0/5.0 | Kecocokan: 100%\n   Outdoor Seating\n   Jenis masakan: ['Seafood', 'Barbecue', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood, asian, barbecue\n\n4. Warung Bule\n   Rating: 4.0/5.0 | Kecocokan: 92%\n   Lombok\n   Jenis masakan: ['Seafood', 'International', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood, asian\n\n5. Seasalt Lombok\n   Rating: 4.5/5.0 | Kecocokan: 87%\n   Serving only the freshest locally sourced seafood from the nearby fishing villages and markets. Casu...\n   Jenis masakan: ['Seafood', 'International', 'Mediterranean', 'Grill', 'Healthy', 'Caucasian']\n  Sesuai preferensi Anda, masakan seafood, asian\n\nMau cari di lokasi tertentu?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T15:29:51.262398",
+      "messages": [
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-09-15T15:08:20.955907"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-09-15T15:08:21.141733"
+        },
+        {
+          "user": "hai",
+          "timestamp": "2025-09-15T15:08:44.404945"
+        },
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-09-15T15:12:47.831344"
+        },
+        {
+          "user": "tempat makan seafood murah",
+          "timestamp": "2025-09-15T15:12:47.880747"
+        },
+        {
+          "user": "halo",
+          "timestamp": "2025-09-15T15:17:34.103441"
+        },
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-09-15T15:27:44.720983"
+        },
+        {
+          "user": "tempat makan seafood murah",
+          "timestamp": "2025-09-15T15:27:44.795841"
+        },
+        {
+          "user": "ayam taliwang",
+          "timestamp": "2025-09-15T15:29:51.163529"
+        },
+        {
+          "user": "ayam taliwang",
+          "timestamp": "2025-09-15T15:29:51.222017"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'ayam taliwang', saya menemukan 3 restoran terbaik (sesuai preferensi Anda):\n\n1. Taliwang Irama\n   Rating: 4.0/5.0 | Kecocokan: 100%\n   Authentic 'Ayam Taliwang' Cuisine\n   Jenis masakan: ['Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan asian\n\n2. Taliwang Khas Pak Udin\n   Rating: 4.0/5.0 | Kecocokan: 93%\n   Seating\n   Jenis masakan: ['Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan asian\n\n3. Ayam Taliwang Raya\n   Rating: 4.0/5.0 | Kecocokan: 88%\n   Reservations\n   Jenis masakan: ['Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan asian\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T15:30:55.665435",
+      "messages": [
+        {
+          "user": "hai",
+          "timestamp": "2025-09-15T15:08:44.404945"
+        },
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-09-15T15:12:47.831344"
+        },
+        {
+          "user": "tempat makan seafood murah",
+          "timestamp": "2025-09-15T15:12:47.880747"
+        },
+        {
+          "user": "halo",
+          "timestamp": "2025-09-15T15:17:34.103441"
+        },
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-09-15T15:27:44.720983"
+        },
+        {
+          "user": "tempat makan seafood murah",
+          "timestamp": "2025-09-15T15:27:44.795841"
+        },
+        {
+          "user": "ayam taliwang",
+          "timestamp": "2025-09-15T15:29:51.163529"
+        },
+        {
+          "user": "ayam taliwang",
+          "timestamp": "2025-09-15T15:29:51.222017"
+        },
+        {
+          "user": "rekomendasikan saya pizza",
+          "timestamp": "2025-09-15T15:30:55.570991"
+        },
+        {
+          "user": "rekomendasikan saya pizza",
+          "timestamp": "2025-09-15T15:30:55.635318"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'rekomendasikan saya pizza' dengan masakan pizza, seafood, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Meno Mojo Restaurant\n   Rating: 3.5/5.0 | Kecocokan: 83%\n   Accepts Credit Cards\n   Jenis masakan: ['Pizza', 'Seafood', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood, asian\n\n2. BOOgils Sunset Bar\n   Rating: 3.5/5.0 | Kecocokan: 81%\n   Free Wifi\n   Jenis masakan: ['Italian', 'Bar', 'Pizza', 'Seafood', 'Asian']\n  Sesuai preferensi Anda, masakan seafood, asian\n\n3. Lotus Bayview Restaurant\n   Rating: 4.0/5.0 | Kecocokan: 53%\n   Accepts Credit Cards\n   Jenis masakan: ['Italian', 'Pizza', 'Seafood', 'European']\n  Sesuai preferensi Anda, masakan seafood\n\n4. Cafe Alberto\n   Rating: 4.0/5.0 | Kecocokan: 50%\n   Accepts Credit Cards\n   Jenis masakan: ['Italian', 'Pizza', 'Seafood', 'Mediterranean', 'European', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n5. Italo Pizza Cafe & Mart\n   Rating: 4.5/5.0 | Kecocokan: 64%\n   Restoran Italia\n   Jenis masakan: ['Italian', 'Pizza']\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T15:32:22.621165",
+      "messages": [
+        {
+          "user": "tempat makan seafood murah",
+          "timestamp": "2025-09-15T15:12:47.880747"
+        },
+        {
+          "user": "halo",
+          "timestamp": "2025-09-15T15:17:34.103441"
+        },
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-09-15T15:27:44.720983"
+        },
+        {
+          "user": "tempat makan seafood murah",
+          "timestamp": "2025-09-15T15:27:44.795841"
+        },
+        {
+          "user": "ayam taliwang",
+          "timestamp": "2025-09-15T15:29:51.163529"
+        },
+        {
+          "user": "ayam taliwang",
+          "timestamp": "2025-09-15T15:29:51.222017"
+        },
+        {
+          "user": "rekomendasikan saya pizza",
+          "timestamp": "2025-09-15T15:30:55.570991"
+        },
+        {
+          "user": "rekomendasikan saya pizza",
+          "timestamp": "2025-09-15T15:30:55.635318"
+        },
+        {
+          "user": "budget 50000 - 100000",
+          "timestamp": "2025-09-15T15:32:22.412340"
+        },
+        {
+          "user": "budget 50000 - 100000",
+          "timestamp": "2025-09-15T15:32:22.597813"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'budget 50000 - 100000' dengan harga cheap, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Ko-Ko-Mo Restaurant\n   Rating: 5.0/5.0 | Kecocokan: 80%\n   With its superb beachfront location our restaurant (headed by an Australian chef) focuses on local p...\n   Jenis masakan: ['Seafood', 'Mediterranean', 'European', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood, asian\n\n2. El-Pirata Beach Bar and Grill\n   Rating: 4.0/5.0 | Kecocokan: 73%\n   El Pirata Beach Bar and Grill fresh sea food everyday the best coctail\n   Jenis masakan: ['Barbecue', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan asian, barbecue\n\n3. Gula Gila - Kebun\n   Rating: 4.5/5.0 | Kecocokan: 20%\n   1st of its kind in Lombok, Gula Gila is the brainchild of Kebun Villas & Resort. With an eclectic ma...\n   Jenis masakan: ['Cafe', 'Deli']\n\n4. Zipp Bar Restaurant & Bungalows\n   Rating: 4.0/5.0 | Kecocokan: 96%\n   Zipp is located on southeast beach of Gili Air in front of best swimming and snorkeling area. Restau...\n   Jenis masakan: ['Bar', 'Seafood', 'International', 'Barbecue', 'Asian', 'Indonesian', 'Soups']\n  Sesuai preferensi Anda, masakan seafood, asian, barbecue\n\n5. Olah - Olah Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 43%\n   Accepts Credit Cards\n   Jenis masakan: ['International', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan asian\n\nMau cari di lokasi tertentu?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T15:33:08.056842",
+      "messages": [
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-09-15T15:27:44.720983"
+        },
+        {
+          "user": "tempat makan seafood murah",
+          "timestamp": "2025-09-15T15:27:44.795841"
+        },
+        {
+          "user": "ayam taliwang",
+          "timestamp": "2025-09-15T15:29:51.163529"
+        },
+        {
+          "user": "ayam taliwang",
+          "timestamp": "2025-09-15T15:29:51.222017"
+        },
+        {
+          "user": "rekomendasikan saya pizza",
+          "timestamp": "2025-09-15T15:30:55.570991"
+        },
+        {
+          "user": "rekomendasikan saya pizza",
+          "timestamp": "2025-09-15T15:30:55.635318"
+        },
+        {
+          "user": "budget 50000 - 100000",
+          "timestamp": "2025-09-15T15:32:22.412340"
+        },
+        {
+          "user": "budget 50000 - 100000",
+          "timestamp": "2025-09-15T15:32:22.597813"
+        },
+        {
+          "user": "harga 100k hingga 500k",
+          "timestamp": "2025-09-15T15:33:07.868513"
+        },
+        {
+          "user": "harga 100k hingga 500k",
+          "timestamp": "2025-09-15T15:33:08.017137"
+        }
+      ],
+      "recommendations_given": "Hmm, saya tidak menemukan restoran yang persis cocok dengan 'harga 100k hingga 500k'.\n\nBagaimana dengan beberapa restoran populer ini?\n\nSendja@Kardiá (5.0/5.0)\nUnknown | ['Bar', 'Barbecue', 'Asian', 'Contemporary', 'Healthy', 'Indonesian', 'Caucasian']\n\nTiki Grove (5.0/5.0)\nUnknown | ['Mexican', 'Southwestern', 'Polynesian', 'Hawaiian']\n\nItaly Pizzeria & Restaurant. Gili Air (5.0/5.0)\nUnknown | ['Italian', 'Pizza', 'Mediterranean', 'European', 'Romana', 'Lazio', 'Central-Italian']\n\nAtau coba pencarian yang lebih spesifik:\nCoba: 'pizza enak di Kuta'\nAtau: 'seafood murah di Senggigi'\nContoh: 'italian food romantic'\n\nButuh bantuan lain? Ketik 'help' untuk panduan lengkap!",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T15:33:34.537765",
+      "messages": [
+        {
+          "user": "ayam taliwang",
+          "timestamp": "2025-09-15T15:29:51.163529"
+        },
+        {
+          "user": "ayam taliwang",
+          "timestamp": "2025-09-15T15:29:51.222017"
+        },
+        {
+          "user": "rekomendasikan saya pizza",
+          "timestamp": "2025-09-15T15:30:55.570991"
+        },
+        {
+          "user": "rekomendasikan saya pizza",
+          "timestamp": "2025-09-15T15:30:55.635318"
+        },
+        {
+          "user": "budget 50000 - 100000",
+          "timestamp": "2025-09-15T15:32:22.412340"
+        },
+        {
+          "user": "budget 50000 - 100000",
+          "timestamp": "2025-09-15T15:32:22.597813"
+        },
+        {
+          "user": "harga 100k hingga 500k",
+          "timestamp": "2025-09-15T15:33:07.868513"
+        },
+        {
+          "user": "harga 100k hingga 500k",
+          "timestamp": "2025-09-15T15:33:08.017137"
+        },
+        {
+          "user": "saya ingin restoran dengan menu untuk diet",
+          "timestamp": "2025-09-15T15:33:34.434707"
+        },
+        {
+          "user": "saya ingin restoran dengan menu untuk diet",
+          "timestamp": "2025-09-15T15:33:34.507735"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'saya ingin restoran dengan menu untuk diet', saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. The Kliff\n   Rating: 4.5/5.0 | Kecocokan: 100%\n   Indulge in a delicious selection of grills, meat, and seafood with a stunning view overlooking the o...\n   Jenis masakan: ['Italian', 'Japanese', 'Seafood', 'European', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood, japanese, asian. Suasana romantis yang Anda suka\n\n2. Ko-Ko-Mo Restaurant\n   Rating: 5.0/5.0 | Kecocokan: 70%\n   With its superb beachfront location our restaurant (headed by an Australian chef) focuses on local p...\n   Jenis masakan: ['Seafood', 'Mediterranean', 'European', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood, asian\n\n3. Jali Kitchen\n   Rating: 4.5/5.0 | Kecocokan: 42%\n   Jali Kitchen serves authentic Vietnamese, Thai, Malay, Indonesian and Western homestyle cooking in a...\n   Jenis masakan: ['Asian', 'Thai', 'Fusion', 'Vietnamese', 'Indonesian', 'Malaysian']\n  Sesuai preferensi Anda, masakan asian\n\n4. Nautilus Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 38%\n   Located right on the beach with the sea breeze carrying the scents of our kitchen through the air Na...\n   Jenis masakan: ['Italian', 'Mediterranean', 'European', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan asian\n\n5. Tír na nÓg Restaurant\n   Rating: 4.0/5.0 | Kecocokan: 18%\n   Open since 2000, we've been providing a fun, safe and relaxed atmosphere within which to enjoy some ...\n   Jenis masakan: ['Irish', 'Bar', 'International', 'Pub']\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T15:34:02.837779",
+      "messages": [
+        {
+          "user": "rekomendasikan saya pizza",
+          "timestamp": "2025-09-15T15:30:55.570991"
+        },
+        {
+          "user": "rekomendasikan saya pizza",
+          "timestamp": "2025-09-15T15:30:55.635318"
+        },
+        {
+          "user": "budget 50000 - 100000",
+          "timestamp": "2025-09-15T15:32:22.412340"
+        },
+        {
+          "user": "budget 50000 - 100000",
+          "timestamp": "2025-09-15T15:32:22.597813"
+        },
+        {
+          "user": "harga 100k hingga 500k",
+          "timestamp": "2025-09-15T15:33:07.868513"
+        },
+        {
+          "user": "harga 100k hingga 500k",
+          "timestamp": "2025-09-15T15:33:08.017137"
+        },
+        {
+          "user": "saya ingin restoran dengan menu untuk diet",
+          "timestamp": "2025-09-15T15:33:34.434707"
+        },
+        {
+          "user": "saya ingin restoran dengan menu untuk diet",
+          "timestamp": "2025-09-15T15:33:34.507735"
+        },
+        {
+          "user": "vegan",
+          "timestamp": "2025-09-15T15:34:02.737229"
+        },
+        {
+          "user": "vegan",
+          "timestamp": "2025-09-15T15:34:02.815494"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'vegan', saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Optimiz Prime\n   Rating: 5.0/5.0 | Kecocokan: 59%\n   Vegan and Indonesian Restaurant\n   Jenis masakan: ['Asian', 'Healthy', 'Indonesian']\n  Sesuai preferensi Anda, masakan asian\n\n2. Family Cafe\n   Rating: 5.0/5.0 | Kecocokan: 62%\n   We are family cafe, serve for breakfast ,lunch and dinner. We have Asian food, western, and vegan\n   Jenis masakan: ['Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan asian. Cocok untuk acara keluarga\n\n3. The Hut Restaurant Kuta\n   Rating: 5.0/5.0 | Kecocokan: 48%\n   Cafe Restaurant International Vegetarian Friendly Vegan Options Healthy Food Food Made Good Board Ga...\n   Jenis masakan: ['Cafe', 'International', 'Asian', 'Fusion', 'Healthy']\n  Sesuai preferensi Anda, masakan asian\n\n4. HonkyTonks Blues Bar and Grill\n   Rating: 4.5/5.0 | Kecocokan: 44%\n   A bar restaurant with a charcoal grill and extensive bar. Kitchen is able to cater to many needs and...\n   Jenis masakan: ['International', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan asian\n\n5. Warung Mexicana x Crepes\n   Rating: 4.5/5.0 | Kecocokan: 22%\n   Local Warung (Restaurant) that serves wraps, burritos, falafels and traditional Indonesian food that...\n   Jenis masakan: ['Mexican', 'Fusion', 'Indonesian']\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T15:43:36.602808",
+      "messages": [
+        {
+          "user": "budget 50000 - 100000",
+          "timestamp": "2025-09-15T15:32:22.412340"
+        },
+        {
+          "user": "budget 50000 - 100000",
+          "timestamp": "2025-09-15T15:32:22.597813"
+        },
+        {
+          "user": "harga 100k hingga 500k",
+          "timestamp": "2025-09-15T15:33:07.868513"
+        },
+        {
+          "user": "harga 100k hingga 500k",
+          "timestamp": "2025-09-15T15:33:08.017137"
+        },
+        {
+          "user": "saya ingin restoran dengan menu untuk diet",
+          "timestamp": "2025-09-15T15:33:34.434707"
+        },
+        {
+          "user": "saya ingin restoran dengan menu untuk diet",
+          "timestamp": "2025-09-15T15:33:34.507735"
+        },
+        {
+          "user": "vegan",
+          "timestamp": "2025-09-15T15:34:02.737229"
+        },
+        {
+          "user": "vegan",
+          "timestamp": "2025-09-15T15:34:02.815494"
+        },
+        {
+          "user": "saya ingin pizza",
+          "timestamp": "2025-09-15T15:43:36.503727"
+        },
+        {
+          "user": "saya ingin pizza",
+          "timestamp": "2025-09-15T15:43:36.575056"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'saya ingin pizza' dengan masakan pizza, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Italo Pizza Cafe & Mart\n   Rating: 4.5/5.0 | Kecocokan: 64%\n   Restoran Italia\n   Jenis masakan: ['Italian', 'Pizza']\n\n2. Meno Mojo Restaurant\n   Rating: 3.5/5.0 | Kecocokan: 83%\n   Accepts Credit Cards\n   Jenis masakan: ['Pizza', 'Seafood', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood, asian\n\n3. Coral Beach 1\n   Rating: 3.5/5.0 | Kecocokan: 67%\n   Outdoor Seating\n   Jenis masakan: ['Pizza', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan asian\n\n4. BOOgils Sunset Bar\n   Rating: 3.5/5.0 | Kecocokan: 81%\n   Free Wifi\n   Jenis masakan: ['Italian', 'Bar', 'Pizza', 'Seafood', 'Asian']\n  Sesuai preferensi Anda, masakan seafood, asian\n\n5. Oasi Italian Pizza & Bungalows\n   Rating: 4.5/5.0 | Kecocokan: 44%\n   Near to Wiwin Cafe\n   Jenis masakan: ['Italian', 'Pizza', 'European']\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T15:44:01.881024",
+      "messages": [
+        {
+          "user": "harga 100k hingga 500k",
+          "timestamp": "2025-09-15T15:33:07.868513"
+        },
+        {
+          "user": "harga 100k hingga 500k",
+          "timestamp": "2025-09-15T15:33:08.017137"
+        },
+        {
+          "user": "saya ingin restoran dengan menu untuk diet",
+          "timestamp": "2025-09-15T15:33:34.434707"
+        },
+        {
+          "user": "saya ingin restoran dengan menu untuk diet",
+          "timestamp": "2025-09-15T15:33:34.507735"
+        },
+        {
+          "user": "vegan",
+          "timestamp": "2025-09-15T15:34:02.737229"
+        },
+        {
+          "user": "vegan",
+          "timestamp": "2025-09-15T15:34:02.815494"
+        },
+        {
+          "user": "saya ingin pizza",
+          "timestamp": "2025-09-15T15:43:36.503727"
+        },
+        {
+          "user": "saya ingin pizza",
+          "timestamp": "2025-09-15T15:43:36.575056"
+        },
+        {
+          "user": "saya ingin dinner pizza",
+          "timestamp": "2025-09-15T15:44:01.804191"
+        },
+        {
+          "user": "saya ingin dinner pizza",
+          "timestamp": "2025-09-15T15:44:01.856640"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'saya ingin dinner pizza' dengan masakan pizza dan suasana romantic, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Meno Mojo Restaurant\n   Rating: 3.5/5.0 | Kecocokan: 77%\n   Accepts Credit Cards\n   Jenis masakan: ['Pizza', 'Seafood', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood, asian\n\n2. Italo Pizza Cafe & Mart\n   Rating: 4.5/5.0 | Kecocokan: 45%\n   Restoran Italia\n   Jenis masakan: ['Italian', 'Pizza']\n\n3. BOOgils Sunset Bar\n   Rating: 3.5/5.0 | Kecocokan: 74%\n   Free Wifi\n   Jenis masakan: ['Italian', 'Bar', 'Pizza', 'Seafood', 'Asian']\n  Sesuai preferensi Anda, masakan seafood, asian\n\n4. Coral Beach 1\n   Rating: 3.5/5.0 | Kecocokan: 56%\n   Outdoor Seating\n   Jenis masakan: ['Pizza', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan asian\n\n5. Oasi Italian Pizza & Bungalows\n   Rating: 4.5/5.0 | Kecocokan: 31%\n   Near to Wiwin Cafe\n   Jenis masakan: ['Italian', 'Pizza', 'European']\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T15:44:37.724947",
+      "messages": [
+        {
+          "user": "saya ingin restoran dengan menu untuk diet",
+          "timestamp": "2025-09-15T15:33:34.434707"
+        },
+        {
+          "user": "saya ingin restoran dengan menu untuk diet",
+          "timestamp": "2025-09-15T15:33:34.507735"
+        },
+        {
+          "user": "vegan",
+          "timestamp": "2025-09-15T15:34:02.737229"
+        },
+        {
+          "user": "vegan",
+          "timestamp": "2025-09-15T15:34:02.815494"
+        },
+        {
+          "user": "saya ingin pizza",
+          "timestamp": "2025-09-15T15:43:36.503727"
+        },
+        {
+          "user": "saya ingin pizza",
+          "timestamp": "2025-09-15T15:43:36.575056"
+        },
+        {
+          "user": "saya ingin dinner pizza",
+          "timestamp": "2025-09-15T15:44:01.804191"
+        },
+        {
+          "user": "saya ingin dinner pizza",
+          "timestamp": "2025-09-15T15:44:01.856640"
+        },
+        {
+          "user": "saya suka masakan itali",
+          "timestamp": "2025-09-15T15:44:37.580522"
+        },
+        {
+          "user": "saya suka masakan itali",
+          "timestamp": "2025-09-15T15:44:37.697597"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'saya suka masakan itali', saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Dolcemare Italian restaurant\n   Rating: 5.0/5.0 | Kecocokan: 63%\n   Dolcemare italian restaurant is original on the recipe on a fine dining set-up, with a good internat...\n   Jenis masakan: ['Italian', 'Seafood', 'Mediterranean', 'European']\n  Sesuai preferensi Anda, masakan seafood\n\n2. Basilico Authentic Italian Restaurant\n   Rating: 3.5/5.0 | Kecocokan: 48%\n   Basilico Restaurant at Kila Senggigi Beach Lombok serve most Italian food, beside Asian,Europe and I...\n   Jenis masakan: ['Italian', 'Pizza', 'Indonesian']\n  Suasana romantis yang Anda suka\n\n3. Classico Italiano pizza\n   Rating: 4.5/5.0 | Kecocokan: 33%\n   CLASSICO ITALIANO PIZZERIA Wood fired oven and Real Italian Taste. Located in the heart of our speci...\n   Jenis masakan: ['Italian', 'Pizza', 'Romana', 'Lazio', 'Central-Italian']\n\n4. Quah Elegant Italian\n   Rating: 4.5/5.0 | Kecocokan: 33%\n   Elegant Italian Dining on the beach. Our culinary Chef, Vittorio Negri, is dedicated to creating fre...\n   Jenis masakan: ['Italian']\n\n5. Biba Beach Cafe - Ristorante Italiano\n   Rating: 4.0/5.0 | Kecocokan: 33%\n   Biba Beach Cafe' has won for 5 consecutive years the Certificate of Excellence on Tripadvisor. Biba ...\n   Jenis masakan: ['Italian', 'International', 'Mediterranean', 'European']\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T15:45:42.463541",
+      "messages": [
+        {
+          "user": "vegan",
+          "timestamp": "2025-09-15T15:34:02.737229"
+        },
+        {
+          "user": "vegan",
+          "timestamp": "2025-09-15T15:34:02.815494"
+        },
+        {
+          "user": "saya ingin pizza",
+          "timestamp": "2025-09-15T15:43:36.503727"
+        },
+        {
+          "user": "saya ingin pizza",
+          "timestamp": "2025-09-15T15:43:36.575056"
+        },
+        {
+          "user": "saya ingin dinner pizza",
+          "timestamp": "2025-09-15T15:44:01.804191"
+        },
+        {
+          "user": "saya ingin dinner pizza",
+          "timestamp": "2025-09-15T15:44:01.856640"
+        },
+        {
+          "user": "saya suka masakan itali",
+          "timestamp": "2025-09-15T15:44:37.580522"
+        },
+        {
+          "user": "saya suka masakan itali",
+          "timestamp": "2025-09-15T15:44:37.697597"
+        },
+        {
+          "user": "saya ingin masakan italia",
+          "timestamp": "2025-09-15T15:45:42.344707"
+        },
+        {
+          "user": "saya ingin masakan italia",
+          "timestamp": "2025-09-15T15:45:42.448865"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'saya ingin masakan italia' dengan masakan italian, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Dolcemare Italian restaurant\n   Rating: 5.0/5.0 | Kecocokan: 83%\n   Dolcemare italian restaurant is original on the recipe on a fine dining set-up, with a good internat...\n   Jenis masakan: ['Italian', 'Seafood', 'Mediterranean', 'European']\n  Sesuai preferensi Anda, masakan seafood\n\n2. Basilico Authentic Italian Restaurant\n   Rating: 3.5/5.0 | Kecocokan: 68%\n   Basilico Restaurant at Kila Senggigi Beach Lombok serve most Italian food, beside Asian,Europe and I...\n   Jenis masakan: ['Italian', 'Pizza', 'Indonesian']\n  Suasana romantis yang Anda suka\n\n3. Classico Italiano pizza\n   Rating: 4.5/5.0 | Kecocokan: 53%\n   CLASSICO ITALIANO PIZZERIA Wood fired oven and Real Italian Taste. Located in the heart of our speci...\n   Jenis masakan: ['Italian', 'Pizza', 'Romana', 'Lazio', 'Central-Italian']\n\n4. Quah Elegant Italian\n   Rating: 4.5/5.0 | Kecocokan: 53%\n   Elegant Italian Dining on the beach. Our culinary Chef, Vittorio Negri, is dedicated to creating fre...\n   Jenis masakan: ['Italian']\n\n5. Biba Beach Cafe - Ristorante Italiano\n   Rating: 4.0/5.0 | Kecocokan: 53%\n   Biba Beach Cafe' has won for 5 consecutive years the Certificate of Excellence on Tripadvisor. Biba ...\n   Jenis masakan: ['Italian', 'International', 'Mediterranean', 'European']\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T15:48:43.971246",
+      "messages": [
+        {
+          "user": "saya ingin pizza",
+          "timestamp": "2025-09-15T15:43:36.503727"
+        },
+        {
+          "user": "saya ingin pizza",
+          "timestamp": "2025-09-15T15:43:36.575056"
+        },
+        {
+          "user": "saya ingin dinner pizza",
+          "timestamp": "2025-09-15T15:44:01.804191"
+        },
+        {
+          "user": "saya ingin dinner pizza",
+          "timestamp": "2025-09-15T15:44:01.856640"
+        },
+        {
+          "user": "saya suka masakan itali",
+          "timestamp": "2025-09-15T15:44:37.580522"
+        },
+        {
+          "user": "saya suka masakan itali",
+          "timestamp": "2025-09-15T15:44:37.697597"
+        },
+        {
+          "user": "saya ingin masakan italia",
+          "timestamp": "2025-09-15T15:45:42.344707"
+        },
+        {
+          "user": "saya ingin masakan italia",
+          "timestamp": "2025-09-15T15:45:42.448865"
+        },
+        {
+          "user": "saya ingin masakan khas itali",
+          "timestamp": "2025-09-15T15:48:43.856632"
+        },
+        {
+          "user": "saya ingin masakan khas itali",
+          "timestamp": "2025-09-15T15:48:43.955016"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'saya ingin masakan khas itali', saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Dolcemare Italian restaurant\n   Rating: 5.0/5.0 | Kecocokan: 63%\n   Dolcemare italian restaurant is original on the recipe on a fine dining set-up, with a good internat...\n   Jenis masakan: ['Italian', 'Seafood', 'Mediterranean', 'European']\n  Sesuai preferensi Anda, masakan seafood\n\n2. Basilico Authentic Italian Restaurant\n   Rating: 3.5/5.0 | Kecocokan: 48%\n   Basilico Restaurant at Kila Senggigi Beach Lombok serve most Italian food, beside Asian,Europe and I...\n   Jenis masakan: ['Italian', 'Pizza', 'Indonesian']\n  Suasana romantis yang Anda suka\n\n3. Classico Italiano pizza\n   Rating: 4.5/5.0 | Kecocokan: 33%\n   CLASSICO ITALIANO PIZZERIA Wood fired oven and Real Italian Taste. Located in the heart of our speci...\n   Jenis masakan: ['Italian', 'Pizza', 'Romana', 'Lazio', 'Central-Italian']\n\n4. Quah Elegant Italian\n   Rating: 4.5/5.0 | Kecocokan: 33%\n   Elegant Italian Dining on the beach. Our culinary Chef, Vittorio Negri, is dedicated to creating fre...\n   Jenis masakan: ['Italian']\n\n5. Biba Beach Cafe - Ristorante Italiano\n   Rating: 4.0/5.0 | Kecocokan: 33%\n   Biba Beach Cafe' has won for 5 consecutive years the Certificate of Excellence on Tripadvisor. Biba ...\n   Jenis masakan: ['Italian', 'International', 'Mediterranean', 'European']\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T15:49:36.395553",
+      "messages": [
+        {
+          "user": "saya ingin dinner pizza",
+          "timestamp": "2025-09-15T15:44:01.804191"
+        },
+        {
+          "user": "saya ingin dinner pizza",
+          "timestamp": "2025-09-15T15:44:01.856640"
+        },
+        {
+          "user": "saya suka masakan itali",
+          "timestamp": "2025-09-15T15:44:37.580522"
+        },
+        {
+          "user": "saya suka masakan itali",
+          "timestamp": "2025-09-15T15:44:37.697597"
+        },
+        {
+          "user": "saya ingin masakan italia",
+          "timestamp": "2025-09-15T15:45:42.344707"
+        },
+        {
+          "user": "saya ingin masakan italia",
+          "timestamp": "2025-09-15T15:45:42.448865"
+        },
+        {
+          "user": "saya ingin masakan khas itali",
+          "timestamp": "2025-09-15T15:48:43.856632"
+        },
+        {
+          "user": "saya ingin masakan khas itali",
+          "timestamp": "2025-09-15T15:48:43.955016"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-09-15T15:49:36.310992"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-09-15T15:49:36.383464"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'ayam taliwang di senggigi' dengan di senggigi, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Taliwang Irama\n   Rating: 4.0/5.0 | Kecocokan: 98%\n   Authentic 'Ayam Taliwang' Cuisine\n   Jenis masakan: ['Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan asian\n\n2. Taliwang Khas Pak Udin\n   Rating: 4.0/5.0 | Kecocokan: 81%\n   Seating\n   Jenis masakan: ['Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan asian\n\n3. Ayam Taliwang Raya\n   Rating: 4.0/5.0 | Kecocokan: 76%\n   Reservations\n   Jenis masakan: ['Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan asian\n\n4. Leaf Cafe\n   Rating: 4.5/5.0 | Kecocokan: 100%\n   We have shifted about a mile down the Road in Kerandangan. Senggigi. Call if you need directions and...\n   Jenis masakan: ['Seafood', 'Barbecue', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood, asian, barbecue\n\n5. Nuf'said Warung\n   Rating: 4.5/5.0 | Kecocokan: 70%\n   On beach in front of Verve Villas, Qunice Villas and just next to Holiday Resort Lombok at Senggigi ...\n   Jenis masakan: ['Seafood', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood, asian\n\nAda budget khusus?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_ec4fe758",
+      "timestamp": "2025-09-15T15:50:49.742214",
+      "messages": [
+        {
+          "user": "saya suka masakan itali",
+          "timestamp": "2025-09-15T15:44:37.580522"
+        },
+        {
+          "user": "saya suka masakan itali",
+          "timestamp": "2025-09-15T15:44:37.697597"
+        },
+        {
+          "user": "saya ingin masakan italia",
+          "timestamp": "2025-09-15T15:45:42.344707"
+        },
+        {
+          "user": "saya ingin masakan italia",
+          "timestamp": "2025-09-15T15:45:42.448865"
+        },
+        {
+          "user": "saya ingin masakan khas itali",
+          "timestamp": "2025-09-15T15:48:43.856632"
+        },
+        {
+          "user": "saya ingin masakan khas itali",
+          "timestamp": "2025-09-15T15:48:43.955016"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-09-15T15:49:36.310992"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-09-15T15:49:36.383464"
+        },
+        {
+          "user": "saya ingin makanan vegetarian",
+          "timestamp": "2025-09-15T15:50:49.654970"
+        },
+        {
+          "user": "saya ingin makanan vegetarian",
+          "timestamp": "2025-09-15T15:50:49.716905"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'saya ingin makanan vegetarian', saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. The Hut Restaurant Kuta\n   Rating: 5.0/5.0 | Kecocokan: 49%\n   Cafe Restaurant International Vegetarian Friendly Vegan Options Healthy Food Food Made Good Board Ga...\n   Jenis masakan: ['Cafe', 'International', 'Asian', 'Fusion', 'Healthy']\n  Sesuai preferensi Anda, masakan asian\n\n2. Felice's Vegetarian Restaurant\n   Rating: 4.0/5.0 | Kecocokan: 56%\n   This restaurant started with a mission: we want to share with the people who are in need. Many child...\n   Jenis masakan: ['Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan asian. Cocok untuk acara keluarga\n\n3. Warung Grand Kuta Lombok\n   Rating: 4.5/5.0 | Kecocokan: 46%\n   We have european food,Mexico,asia,indonesian and local food,vegetarian. Fresh food,fresh drink,fresh...\n   Jenis masakan: ['Mexican', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan asian\n\n4. HonkyTonks Blues Bar and Grill\n   Rating: 4.5/5.0 | Kecocokan: 44%\n   A bar restaurant with a charcoal grill and extensive bar. Kitchen is able to cater to many needs and...\n   Jenis masakan: ['International', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan asian\n\n5. Knalpot\n   Rating: 4.5/5.0 | Kecocokan: 41%\n   Extraordinary Asian Fusion restaurant in Kuta, Lombok with focus on exquisite pescetarian and vegeta...\n   Jenis masakan: ['Asian', 'Fusion']\n  Sesuai preferensi Anda, masakan asian\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    }
+  ],
+  "preferences": {
+    "preferred_cuisines": [
+      "seafood",
+      "japanese",
+      "western",
+      "asian",
+      "barbecue"
+    ],
+    "preferred_locations": [
+      "kuta",
+      "senggigi"
+    ],
+    "price_preference": null,
+    "mood_preferences": [
+      "family",
+      "romantic"
+    ],
+    "dietary_restrictions": [
+      "vegan",
+      "vegetarian"
+    ]
+  },
+  "interaction_stats": {
+    "total_messages": 373,
+    "total_sessions": 38,
+    "favorite_restaurants": [],
+    "search_patterns": {}
+  },
+  "last_updated": "2025-09-15T15:50:49.743981"
+}
