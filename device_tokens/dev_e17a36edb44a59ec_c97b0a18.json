@@ -1,0 +1,31 @@
+{
+  "token": "dev_e17a36edb44a59ec_c97b0a18",
+  "created_at": "2025-09-17T17:04:11.637194",
+  "device_info": {
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+    "ip_address": "10.51.237.90",
+    "platform": "Windows",
+    "platform_version": "11",
+    "timestamp": "2025-09-17T17:04:11.636197",
+    "screen_resolution": "1536x864",
+    "screen_color_depth": 24,
+    "timezone": "Asia/Jakarta",
+    "timezone_offset": -420,
+    "languages": [
+      "id-ID",
+      "id",
+      "en-US",
+      "en"
+    ],
+    "platform_info": {
+      "platform": "Win32",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+      "cookieEnabled": true,
+      "doNotTrack": null,
+      "hardwareConcurrency": 12,
+      "maxTouchPoints": 0
+    }
+  },
+  "last_seen": "2025-09-17T17:04:11.722910",
+  "session_count": 2
+}

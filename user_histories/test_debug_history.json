@@ -1,0 +1,41 @@
+{
+  "device_token": "test_debug",
+  "created_at": "2025-11-07T17:27:45.937738",
+  "chat_sessions": [
+    {
+      "session_id": "session_d23f2863",
+      "timestamp": "2025-11-07T17:27:46.030914",
+      "messages": [
+        {
+          "user": "seafood di senggigi yang murah",
+          "timestamp": "2025-11-07T17:27:45.991875"
+        },
+        {
+          "user": "pizza yang enak",
+          "timestamp": "2025-11-07T17:27:46.030914"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'pizza yang enak' dengan masakan pizza, saya menemukan 1 restoran terbaik:\n\n1. Mama Pizza Kuta Lombok\n   Rating: 4.5/5.0 | Kecocokan: 31%\n   Reservations\n   Jenis masakan: ['Italian', 'Pizza', 'Cafe', 'European', 'Neapolitan', 'Campania', 'Southern-Italian']\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    }
+  ],
+  "preferences": {
+    "preferred_cuisines": [
+      "seafood",
+      "italian"
+    ],
+    "preferred_locations": [
+      "senggigi"
+    ],
+    "price_preference": "budget",
+    "mood_preferences": [],
+    "dietary_restrictions": []
+  },
+  "interaction_stats": {
+    "total_messages": 2,
+    "total_sessions": 1,
+    "favorite_restaurants": [],
+    "search_patterns": {}
+  },
+  "last_updated": "2025-11-07T17:27:46.030914"
+}

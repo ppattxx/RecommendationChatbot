@@ -121,51 +121,7 @@ class TextFormatter:
         if not text or len(text) <= max_length:
             return text
         return text[:max_length].rsplit(' ', 1)[0] + "..."
-class SessionManager:
-    def __init__(self):
-        self.sessions: Dict[str, Dict[str, Any]] = {}
-        self.session_timeout = timedelta(hours=2)
-    def create_session(self, user_id: str) -> str:
-        session_id = f"{user_id}_{int(time.time())}"
-        self.sessions[session_id] = {
-            'user_id': user_id,
-            'created_at': datetime.now(),
-            'last_activity': datetime.now(),
-            'conversation_history': [],
-            'context': {}
-        }
-        return session_id
-    def get_session(self, session_id: str) -> Optional[Dict[str, Any]]:
-        if session_id not in self.sessions:
-            return None
-        session = self.sessions[session_id]
-        if datetime.now() - session['last_activity'] > self.session_timeout:
-            del self.sessions[session_id]
-            return None
-        return session
-    def update_session(self, session_id: str, **updates):
-        if session_id in self.sessions:
-            self.sessions[session_id].update(updates)
-            self.sessions[session_id]['last_activity'] = datetime.now()
-    def add_to_conversation_history(self, session_id: str, user_query: str, bot_response: str):
-        if session_id in self.sessions:
-            history_item = {
-                'timestamp': datetime.now().isoformat(),
-                'user_query': user_query,
-                'bot_response': bot_response
-            }
-            self.sessions[session_id]['conversation_history'].append(history_item)
-            if len(self.sessions[session_id]['conversation_history']) > 20:
-                self.sessions[session_id]['conversation_history'] = \
-                    self.sessions[session_id]['conversation_history'][-20:]
-    def cleanup_expired_sessions(self):
-        now = datetime.now()
-        expired_sessions = []
-        for session_id, session in self.sessions.items():
-            if now - session['last_activity'] > self.session_timeout:
-                expired_sessions.append(session_id)
-        for session_id in expired_sessions:
-            del self.sessions[session_id]
+
 def calculate_similarity_score(query_entities: Dict[str, List[str]], 
                              restaurant: Restaurant) -> float:
     total_score = 0.0

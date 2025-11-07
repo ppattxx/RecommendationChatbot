@@ -7,3 +7,7 @@
 2025-09-11 09:46:27 - chatbot - DEBUG - Performance metric: process_message
 2025-09-11 09:46:39 - chatbot - DEBUG - Performance metric: get_recommendations
 2025-09-11 09:46:39 - chatbot - DEBUG - Performance metric: process_message
+2025-11-07 17:12:16 - chatbot - DEBUG - Performance metric: _initialize_engine
+2025-11-07 17:14:12 - chatbot - DEBUG - Performance metric: _initialize_engine
+2025-11-07 17:14:26 - chatbot - DEBUG - Performance metric: get_recommendations
+2025-11-07 17:21:15 - chatbot - DEBUG - Performance metric: get_recommendations

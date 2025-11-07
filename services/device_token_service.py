@@ -405,7 +405,6 @@ class DeviceTokenService:
         return found_cuisines
     
     def _extract_locations(self, text: str) -> list:
-        """Extract location preferences from text"""
         location_keywords = {
             'kuta': ['kuta', 'legian'],
             'seminyak': ['seminyak', 'oberoi'],

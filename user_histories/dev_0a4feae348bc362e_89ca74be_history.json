@@ -1,0 +1,404 @@
+{
+  "device_token": "dev_0a4feae348bc362e_89ca74be",
+  "created_at": "2025-09-24T22:45:36.285979",
+  "chat_sessions": [
+    {
+      "session_id": "session_aac0b921",
+      "timestamp": "2025-09-24T23:08:42.972818",
+      "messages": [
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-09-24T22:45:46.541639"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-09-24T22:45:46.615396"
+        },
+        {
+          "user": "beri saya restoran dengan harga yang murah",
+          "timestamp": "2025-09-24T23:05:26.454765"
+        },
+        {
+          "user": "beri saya restoran dengan harga yang murah",
+          "timestamp": "2025-09-24T23:05:26.706107"
+        },
+        {
+          "user": "restoran dengan harga yang murah tetapi romantis ada dimana?",
+          "timestamp": "2025-09-24T23:05:53.747327"
+        },
+        {
+          "user": "restoran dengan harga yang murah tetapi romantis ada dimana?",
+          "timestamp": "2025-09-24T23:05:54.004186"
+        },
+        {
+          "user": "kalau dengan pemandangan pantai",
+          "timestamp": "2025-09-24T23:06:34.890471"
+        },
+        {
+          "user": "kalau dengan pemandangan pantai",
+          "timestamp": "2025-09-24T23:06:35.108990"
+        },
+        {
+          "user": "kalau makanan seafood dengan pemandangan pantai ada dimana",
+          "timestamp": "2025-09-24T23:06:54.331026"
+        },
+        {
+          "user": "kalau makanan seafood dengan pemandangan pantai ada dimana",
+          "timestamp": "2025-09-24T23:06:54.462615"
+        },
+        {
+          "user": "deskripsikan ocean blue seafood restaurant",
+          "timestamp": "2025-09-24T23:07:12.331507"
+        },
+        {
+          "user": "deskripsikan ocean blue seafood restaurant",
+          "timestamp": "2025-09-24T23:07:12.477021"
+        },
+        {
+          "user": "deskripsikan ocean blue seafood restaurant",
+          "timestamp": "2025-09-24T23:08:22.671170"
+        },
+        {
+          "user": "deskripsikan ocean blue seafood restaurant",
+          "timestamp": "2025-09-24T23:08:22.763841"
+        },
+        {
+          "user": "restoran untuk pesta  ulang tahun",
+          "timestamp": "2025-09-24T23:08:42.750522"
+        },
+        {
+          "user": "restoran untuk pesta  ulang tahun",
+          "timestamp": "2025-09-24T23:08:42.972818"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'restoran untuk pesta  ulang tahun', saya menemukan 2 restoran terbaik (sesuai preferensi Anda):\n\n1. La Boulangerie\n   Rating: 4.5/5.0 | Kecocokan: 13%\n   Little bakery on the main street of Gili Trawangan. Enjoy our delicious croissant & chocolate bun wi...\n   Jenis masakan: ['French', 'Cafe']\n\n2. Italo Pizza Cafe & Mart\n   Rating: 4.5/5.0 | Kecocokan: 36%\n   Restoran Italia\n   Jenis masakan: ['Italian', 'Pizza']\n  Sesuai preferensi Anda, masakan italian\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_aac0b921",
+      "timestamp": "2025-09-24T22:45:46.656256",
+      "messages": [
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-09-24T22:45:46.541639"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-09-24T22:45:46.615396"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'cari restoran pizza di kuta' dengan masakan pizza dan di kuta, saya menemukan 5 restoran terbaik:\n\n1. Italo Pizza Cafe & Mart\n   Rating: 4.5/5.0 | Kecocokan: 41%\n   Restoran Italia\n   Jenis masakan: ['Italian', 'Pizza']\n\n2. Mama Pizza Kuta Lombok\n   Rating: 4.5/5.0 | Kecocokan: 33%\n   Reservations\n   Jenis masakan: ['Italian', 'Pizza', 'Cafe', 'European', 'Neapolitan', 'Campania', 'Southern-Italian']\n\n3. Oasi Italian Pizza & Bungalows\n   Rating: 4.5/5.0 | Kecocokan: 28%\n   Near to Wiwin Cafe\n   Jenis masakan: ['Italian', 'Pizza', 'European']\n\n4. Coral Beach 1\n   Rating: 3.5/5.0 | Kecocokan: 24%\n   Outdoor Seating\n   Jenis masakan: ['Pizza', 'Asian', 'Indonesian']\n\n5. Warung Aldi's\n   Rating: 3.0/5.0 | Kecocokan: 22%\n   Warung Aldy's\n   Jenis masakan: ['Pizza', 'Indonesian']\n\nAda budget khusus?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_aac0b921",
+      "timestamp": "2025-09-24T23:05:26.737001",
+      "messages": [
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-09-24T22:45:46.541639"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-09-24T22:45:46.615396"
+        },
+        {
+          "user": "beri saya restoran dengan harga yang murah",
+          "timestamp": "2025-09-24T23:05:26.454765"
+        },
+        {
+          "user": "beri saya restoran dengan harga yang murah",
+          "timestamp": "2025-09-24T23:05:26.706107"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'beri saya restoran dengan harga yang murah' dengan harga cheap, saya menemukan 2 restoran terbaik (sesuai preferensi Anda):\n\n1. Kayangan Restaurant\n   Rating: 5.0/5.0 | Kecocokan: 20%\n   Located within the stunning Holiday Resort Lombok, Kayangan Restaurant offers a sophisticated dining...\n   Jenis masakan: ['Chinese', 'Pizza', 'Seafood', 'International', 'Indonesian']\n\n2. Italo Pizza Cafe & Mart\n   Rating: 4.5/5.0 | Kecocokan: 36%\n   Restoran Italia\n   Jenis masakan: ['Italian', 'Pizza']\n  Sesuai preferensi Anda, masakan italian\n\nMau cari di lokasi tertentu?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_aac0b921",
+      "timestamp": "2025-09-24T23:05:54.035050",
+      "messages": [
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-09-24T22:45:46.541639"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-09-24T22:45:46.615396"
+        },
+        {
+          "user": "beri saya restoran dengan harga yang murah",
+          "timestamp": "2025-09-24T23:05:26.454765"
+        },
+        {
+          "user": "beri saya restoran dengan harga yang murah",
+          "timestamp": "2025-09-24T23:05:26.706107"
+        },
+        {
+          "user": "restoran dengan harga yang murah tetapi romantis ada dimana?",
+          "timestamp": "2025-09-24T23:05:53.747327"
+        },
+        {
+          "user": "restoran dengan harga yang murah tetapi romantis ada dimana?",
+          "timestamp": "2025-09-24T23:05:54.004186"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'restoran dengan harga yang murah tetapi romantis ada dimana?' dengan suasana romantic dan harga cheap, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Kayangan Restaurant\n   Rating: 5.0/5.0 | Kecocokan: 20%\n   Located within the stunning Holiday Resort Lombok, Kayangan Restaurant offers a sophisticated dining...\n   Jenis masakan: ['Chinese', 'Pizza', 'Seafood', 'International', 'Indonesian']\n\n2. Begadang Bar & Restaurant\n   Rating: 5.0/5.0 | Kecocokan: 13%\n   All day breakfast, coffee, sandwiches, burgers, pasta, Asian, healthy food, Heineken draft beer, win...\n   Jenis masakan: ['European', 'Grill', 'Healthy', 'Gastropub']\n\n3. RM. Nada Alam Nyaman\n   Rating: 4.0/5.0 | Kecocokan: 13%\n   Accepts Credit Cards\n   Jenis masakan: ['Asian', 'Indonesian']\n\n4. Italo Pizza Cafe & Mart\n   Rating: 4.5/5.0 | Kecocokan: 36%\n   Restoran Italia\n   Jenis masakan: ['Italian', 'Pizza']\n  Sesuai preferensi Anda, masakan italian\n\n5. Istanbul Kebab 2\n   Rating: 4.0/5.0 | Kecocokan: 6%\n   Turkish kebabs healthy delicious fresh and open 24 hours.Turkish cuisine: The Turkish cuisine left o...\n   Jenis masakan: ['Fast Food', 'Turkish', 'Grill', 'Diner', 'Healthy', 'Middle Eastern']\n\nMau cari di lokasi tertentu?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_aac0b921",
+      "timestamp": "2025-09-24T23:06:35.140007",
+      "messages": [
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-09-24T22:45:46.541639"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-09-24T22:45:46.615396"
+        },
+        {
+          "user": "beri saya restoran dengan harga yang murah",
+          "timestamp": "2025-09-24T23:05:26.454765"
+        },
+        {
+          "user": "beri saya restoran dengan harga yang murah",
+          "timestamp": "2025-09-24T23:05:26.706107"
+        },
+        {
+          "user": "restoran dengan harga yang murah tetapi romantis ada dimana?",
+          "timestamp": "2025-09-24T23:05:53.747327"
+        },
+        {
+          "user": "restoran dengan harga yang murah tetapi romantis ada dimana?",
+          "timestamp": "2025-09-24T23:05:54.004186"
+        },
+        {
+          "user": "kalau dengan pemandangan pantai",
+          "timestamp": "2025-09-24T23:06:34.890471"
+        },
+        {
+          "user": "kalau dengan pemandangan pantai",
+          "timestamp": "2025-09-24T23:06:35.108990"
+        }
+      ],
+      "recommendations_given": "Hmm, saya tidak menemukan restoran yang persis cocok dengan 'kalau dengan pemandangan pantai'.\n\nBagaimana dengan beberapa restoran populer ini?\n\nSendja@Kardiá (5.0/5.0)\nUnknown | ['Bar', 'Barbecue', 'Asian', 'Contemporary', 'Healthy', 'Indonesian', 'Caucasian']\n\nTiki Grove (5.0/5.0)\nUnknown | ['Mexican', 'Southwestern', 'Polynesian', 'Hawaiian']\n\nItaly Pizzeria & Restaurant. Gili Air (5.0/5.0)\nUnknown | ['Italian', 'Pizza', 'Mediterranean', 'European', 'Romana', 'Lazio', 'Central-Italian']\n\nAtau coba pencarian yang lebih spesifik:\nCoba: 'pizza enak di Kuta'\nAtau: 'seafood murah di Senggigi'\nContoh: 'italian food romantic'\n\nButuh bantuan lain? Ketik 'help' untuk panduan lengkap!",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_aac0b921",
+      "timestamp": "2025-09-24T23:06:54.510434",
+      "messages": [
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-09-24T22:45:46.541639"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-09-24T22:45:46.615396"
+        },
+        {
+          "user": "beri saya restoran dengan harga yang murah",
+          "timestamp": "2025-09-24T23:05:26.454765"
+        },
+        {
+          "user": "beri saya restoran dengan harga yang murah",
+          "timestamp": "2025-09-24T23:05:26.706107"
+        },
+        {
+          "user": "restoran dengan harga yang murah tetapi romantis ada dimana?",
+          "timestamp": "2025-09-24T23:05:53.747327"
+        },
+        {
+          "user": "restoran dengan harga yang murah tetapi romantis ada dimana?",
+          "timestamp": "2025-09-24T23:05:54.004186"
+        },
+        {
+          "user": "kalau dengan pemandangan pantai",
+          "timestamp": "2025-09-24T23:06:34.890471"
+        },
+        {
+          "user": "kalau dengan pemandangan pantai",
+          "timestamp": "2025-09-24T23:06:35.108990"
+        },
+        {
+          "user": "kalau makanan seafood dengan pemandangan pantai ada dimana",
+          "timestamp": "2025-09-24T23:06:54.331026"
+        },
+        {
+          "user": "kalau makanan seafood dengan pemandangan pantai ada dimana",
+          "timestamp": "2025-09-24T23:06:54.462615"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'kalau makanan seafood dengan pemandangan pantai ada dimana' dengan masakan seafood dan suasana beachside, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Danima Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 70%\n   Beach\n   Jenis masakan: ['Italian', 'Seafood', 'Mediterranean', 'Barbecue', 'European']\n  Sesuai preferensi Anda, masakan italian, seafood\n\n2. Ocean Blue Seafood Restaurant\n   Rating: 3.5/5.0 | Kecocokan: 40%\n   Outdoor Seating\n   Jenis masakan: ['Seafood', 'Asian', 'Indonesian']\n\n3. Lotus Bayview Restaurant\n   Rating: 4.0/5.0 | Kecocokan: 49%\n   Accepts Credit Cards\n   Jenis masakan: ['Italian', 'Pizza', 'Seafood', 'European']\n  Sesuai preferensi Anda, masakan italian, seafood\n\n4. Ko-Ko-Mo Restaurant\n   Rating: 5.0/5.0 | Kecocokan: 40%\n   With its superb beachfront location our restaurant (headed by an Australian chef) focuses on local p...\n   Jenis masakan: ['Seafood', 'Mediterranean', 'European', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n5. Warung Bule\n   Rating: 4.0/5.0 | Kecocokan: 32%\n   Lombok\n   Jenis masakan: ['Seafood', 'International', 'Asian', 'Indonesian']\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_aac0b921",
+      "timestamp": "2025-09-24T23:07:12.518881",
+      "messages": [
+        {
+          "user": "beri saya restoran dengan harga yang murah",
+          "timestamp": "2025-09-24T23:05:26.454765"
+        },
+        {
+          "user": "beri saya restoran dengan harga yang murah",
+          "timestamp": "2025-09-24T23:05:26.706107"
+        },
+        {
+          "user": "restoran dengan harga yang murah tetapi romantis ada dimana?",
+          "timestamp": "2025-09-24T23:05:53.747327"
+        },
+        {
+          "user": "restoran dengan harga yang murah tetapi romantis ada dimana?",
+          "timestamp": "2025-09-24T23:05:54.004186"
+        },
+        {
+          "user": "kalau dengan pemandangan pantai",
+          "timestamp": "2025-09-24T23:06:34.890471"
+        },
+        {
+          "user": "kalau dengan pemandangan pantai",
+          "timestamp": "2025-09-24T23:06:35.108990"
+        },
+        {
+          "user": "kalau makanan seafood dengan pemandangan pantai ada dimana",
+          "timestamp": "2025-09-24T23:06:54.331026"
+        },
+        {
+          "user": "kalau makanan seafood dengan pemandangan pantai ada dimana",
+          "timestamp": "2025-09-24T23:06:54.462615"
+        },
+        {
+          "user": "deskripsikan ocean blue seafood restaurant",
+          "timestamp": "2025-09-24T23:07:12.331507"
+        },
+        {
+          "user": "deskripsikan ocean blue seafood restaurant",
+          "timestamp": "2025-09-24T23:07:12.477021"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'deskripsikan ocean blue seafood restaurant' dengan masakan seafood, seafood, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Ocean Blue Seafood Restaurant\n   Rating: 3.5/5.0 | Kecocokan: 93%\n   Outdoor Seating\n   Jenis masakan: ['Seafood', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n2. The Kliff\n   Rating: 4.5/5.0 | Kecocokan: 100%\n   Indulge in a delicious selection of grills, meat, and seafood with a stunning view overlooking the o...\n   Jenis masakan: ['Italian', 'Japanese', 'Seafood', 'European', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan italian, seafood. Suasana romantis yang Anda suka\n\n3. Danima Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 89%\n   Beach\n   Jenis masakan: ['Italian', 'Seafood', 'Mediterranean', 'Barbecue', 'European']\n  Sesuai preferensi Anda, masakan italian, seafood\n\n4. Lotus Bayview Restaurant\n   Rating: 4.0/5.0 | Kecocokan: 71%\n   Accepts Credit Cards\n   Jenis masakan: ['Italian', 'Pizza', 'Seafood', 'European']\n  Sesuai preferensi Anda, masakan italian, seafood\n\n5. Aura Lounge & Bar Lombok\n   Rating: 4.5/5.0 | Kecocokan: 59%\n   Lombok's premium dining venue with unparalleled views over the Indian Ocean. Offering breakfast & al...\n   Jenis masakan: ['Seafood', 'International', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_aac0b921",
+      "timestamp": "2025-09-24T23:08:22.817616",
+      "messages": [
+        {
+          "user": "restoran dengan harga yang murah tetapi romantis ada dimana?",
+          "timestamp": "2025-09-24T23:05:53.747327"
+        },
+        {
+          "user": "restoran dengan harga yang murah tetapi romantis ada dimana?",
+          "timestamp": "2025-09-24T23:05:54.004186"
+        },
+        {
+          "user": "kalau dengan pemandangan pantai",
+          "timestamp": "2025-09-24T23:06:34.890471"
+        },
+        {
+          "user": "kalau dengan pemandangan pantai",
+          "timestamp": "2025-09-24T23:06:35.108990"
+        },
+        {
+          "user": "kalau makanan seafood dengan pemandangan pantai ada dimana",
+          "timestamp": "2025-09-24T23:06:54.331026"
+        },
+        {
+          "user": "kalau makanan seafood dengan pemandangan pantai ada dimana",
+          "timestamp": "2025-09-24T23:06:54.462615"
+        },
+        {
+          "user": "deskripsikan ocean blue seafood restaurant",
+          "timestamp": "2025-09-24T23:07:12.331507"
+        },
+        {
+          "user": "deskripsikan ocean blue seafood restaurant",
+          "timestamp": "2025-09-24T23:07:12.477021"
+        },
+        {
+          "user": "deskripsikan ocean blue seafood restaurant",
+          "timestamp": "2025-09-24T23:08:22.671170"
+        },
+        {
+          "user": "deskripsikan ocean blue seafood restaurant",
+          "timestamp": "2025-09-24T23:08:22.763841"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'deskripsikan ocean blue seafood restaurant' dengan masakan seafood, seafood, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Ocean Blue Seafood Restaurant\n   Rating: 3.5/5.0 | Kecocokan: 93%\n   Outdoor Seating\n   Jenis masakan: ['Seafood', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n2. The Kliff\n   Rating: 4.5/5.0 | Kecocokan: 100%\n   Indulge in a delicious selection of grills, meat, and seafood with a stunning view overlooking the o...\n   Jenis masakan: ['Italian', 'Japanese', 'Seafood', 'European', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan italian, seafood. Suasana romantis yang Anda suka\n\n3. Danima Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 89%\n   Beach\n   Jenis masakan: ['Italian', 'Seafood', 'Mediterranean', 'Barbecue', 'European']\n  Sesuai preferensi Anda, masakan italian, seafood\n\n4. Lotus Bayview Restaurant\n   Rating: 4.0/5.0 | Kecocokan: 71%\n   Accepts Credit Cards\n   Jenis masakan: ['Italian', 'Pizza', 'Seafood', 'European']\n  Sesuai preferensi Anda, masakan italian, seafood\n\n5. Aura Lounge & Bar Lombok\n   Rating: 4.5/5.0 | Kecocokan: 59%\n   Lombok's premium dining venue with unparalleled views over the Indian Ocean. Offering breakfast & al...\n   Jenis masakan: ['Seafood', 'International', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_aac0b921",
+      "timestamp": "2025-09-24T23:08:43.013716",
+      "messages": [
+        {
+          "user": "kalau dengan pemandangan pantai",
+          "timestamp": "2025-09-24T23:06:34.890471"
+        },
+        {
+          "user": "kalau dengan pemandangan pantai",
+          "timestamp": "2025-09-24T23:06:35.108990"
+        },
+        {
+          "user": "kalau makanan seafood dengan pemandangan pantai ada dimana",
+          "timestamp": "2025-09-24T23:06:54.331026"
+        },
+        {
+          "user": "kalau makanan seafood dengan pemandangan pantai ada dimana",
+          "timestamp": "2025-09-24T23:06:54.462615"
+        },
+        {
+          "user": "deskripsikan ocean blue seafood restaurant",
+          "timestamp": "2025-09-24T23:07:12.331507"
+        },
+        {
+          "user": "deskripsikan ocean blue seafood restaurant",
+          "timestamp": "2025-09-24T23:07:12.477021"
+        },
+        {
+          "user": "deskripsikan ocean blue seafood restaurant",
+          "timestamp": "2025-09-24T23:08:22.671170"
+        },
+        {
+          "user": "deskripsikan ocean blue seafood restaurant",
+          "timestamp": "2025-09-24T23:08:22.763841"
+        },
+        {
+          "user": "restoran untuk pesta  ulang tahun",
+          "timestamp": "2025-09-24T23:08:42.750522"
+        },
+        {
+          "user": "restoran untuk pesta  ulang tahun",
+          "timestamp": "2025-09-24T23:08:42.972818"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'restoran untuk pesta  ulang tahun', saya menemukan 2 restoran terbaik (sesuai preferensi Anda):\n\n1. La Boulangerie\n   Rating: 4.5/5.0 | Kecocokan: 13%\n   Little bakery on the main street of Gili Trawangan. Enjoy our delicious croissant & chocolate bun wi...\n   Jenis masakan: ['French', 'Cafe']\n\n2. Italo Pizza Cafe & Mart\n   Rating: 4.5/5.0 | Kecocokan: 36%\n   Restoran Italia\n   Jenis masakan: ['Italian', 'Pizza']\n  Sesuai preferensi Anda, masakan italian\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    }
+  ],
+  "preferences": {
+    "preferred_cuisines": [
+      "italian",
+      "seafood"
+    ],
+    "preferred_locations": [
+      "kuta"
+    ],
+    "price_preference": "budget",
+    "mood_preferences": [
+      "romantic",
+      "scenic"
+    ],
+    "dietary_restrictions": []
+  },
+  "interaction_stats": {
+    "total_messages": 68,
+    "total_sessions": 9,
+    "favorite_restaurants": [],
+    "search_patterns": {}
+  },
+  "last_updated": "2025-09-24T23:08:43.020665"
+}
