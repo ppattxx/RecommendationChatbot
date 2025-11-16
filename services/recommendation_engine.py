@@ -37,7 +37,7 @@ class ContentBasedRecommendationEngine:
             raise
     def _load_data(self):
         try:
-            self.restaurants_df = DataLoader.load_processed_restaurants(self.data_path)            
+            self.restaurants_df = DataLoader.load_processed_restaurants(self.data_path)
             self.restaurants_objects = DataLoader.restaurants_df_to_objects(self.restaurants_df)
             logger.info(f"Loaded {len(self.restaurants_objects)} restaurants")
         except Exception as e:
@@ -46,34 +46,43 @@ class ContentBasedRecommendationEngine:
     def _build_tfidf_model(self):
         try:
             logger.info("Building TF-IDF model...")
+            print("DEBUG: Starting TF-IDF model building...")
             content_texts = []
-            for _, row in self.restaurants_df.iterrows():
+            for idx, row in self.restaurants_df.iterrows():
                 content_parts = []
+                
+                if pd.notna(row.get('name')):
+                    content_parts.append(str(row['name']).lower())
+                
+                if pd.notna(row.get('about')):
+                    content_parts.append(str(row['about']).lower())
+                
                 if pd.notna(row.get('entitas_lokasi')):
                     content_parts.append(str(row['entitas_lokasi']))
+                    
                 cuisines = self._parse_list_field(row.get('entitas_jenis_makanan', []))
                 content_parts.extend(cuisines)
+                
                 menu_items = self._parse_list_field(row.get('entitas_menu', []))
                 content_parts.extend(menu_items)
+                
                 preferences = self._parse_list_field(row.get('entitas_preferensi', []))
                 content_parts.extend(preferences)
+                
                 features = self._parse_list_field(row.get('entitas_features', []))
                 content_parts.extend(features)
-                if pd.notna(row.get('about')):
-                    about_processed = self.text_preprocessor.preprocess(
-                        str(row['about']), 
-                        remove_stopwords=True
-                    )
-                    content_parts.append(about_processed)
+                
                 combined_content = ' '.join(content_parts).lower()
                 content_texts.append(combined_content)
+            
+            print(f"DEBUG: Processed {len(content_texts)} restaurants content")
             self.tfidf_vectorizer = TfidfVectorizer(
                 max_features=self.model_config['tfidf']['max_features'],
                 min_df=self.model_config['tfidf']['min_df'],
                 max_df=self.model_config['tfidf']['max_df'],
                 ngram_range=self.model_config['tfidf']['ngram_range'],
-                stop_words=None  
-            )            
+                stop_words=None
+            )
             self.tfidf_matrix = self.tfidf_vectorizer.fit_transform(content_texts)
             logger.info(f"TF-IDF model built with {self.tfidf_matrix.shape[1]} features")
         except Exception as e:
@@ -101,11 +110,14 @@ class ContentBasedRecommendationEngine:
             entity_recommendations = self._get_entity_based_recommendations(
                 query_result.entities, top_n * 2
             )
+            logger.debug(f"Entity-based recommendations: {len(entity_recommendations)}")
             recommendations.extend(entity_recommendations)
             tfidf_recommendations = self._get_tfidf_recommendations(
                 user_query, top_n * 2
             )
+            logger.debug(f"TF-IDF recommendations: {len(tfidf_recommendations)}")
             recommendations.extend(tfidf_recommendations)
+            logger.debug(f"Total before combining: {len(recommendations)}")
             final_recommendations = self._combine_and_rank_recommendations(
                 recommendations, top_n
             )
@@ -113,6 +125,8 @@ class ContentBasedRecommendationEngine:
             return final_recommendations
         except Exception as e:
             logger.error(f"Error generating recommendations: {e}")
+            import traceback
+            traceback.print_exc()
             return []
     def _process_user_query(self, user_query: str) -> EntityExtractionResult:
         processed_text = self.text_preprocessor.preprocess(user_query)
@@ -142,10 +156,10 @@ class ContentBasedRecommendationEngine:
     def _get_tfidf_recommendations(self, user_query: str, top_n: int) -> List[Recommendation]:
         try:
             processed_query = self.text_preprocessor.preprocess(
-                user_query, 
+                user_query,
                 remove_stopwords=True
             )
-            query_vector = self.tfidf_vectorizer.transform([processed_query])            
+            query_vector = self.tfidf_vectorizer.transform([processed_query])
             similarities = cosine_similarity(query_vector, self.tfidf_matrix).flatten()
             top_indices = similarities.argsort()[-top_n:][::-1]
             recommendations = []
@@ -230,7 +244,7 @@ class ContentBasedRecommendationEngine:
             if target_restaurant is None:
                 logger.warning(f"Restaurant with ID {restaurant_id} not found")
                 return []
-            target_vector = self.tfidf_matrix[target_index]            
+            target_vector = self.tfidf_matrix[target_index]
             similarities = cosine_similarity(target_vector, self.tfidf_matrix).flatten()
             similar_indices = []
             for idx in similarities.argsort()[::-1]:
@@ -238,7 +252,7 @@ class ContentBasedRecommendationEngine:
                     similar_indices.append(idx)
             recommendations = []
             for idx in similar_indices:
-                if similarities[idx] > 0.1:  
+                if similarities[idx] > 0.1:
                     restaurant = self.restaurants_objects[idx]
                     recommendation = Recommendation(
                         restaurant=restaurant,

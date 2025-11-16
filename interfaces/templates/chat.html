@@ -494,6 +494,61 @@
             overflow-wrap: break-word;
             hyphens: auto;
         }
+
+        /* Favorite Button Styles */
+        .favorite-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            margin-top: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .favorite-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .favorite-btn.favorited {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.5);
+        }
+
+        .favorite-btn.favorited:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        .favorite-icon {
+            font-size: 14px;
+        }
+
+        .restaurant-card {
+            margin: 8px 0;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .restaurant-name {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+
+        .restaurant-info {
+            font-size: 13px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
     </style>
 </head>
 
@@ -783,15 +838,22 @@
                              if (line.startsWith('data: ')) {
                                  try {
                                      const data = JSON.parse(line.slice(6));
-                                     const formattedText = data.text.replace(/\n/g, '<br>');
+                                     let formattedText = data.text.replace(/\n/g, '<br>');
+                                     
+                                     // Add favorite buttons when message is complete
+                                     if (data.is_complete) {
+                                         formattedText = enhanceMessageWithFavorites(formattedText);
+                                     }
+                                     
                                      messageTextDiv.innerHTML = formattedText;
                                      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                                     
                                      if (!data.is_complete) {
                                          messageTextDiv.innerHTML = formattedText + '<span class="typing-cursor">|</span>';
-                                     } else {
-                                         messageTextDiv.innerHTML = formattedText;
                                      }
-                                 } catch (e) {}
+                                 } catch (e) {
+                                     console.error('Error parsing stream data:', e);
+                                 }
                              }
                          }
                      }
@@ -814,8 +876,104 @@
                 }
             });
 
+            // Favorite Functions
+            let userFavorites = [];
+
+            async function loadUserFavorites() {
+                try {
+                    const response = await fetch('/api/favorites');
+                    const data = await response.json();
+                    if (data.success) {
+                        userFavorites = data.favorites || [];
+                        console.log('Loaded favorites:', userFavorites);
+                    }
+                } catch (error) {
+                    console.error('Error loading favorites:', error);
+                }
+            }
+
+            window.toggleFavorite = async function(restaurantId, restaurantName, buttonElement) {
+                const isFavorited = userFavorites.includes(restaurantId);
+                const endpoint = isFavorited ? '/api/favorite/remove' : '/api/favorite/add';
+                
+                try {
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            restaurant_id: restaurantId,
+                            restaurant_name: restaurantName
+                        })
+                    });
+
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        if (isFavorited) {
+                            userFavorites = userFavorites.filter(id => id !== restaurantId);
+                            buttonElement.classList.remove('favorited');
+                            buttonElement.innerHTML = '<span class="favorite-icon">♡</span> Favorit';
+                        } else {
+                            userFavorites.push(restaurantId);
+                            buttonElement.classList.add('favorited');
+                            buttonElement.innerHTML = '<span class="favorite-icon">♥</span> Favorit';
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error toggling favorite:', error);
+                }
+            }
+
+            // Enhanced addMessage to parse restaurants and add favorite buttons
+            function parseRestaurantInfo(text) {
+                // Simple regex to detect restaurant listings (format: "1. Restaurant Name")
+                const restaurantPattern = /(\d+)\.\s+([^\n]+)\n\s+Rating:\s+([\d.]+|Belum tersedia)\/5\.0/g;
+                let match;
+                const restaurants = [];
+                
+                while ((match = restaurantPattern.exec(text)) !== null) {
+                    restaurants.push({
+                        index: parseInt(match[1]),
+                        name: match[2].trim(),
+                        rating: match[3]
+                    });
+                }
+                
+                return restaurants;
+            }
+
+            function enhanceMessageWithFavorites(text) {
+                const restaurants = parseRestaurantInfo(text);
+                
+                if (restaurants.length === 0) return text;
+                
+                let enhancedText = text;
+                
+                restaurants.forEach(restaurant => {
+                    // Create a unique restaurant ID based on name (you can use actual ID from backend)
+                    const restaurantId = restaurant.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+                    const isFavorited = userFavorites.includes(restaurantId);
+                    
+                    const favIcon = isFavorited ? '♥' : '♡';
+                    const favClass = isFavorited ? 'favorited' : '';
+                    const favText = 'Favorit';
+                    
+                    // Find the restaurant entry and add favorite button after it
+                    const restaurantRegex = new RegExp(`(${restaurant.index}\\. ${restaurant.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}[\\s\\S]*?)(?=\\n\\n|\\n${restaurant.index + 1}\\.|Mau cari|Atau coba|Butuh|$)`, 'i');
+                    
+                    enhancedText = enhancedText.replace(restaurantRegex, (match) => {
+                        return match + `\n   <button class="favorite-btn ${favClass}" onclick="toggleFavorite('${restaurantId}', '${restaurant.name}', this)"><span class="favorite-icon">${favIcon}</span> ${favText}</button>`;
+                    });
+                });
+                
+                return enhancedText;
+            }
+
             window.addEventListener('load', function() {
                 initializeChat();
+                loadUserFavorites();
                 messageInput.focus();
                 toggleSendButton(); 
             });

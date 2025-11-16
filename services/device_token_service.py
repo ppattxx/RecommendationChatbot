@@ -18,9 +18,7 @@ class DeviceTokenService:
         self.user_histories_dir.mkdir(exist_ok=True)
     
     def generate_device_token(self, user_agent: str = "", ip_address: str = "", additional_info: Dict = None) -> str:
-        """
-        Generate unique device token based on browser fingerprint
-        """
+
         try:
             device_info = {
                 'user_agent': user_agent or "unknown",
@@ -126,7 +124,7 @@ class DeviceTokenService:
             logger.error(f"Failed to create missing token file: {e}")
     
     def get_or_create_user_history(self, device_token: str) -> Dict:
-        """Get or create user history for device token"""
+
         try:
             history_file = self.user_histories_dir / f"{device_token}_history.json"
             if history_file.exists():
@@ -162,7 +160,7 @@ class DeviceTokenService:
             return new_history
     
     def _create_empty_history(self, device_token: str) -> Dict:
-        """Create empty history structure"""
+
         return {
             'device_token': device_token,
             'created_at': datetime.now().isoformat(),
@@ -183,7 +181,7 @@ class DeviceTokenService:
         }
     
     def _save_user_history(self, device_token: str, history: Dict):
-        """Save user history to file"""
+
         try:
             history_file = self.user_histories_dir / f"{device_token}_history.json"
             history['last_updated'] = datetime.now().isoformat()
@@ -195,7 +193,7 @@ class DeviceTokenService:
             logger.error(f"Error saving user history: {e}")
     
     def add_chat_session(self, device_token: str, session_data: Dict):
-        """Add new chat session to user history"""
+
         try:
             history = self.get_or_create_user_history(device_token)
             
@@ -251,7 +249,7 @@ class DeviceTokenService:
                 logger.error(f"Failed to repair history file for {device_token}")
     
     def _repair_history_file(self, device_token: str):
-        """Repair corrupted history file"""
+
         try:
             history_file = self.user_histories_dir / f"{device_token}_history.json"
             if history_file.exists():
@@ -260,7 +258,7 @@ class DeviceTokenService:
             logger.error(f"Error repairing history file: {e}")
     
     def update_user_preferences(self, device_token: str, preferences_update: Dict):
-        """Update user preferences based on interactions"""
+
         try:
             history = self.get_or_create_user_history(device_token)
             
@@ -283,7 +281,7 @@ class DeviceTokenService:
             logger.error(f"Error updating user preferences: {e}")
     
     def get_user_preferences(self, device_token: str) -> Dict:
-        """Get user preferences for personalization"""
+
         try:
             history = self.get_or_create_user_history(device_token)
             return history.get('preferences', {})
@@ -292,7 +290,7 @@ class DeviceTokenService:
             return {}
     
     def get_user_stats(self, device_token: str) -> Dict:
-        """Get user interaction statistics"""
+
         try:
             history = self.get_or_create_user_history(device_token)
             return history.get('interaction_stats', {})
@@ -300,8 +298,69 @@ class DeviceTokenService:
             logger.error(f"Error getting user stats: {e}")
             return {}
     
+    def add_favorite_restaurant(self, device_token: str, restaurant_id: str, restaurant_name: str = None):
+        """Add a restaurant to user's favorites"""
+        try:
+            history = self.get_or_create_user_history(device_token)
+            preferences = history.get('preferences', {})
+            
+            favorite_restaurants = preferences.get('favorite_restaurants', [])
+            
+            # Add if not already in favorites
+            if restaurant_id not in favorite_restaurants:
+                favorite_restaurants.append(restaurant_id)
+                preferences['favorite_restaurants'] = favorite_restaurants[-10:]  # Keep last 10
+                
+                history['preferences'] = preferences
+                self._save_user_history(device_token, history)
+                
+                logger.info(f"Added restaurant {restaurant_id} ({restaurant_name}) to favorites for {device_token}")
+                return True
+            else:
+                logger.info(f"Restaurant {restaurant_id} already in favorites")
+                return False
+                
+        except Exception as e:
+            logger.error(f"Error adding favorite restaurant: {e}")
+            return False
+    
+    def remove_favorite_restaurant(self, device_token: str, restaurant_id: str):
+        """Remove a restaurant from user's favorites"""
+        try:
+            history = self.get_or_create_user_history(device_token)
+            preferences = history.get('preferences', {})
+            
+            favorite_restaurants = preferences.get('favorite_restaurants', [])
+            
+            if restaurant_id in favorite_restaurants:
+                favorite_restaurants.remove(restaurant_id)
+                preferences['favorite_restaurants'] = favorite_restaurants
+                
+                history['preferences'] = preferences
+                self._save_user_history(device_token, history)
+                
+                logger.info(f"Removed restaurant {restaurant_id} from favorites for {device_token}")
+                return True
+            else:
+                logger.info(f"Restaurant {restaurant_id} not in favorites")
+                return False
+                
+        except Exception as e:
+            logger.error(f"Error removing favorite restaurant: {e}")
+            return False
+    
+    def get_favorite_restaurants(self, device_token: str) -> list:
+        """Get list of user's favorite restaurant IDs"""
+        try:
+            history = self.get_or_create_user_history(device_token)
+            preferences = history.get('preferences', {})
+            return preferences.get('favorite_restaurants', [])
+        except Exception as e:
+            logger.error(f"Error getting favorite restaurants: {e}")
+            return []
+    
     def cleanup_old_tokens(self, days_threshold: int = 90):
-        """Clean up old inactive tokens"""
+
         try:
             cutoff_date = datetime.now().timestamp() - (days_threshold * 24 * 60 * 60)
             
@@ -329,7 +388,7 @@ class DeviceTokenService:
             logger.error(f"Error cleaning up old tokens: {e}")
     
     def analyze_user_preferences(self, device_token: str) -> Dict:
-        """Analyze user preferences from chat history"""
+
         try:
             history = self.get_or_create_user_history(device_token)
             preferences = {
@@ -378,7 +437,7 @@ class DeviceTokenService:
             return {}
     
     def _extract_cuisines(self, text: str) -> list:
-        """Extract cuisine types from text (improved with more keywords and substring matching)"""
+
         cuisine_keywords = {
             'italian': [
                 'itali', 'italian', 'italia', 'pizza', 'pasta', 'spaghetti', 'ristorante', 'italian food', 'masakan italia', 'italian cuisine', 'ristorante italiano'
@@ -426,7 +485,7 @@ class DeviceTokenService:
         return found_locations
     
     def _extract_price_preferences(self, text: str) -> list:
-        """Extract price preferences from text"""
+
         price_keywords = []
         if any(word in text for word in ['murah', 'cheap', 'budget', 'affordable']):
             price_keywords.append('budget')
@@ -437,7 +496,7 @@ class DeviceTokenService:
         return price_keywords
     
     def _extract_mood_preferences(self, text: str) -> list:
-        """Extract mood/atmosphere preferences from text"""
+
         mood_keywords = []
         if any(word in text for word in ['romantic', 'romantis', 'couple', 'intimate', 'cozy', 'pasangan']):
             mood_keywords.append('romantic')
@@ -452,7 +511,7 @@ class DeviceTokenService:
         return mood_keywords
     
     def get_personalized_boost(self, device_token: str, restaurant_data: Dict) -> float:
-        """Calculate personalized boost score for restaurant based on user preferences"""
+
         try:
             history = self.get_or_create_user_history(device_token)
             preferences = history.get('preferences', {})
@@ -493,7 +552,7 @@ class DeviceTokenService:
             return 0.0
     
     def update_user_preferences_from_interaction(self, device_token: str, user_query: str, selected_restaurant: Dict = None):
-        """Update user preferences based on interaction, now including dietary and price preferences"""
+
         try:
             logger.info(f"Updating preferences for device_token: {device_token}, query: '{user_query}'")
             
@@ -507,6 +566,9 @@ class DeviceTokenService:
             
             history = self.get_or_create_user_history(device_token)
             current_prefs = history.get('preferences', {})
+            
+            # Track search patterns (keywords frequency)
+            self._update_search_patterns(history, user_query)
             
             logger.info(f"Current preferences before update: {current_prefs}")
             
@@ -561,7 +623,7 @@ class DeviceTokenService:
         except Exception as e:
             logger.error(f"Error updating user preferences: {e}")
     def _extract_dietary_restrictions(self, text: str) -> list:
-        """Extract dietary restrictions from text"""
+
         dietary_keywords = []
         if any(word in text for word in ['vegan', 'vegetarian', 'plant-based']):
             dietary_keywords.append('vegan')
@@ -576,3 +638,33 @@ class DeviceTokenService:
         if 'allergy' in text or 'alergi' in text:
             dietary_keywords.append('allergy')
         return list(set(dietary_keywords))
+    
+    def _update_search_patterns(self, history: Dict, user_query: str):
+        """Track keyword frequency from user queries"""
+        try:
+            # Stopwords to ignore
+            stopwords = {'cari', 'restoran', 'restaurant', 'mau', 'aku', 'saya', 'di', 'yang', 'untuk', 
+                        'dengan', 'dan', 'atau', 'ke', 'dari', 'ini', 'itu', 'ada', 'butuh', 'ingin'}
+            
+            # Extract meaningful keywords
+            words = user_query.lower().split()
+            search_patterns = history.get('search_patterns', {})
+            
+            for word in words:
+                # Clean word (remove punctuation)
+                word = ''.join(c for c in word if c.isalnum())
+                
+                # Only track words >= 3 characters and not stopwords
+                if len(word) >= 3 and word not in stopwords:
+                    search_patterns[word] = search_patterns.get(word, 0) + 1
+            
+            # Keep only top 20 most frequent patterns
+            if len(search_patterns) > 20:
+                sorted_patterns = sorted(search_patterns.items(), key=lambda x: x[1], reverse=True)
+                search_patterns = dict(sorted_patterns[:20])
+            
+            history['search_patterns'] = search_patterns
+            logger.info(f"Updated search patterns: {search_patterns}")
+            
+        except Exception as e:
+            logger.error(f"Error updating search patterns: {e}")

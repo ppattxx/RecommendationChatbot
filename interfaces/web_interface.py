@@ -20,12 +20,24 @@ device_token_service = None
 def initialize_chatbot():
     global chatbot_service, device_token_service
     try:
+        print("DEBUG: Starting chatbot initialization...")
         logger.info("Initializing chatbot service for web interface...")
+        
+        print("DEBUG: Creating ChatbotService instance...")
         chatbot_service = ChatbotService(str(RESTAURANTS_ENTITAS_CSV))
+        print("DEBUG: ChatbotService created successfully")
+        
+        print("DEBUG: Creating DeviceTokenService instance...")
         device_token_service = DeviceTokenService()
+        print("DEBUG: DeviceTokenService created successfully")
+        
         logger.info("Chatbot service initialized successfully")
+        print("DEBUG: Initialization complete!")
     except Exception as e:
         logger.error(f"Failed to initialize chatbot service: {e}")
+        print(f"DEBUG ERROR: {e}")
+        import traceback
+        traceback.print_exc()
         raise
 @app.route('/')
 def index():
@@ -44,11 +56,35 @@ def index_page():
 @app.route('/chat')
 def chat_page():
     try:
+        print("DEBUG: /chat route accessed")
         logger.info("Rendering chat.html template")
         return render_template('chat.html')
     except Exception as e:
+        print(f"DEBUG ERROR: Error rendering chat template: {e}")
         logger.error(f"Error rendering chat template: {e}")
+        import traceback
+        traceback.print_exc()
         return f"Error rendering template: {e}", 500
+
+@app.route('/simple-test')
+def simple_test():
+    return """
+    <html>
+        <body style="font-family: Arial; padding: 20px;">
+            <h1>Flask is Working! ✅</h1>
+            <p>Server is running correctly.</p>
+            <p><a href="/chat">Go to Chat</a></p>
+            <p><a href="/test-page">Go to Full Test Page</a></p>
+        </body>
+    </html>
+    """
+
+@app.route('/test-page')
+def test_page_full():
+    try:
+        return render_template('test.html')
+    except Exception as e:
+        return f"Error: {e}", 500
 @app.route('/test')
 def test_page():
     try:
@@ -74,6 +110,93 @@ def health_check():
         logger.error(f"Health check failed: {e}")
         return jsonify({
             'status': 'error',
+            'error': str(e)
+        }), 500
+
+@app.route('/api/favorite/add', methods=['POST'])
+def add_favorite():
+    """Add a restaurant to user's favorites"""
+    try:
+        data = request.get_json()
+        device_token = session.get('device_token') or data.get('device_token')
+        restaurant_id = data.get('restaurant_id')
+        restaurant_name = data.get('restaurant_name')
+        
+        if not device_token or not restaurant_id:
+            return jsonify({
+                'success': False,
+                'error': 'Missing device_token or restaurant_id'
+            }), 400
+        
+        success = device_token_service.add_favorite_restaurant(
+            device_token, 
+            restaurant_id, 
+            restaurant_name
+        )
+        
+        return jsonify({
+            'success': success,
+            'message': 'Restaurant added to favorites' if success else 'Restaurant already in favorites'
+        })
+        
+    except Exception as e:
+        logger.error(f"Error adding favorite: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/favorite/remove', methods=['POST'])
+def remove_favorite():
+    """Remove a restaurant from user's favorites"""
+    try:
+        data = request.get_json()
+        device_token = session.get('device_token') or data.get('device_token')
+        restaurant_id = data.get('restaurant_id')
+        
+        if not device_token or not restaurant_id:
+            return jsonify({
+                'success': False,
+                'error': 'Missing device_token or restaurant_id'
+            }), 400
+        
+        success = device_token_service.remove_favorite_restaurant(device_token, restaurant_id)
+        
+        return jsonify({
+            'success': success,
+            'message': 'Restaurant removed from favorites' if success else 'Restaurant not in favorites'
+        })
+        
+    except Exception as e:
+        logger.error(f"Error removing favorite: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/favorites', methods=['GET'])
+def get_favorites():
+    """Get user's favorite restaurants"""
+    try:
+        device_token = session.get('device_token') or request.args.get('device_token')
+        
+        if not device_token:
+            return jsonify({
+                'success': False,
+                'error': 'Missing device_token'
+            }), 400
+        
+        favorite_ids = device_token_service.get_favorite_restaurants(device_token)
+        
+        return jsonify({
+            'success': True,
+            'favorites': favorite_ids
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting favorites: {e}")
+        return jsonify({
+            'success': False,
             'error': str(e)
         }), 500
 
@@ -261,7 +384,7 @@ def send_message():
 
 @app.route('/api/send_message_stream', methods=['POST'])
 def send_message_stream():
-    """Stream bot response word by word for typing effect"""
+
     try:
         data = request.get_json()
         user_message = data.get('message', '').strip()
@@ -427,7 +550,7 @@ def cleanup_old_tokens():
 
 @app.route('/api/analyze_preferences', methods=['POST'])
 def analyze_preferences():
-    """Analyze and return user preferences based on chat history"""
+
     try:
         device_token = session.get('device_token')
         if not device_token:

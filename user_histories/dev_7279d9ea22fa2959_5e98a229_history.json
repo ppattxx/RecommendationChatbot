@@ -1,0 +1,1353 @@
+{
+  "device_token": "dev_7279d9ea22fa2959_5e98a229",
+  "created_at": "2025-11-17T05:56:37.981520",
+  "chat_sessions": [
+    {
+      "session_id": "session_94556303",
+      "timestamp": "2025-11-17T06:55:15.169868",
+      "messages": [
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:43:10.368713"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:43:10.538610"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:44:35.615316"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:44:35.887443"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:45:58.872222"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:45:59.126313"
+        },
+        {
+          "user": "ayam taliwang di gili",
+          "timestamp": "2025-11-17T06:46:33.184094"
+        },
+        {
+          "user": "ayam taliwang di gili",
+          "timestamp": "2025-11-17T06:46:33.325652"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:49:11.093200"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:49:11.208320"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:51:20.013648"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:51:20.131183"
+        },
+        {
+          "user": "pizza di kuta",
+          "timestamp": "2025-11-17T06:55:15.000255"
+        },
+        {
+          "user": "pizza di kuta",
+          "timestamp": "2025-11-17T06:55:15.169868"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'pizza di kuta' dengan masakan pizza dan di kuta, saya menemukan 4 restoran terbaik (sesuai preferensi Anda):\n\n1. Sapori\n   Rating: 4.5/5.0 | Kecocokan: 79% \n   Delivery\n   Jenis masakan: ['Italian', 'Pizza', 'Cafe', 'Mediterranean', 'Neapolitan', 'Campania', 'Southern-Italian']\n  Sesuai preferensi Anda, masakan italian\n\n2. Mama Pizza Kuta Lombok\n   Rating: 4.5/5.0 | Kecocokan: 79% \n   Reservations\n   Jenis masakan: ['Italian', 'Pizza', 'Cafe', 'European', 'Neapolitan', 'Campania', 'Southern-Italian']\n  Sesuai preferensi Anda, masakan italian\n\n3. KRNK Restaurant & Bar\n   Rating: 4.5/5.0 | Kecocokan: 68%\n   KRNK Kuta Lombok is a restaurant bar that specialises in burgers, Pizza, cocktails and art. Inspired...\n   Jenis masakan: ['Bar', 'Pizza', 'International', 'Mediterranean', 'Grill']\n\n4. Warung Aldi's\n   Rating: 3.0/5.0 | Kecocokan: 67%\n   Warung Aldy's\n   Jenis masakan: ['Pizza', 'Indonesian']\n\nAda budget khusus?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_94556303",
+      "timestamp": "2025-11-17T05:56:41.746825",
+      "messages": [
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T05:56:41.647838"
+        }
+      ],
+      "recommendations_given": "Hmm, saya tidak menemukan restoran yang persis cocok dengan 'cari restoran pizza di kuta'.\n\nBagaimana dengan beberapa restoran populer ini?\n\nSendja@Kardiá (5.0/5.0)\nUnknown | ['Bar', 'Barbecue', 'Asian', 'Contemporary', 'Healthy', 'Indonesian', 'Caucasian']\n\nTiki Grove (5.0/5.0)\nUnknown | ['Mexican', 'Southwestern', 'Polynesian', 'Hawaiian']\n\nItaly Pizzeria & Restaurant. Gili Air (5.0/5.0)\nUnknown | ['Italian', 'Pizza', 'Mediterranean', 'European', 'Romana', 'Lazio', 'Central-Italian']\n\nAtau coba pencarian yang lebih spesifik:\nButuh bantuan lain? Ketik 'help' untuk panduan lengkap!",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_94556303",
+      "timestamp": "2025-11-17T06:11:38.275886",
+      "messages": [
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T05:56:41.737706"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:11:38.154024"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:11:38.264889"
+        }
+      ],
+      "recommendations_given": "Hmm, saya tidak menemukan restoran yang persis cocok dengan 'cari restoran pizza di kuta'.\n\nBagaimana dengan beberapa restoran populer ini?\n\nSendja@Kardiá (5.0/5.0)\n['Bar', 'Barbecue', 'Asian', 'Contemporary', 'Healthy', 'Indonesian', 'Caucasian']\n\nTiki Grove (5.0/5.0)\n['Mexican', 'Southwestern', 'Polynesian', 'Hawaiian']\n\nItaly Pizzeria & Restaurant. Gili Air (5.0/5.0)\n['Italian', 'Pizza', 'Mediterranean', 'European', 'Romana', 'Lazio', 'Central-Italian']\n\nAtau coba pencarian yang lebih spesifik:\nButuh bantuan lain? Ketik 'help' untuk panduan lengkap!",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_94556303",
+      "timestamp": "2025-11-17T06:11:51.502934",
+      "messages": [
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T05:56:41.737706"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:11:38.154024"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:11:38.264889"
+        },
+        {
+          "user": "restoran seafood di senggigi",
+          "timestamp": "2025-11-17T06:11:51.313301"
+        },
+        {
+          "user": "restoran seafood di senggigi",
+          "timestamp": "2025-11-17T06:11:51.491933"
+        }
+      ],
+      "recommendations_given": "Hmm, saya tidak menemukan restoran yang persis cocok dengan 'restoran seafood di senggigi'.\n\nBagaimana dengan beberapa restoran populer ini?\n\nSendja@Kardiá (5.0/5.0)\n['Bar', 'Barbecue', 'Asian', 'Contemporary', 'Healthy', 'Indonesian', 'Caucasian']\n\nTiki Grove (5.0/5.0)\n['Mexican', 'Southwestern', 'Polynesian', 'Hawaiian']\n\nItaly Pizzeria & Restaurant. Gili Air (5.0/5.0)\n['Italian', 'Pizza', 'Mediterranean', 'European', 'Romana', 'Lazio', 'Central-Italian']\n\nAtau coba pencarian yang lebih spesifik:\nButuh bantuan lain? Ketik 'help' untuk panduan lengkap!",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_94556303",
+      "timestamp": "2025-11-17T06:13:41.568616",
+      "messages": [
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T05:56:41.737706"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:11:38.154024"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:11:38.264889"
+        },
+        {
+          "user": "restoran seafood di senggigi",
+          "timestamp": "2025-11-17T06:11:51.313301"
+        },
+        {
+          "user": "restoran seafood di senggigi",
+          "timestamp": "2025-11-17T06:11:51.491933"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:13:41.453184"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:13:41.558614"
+        }
+      ],
+      "recommendations_given": "Hmm, saya tidak menemukan restoran yang persis cocok dengan 'cari restoran pizza di kuta'.\n\nBagaimana dengan beberapa restoran populer ini?\n\nSendja@Kardiá (5.0/5.0)\nMasakan: Bar, Barbecue, Asian, Contemporary, Healthy, Indonesian, Caucasian\n\nTiki Grove (5.0/5.0)\nMasakan: Mexican, Southwestern, Polynesian, Hawaiian\n\nItaly Pizzeria & Restaurant. Gili Air (5.0/5.0)\nMasakan: Italian, Pizza, Mediterranean, European, Romana, Lazio, Central-Italian\n\nAtau coba pencarian yang lebih spesifik:\nButuh bantuan lain? Ketik 'help' untuk panduan lengkap!",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_94556303",
+      "timestamp": "2025-11-17T06:17:02.880561",
+      "messages": [
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T05:56:41.737706"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:11:38.154024"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:11:38.264889"
+        },
+        {
+          "user": "restoran seafood di senggigi",
+          "timestamp": "2025-11-17T06:11:51.313301"
+        },
+        {
+          "user": "restoran seafood di senggigi",
+          "timestamp": "2025-11-17T06:11:51.491933"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:13:41.453184"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:13:41.558614"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:17:02.761839"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:17:02.870557"
+        }
+      ],
+      "recommendations_given": "Hmm, saya tidak menemukan restoran yang persis cocok dengan 'cari restoran pizza di kuta'.\n\nBagaimana dengan beberapa restoran populer ini?\n\nSendja@Kardiá (5.0/5.0)\nMasakan: Bar, Barbecue, Asian, Contemporary, Healthy, Indonesian, Caucasian\n\nTiki Grove (5.0/5.0)\nMasakan: Mexican, Southwestern, Polynesian, Hawaiian\n\nItaly Pizzeria & Restaurant. Gili Air (5.0/5.0)\nMasakan: Italian, Pizza, Mediterranean, European, Romana, Lazio, Central-Italian\n\nAtau coba pencarian yang lebih spesifik:\nButuh bantuan lain? Ketik 'help' untuk panduan lengkap!",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_94556303",
+      "timestamp": "2025-11-17T06:17:50.770826",
+      "messages": [
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:11:38.154024"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:11:38.264889"
+        },
+        {
+          "user": "restoran seafood di senggigi",
+          "timestamp": "2025-11-17T06:11:51.313301"
+        },
+        {
+          "user": "restoran seafood di senggigi",
+          "timestamp": "2025-11-17T06:11:51.491933"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:13:41.453184"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:13:41.558614"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:17:02.761839"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:17:02.870557"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:17:50.658205"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:17:50.759825"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'cari restoran pizza di kuta' dengan masakan pizza dan di kuta, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Sapori\n   Rating: 4.5/5.0 | Kecocokan: 100% ⭐\n   Delivery\n   Jenis masakan: ['Italian', 'Pizza', 'Cafe', 'Mediterranean', 'Neapolitan', 'Campania', 'Southern-Italian']\n  Sesuai preferensi Anda, masakan italian\n\n2. Italo Pizza Cafe & Mart\n   Rating: 4.5/5.0 | Kecocokan: 100% ⭐\n   Restoran Italia\n   Jenis masakan: ['Italian', 'Pizza']\n  Sesuai preferensi Anda, masakan italian\n\n3. Mama Pizza Kuta Lombok\n   Rating: 4.5/5.0 | Kecocokan: 100% ⭐\n   Reservations\n   Jenis masakan: ['Italian', 'Pizza', 'Cafe', 'European', 'Neapolitan', 'Campania', 'Southern-Italian']\n  Sesuai preferensi Anda, masakan italian\n\n4. Italy Pizzeria & Restaurant. Gili Air\n   Rating: 5.0/5.0 | Kecocokan: 100% ⭐\n   Indulge in the authentic taste of Italy with our mouthwatering dishes made following our traditions.\n   Jenis masakan: ['Italian', 'Pizza', 'Mediterranean', 'European', 'Romana', 'Lazio', 'Central-Italian']\n  Sesuai preferensi Anda, masakan italian\n\n5. Francesco's Pizza\n   Rating: 5.0/5.0 | Kecocokan: 100% ⭐\n   Our restaurant is located in a small street opposite the harbour. Here you'll find the true Italian ...\n   Jenis masakan: ['Italian', 'Pizza']\n  Sesuai preferensi Anda, masakan italian\n\nAda budget khusus?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_94556303",
+      "timestamp": "2025-11-17T06:19:37.965040",
+      "messages": [
+        {
+          "user": "restoran seafood di senggigi",
+          "timestamp": "2025-11-17T06:11:51.313301"
+        },
+        {
+          "user": "restoran seafood di senggigi",
+          "timestamp": "2025-11-17T06:11:51.491933"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:13:41.453184"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:13:41.558614"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:17:02.761839"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:17:02.870557"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:17:50.658205"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:17:50.759825"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:19:37.846861"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:19:37.953031"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'cari restoran pizza di kuta' dengan masakan pizza dan di kuta, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Sapori\n   Rating: 4.5/5.0 | Kecocokan: 70% ⭐\n   Delivery\n   Jenis masakan: ['Italian', 'Pizza', 'Cafe', 'Mediterranean', 'Neapolitan', 'Campania', 'Southern-Italian']\n  Sesuai preferensi Anda, masakan italian\n\n2. Italo Pizza Cafe & Mart\n   Rating: 4.5/5.0 | Kecocokan: 70% ⭐\n   Restoran Italia\n   Jenis masakan: ['Italian', 'Pizza']\n  Sesuai preferensi Anda, masakan italian\n\n3. Mama Pizza Kuta Lombok\n   Rating: 4.5/5.0 | Kecocokan: 70% ⭐\n   Reservations\n   Jenis masakan: ['Italian', 'Pizza', 'Cafe', 'European', 'Neapolitan', 'Campania', 'Southern-Italian']\n  Sesuai preferensi Anda, masakan italian\n\n4. Italy Pizzeria & Restaurant. Gili Air\n   Rating: 5.0/5.0 | Kecocokan: 61% ⭐\n   Indulge in the authentic taste of Italy with our mouthwatering dishes made following our traditions.\n   Jenis masakan: ['Italian', 'Pizza', 'Mediterranean', 'European', 'Romana', 'Lazio', 'Central-Italian']\n  Sesuai preferensi Anda, masakan italian\n\n5. Francesco's Pizza\n   Rating: 5.0/5.0 | Kecocokan: 61% ⭐\n   Our restaurant is located in a small street opposite the harbour. Here you'll find the true Italian ...\n   Jenis masakan: ['Italian', 'Pizza']\n  Sesuai preferensi Anda, masakan italian\n\nAda budget khusus?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_94556303",
+      "timestamp": "2025-11-17T06:19:58.289220",
+      "messages": [
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:13:41.453184"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:13:41.558614"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:17:02.761839"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:17:02.870557"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:17:50.658205"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:17:50.759825"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:19:37.846861"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:19:37.953031"
+        },
+        {
+          "user": "seafood di senggigi",
+          "timestamp": "2025-11-17T06:19:58.046610"
+        },
+        {
+          "user": "seafood di senggigi",
+          "timestamp": "2025-11-17T06:19:58.274588"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'seafood di senggigi' dengan masakan seafood dan di senggigi, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. The Kliff\n   Rating: 4.5/5.0 | Kecocokan: 65% ⭐\n   Indulge in a delicious selection of grills, meat, and seafood with a stunning view overlooking the o...\n   Jenis masakan: ['Italian', 'Japanese', 'Seafood', 'European', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan italian, seafood\n\n2. Lotus Bayview Restaurant\n   Rating: 4.0/5.0 | Kecocokan: 65% ⭐\n   Accepts Credit Cards\n   Jenis masakan: ['Italian', 'Pizza', 'Seafood', 'European']\n  Sesuai preferensi Anda, masakan italian, seafood\n\n3. Cafe Alberto\n   Rating: 4.0/5.0 | Kecocokan: 64% ⭐\n   Accepts Credit Cards\n   Jenis masakan: ['Italian', 'Pizza', 'Seafood', 'Mediterranean', 'European', 'Indonesian']\n  Sesuai preferensi Anda, masakan italian, seafood\n\n4. Warung Sasak Cafe\n   Rating: 4.5/5.0 | Kecocokan: 48% ⭐\n   Buffet\n   Jenis masakan: ['Seafood', 'Grill', 'Healthy', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n5. Kayangan Restaurant\n   Rating: 5.0/5.0 | Kecocokan: 47% ⭐\n   Located within the stunning Holiday Resort Lombok, Kayangan Restaurant offers a sophisticated dining...\n   Jenis masakan: ['Chinese', 'Pizza', 'Seafood', 'International', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\nAda budget khusus?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_94556303",
+      "timestamp": "2025-11-17T06:20:14.796902",
+      "messages": [
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:17:02.761839"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:17:02.870557"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:17:50.658205"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:17:50.759825"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:19:37.846861"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:19:37.953031"
+        },
+        {
+          "user": "seafood di senggigi",
+          "timestamp": "2025-11-17T06:19:58.046610"
+        },
+        {
+          "user": "seafood di senggigi",
+          "timestamp": "2025-11-17T06:19:58.274588"
+        },
+        {
+          "user": "pizza di seminyak",
+          "timestamp": "2025-11-17T06:20:14.728801"
+        },
+        {
+          "user": "pizza di seminyak",
+          "timestamp": "2025-11-17T06:20:14.780691"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'pizza di seminyak' dengan masakan pizza, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Lotus Bayview Restaurant\n   Rating: 4.0/5.0 | Kecocokan: 87% ⭐\n   Accepts Credit Cards\n   Jenis masakan: ['Italian', 'Pizza', 'Seafood', 'European']\n  Sesuai preferensi Anda, masakan italian, seafood\n\n2. Cafe Alberto\n   Rating: 4.0/5.0 | Kecocokan: 87% ⭐\n   Accepts Credit Cards\n   Jenis masakan: ['Italian', 'Pizza', 'Seafood', 'Mediterranean', 'European', 'Indonesian']\n  Sesuai preferensi Anda, masakan italian, seafood\n\n3. Italy Pizzeria & Restaurant. Gili Air\n   Rating: 5.0/5.0 | Kecocokan: 71% ⭐\n   Indulge in the authentic taste of Italy with our mouthwatering dishes made following our traditions.\n   Jenis masakan: ['Italian', 'Pizza', 'Mediterranean', 'European', 'Romana', 'Lazio', 'Central-Italian']\n  Sesuai preferensi Anda, masakan italian\n\n4. Francesco's Pizza\n   Rating: 5.0/5.0 | Kecocokan: 71% ⭐\n   Our restaurant is located in a small street opposite the harbour. Here you'll find the true Italian ...\n   Jenis masakan: ['Italian', 'Pizza']\n  Sesuai preferensi Anda, masakan italian\n\n5. Mama Pizza\n   Rating: 5.0/5.0 | Kecocokan: 71% ⭐\n   Free Wifi\n   Jenis masakan: ['Italian', 'Pizza', 'European', 'Neapolitan', 'Campania', 'Southern-Italian']\n  Sesuai preferensi Anda, masakan italian\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_94556303",
+      "timestamp": "2025-11-17T06:21:18.140193",
+      "messages": [
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:17:50.658205"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:17:50.759825"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:19:37.846861"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:19:37.953031"
+        },
+        {
+          "user": "seafood di senggigi",
+          "timestamp": "2025-11-17T06:19:58.046610"
+        },
+        {
+          "user": "seafood di senggigi",
+          "timestamp": "2025-11-17T06:19:58.274588"
+        },
+        {
+          "user": "pizza di seminyak",
+          "timestamp": "2025-11-17T06:20:14.728801"
+        },
+        {
+          "user": "pizza di seminyak",
+          "timestamp": "2025-11-17T06:20:14.780691"
+        },
+        {
+          "user": "masakan italia",
+          "timestamp": "2025-11-17T06:21:17.971413"
+        },
+        {
+          "user": "masakan italia",
+          "timestamp": "2025-11-17T06:21:18.122983"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'masakan italia' dengan masakan italian, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Danima Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 88% \n   Beach\n   Jenis masakan: ['Italian', 'Seafood', 'Mediterranean', 'Barbecue', 'European']\n  Sesuai preferensi Anda, masakan italian, seafood\n\n2. Dolcemare Italian restaurant\n   Rating: 5.0/5.0 | Kecocokan: 72% \n   Dolcemare italian restaurant is original on the recipe on a fine dining set-up, with a good internat...\n   Jenis masakan: ['Italian', 'Seafood', 'Mediterranean', 'European']\n  Sesuai preferensi Anda, masakan italian, seafood\n\n3. The Kliff\n   Rating: 4.5/5.0 | Kecocokan: 72% \n   Indulge in a delicious selection of grills, meat, and seafood with a stunning view overlooking the o...\n   Jenis masakan: ['Italian', 'Japanese', 'Seafood', 'European', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan italian, seafood\n\n4. Italo Pizza Cafe & Mart\n   Rating: 4.5/5.0 | Kecocokan: 70% \n   Restoran Italia\n   Jenis masakan: ['Italian', 'Pizza']\n  Sesuai preferensi Anda, masakan italian\n\n5. JM's Steakhouse\n   Rating: 3.0/5.0 | Kecocokan: 69% \n   The Gili's only Steakhouse, Using only the Best Quality, Premium grade, Imported Australia Beef. We ...\n   Jenis masakan: ['Italian', 'American', 'Steakhouse', 'Bar', 'Barbecue', 'Pub', 'Australian']\n  Sesuai preferensi Anda, masakan italian\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_94556303",
+      "timestamp": "2025-11-17T06:23:41.783530",
+      "messages": [
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:19:37.846861"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:19:37.953031"
+        },
+        {
+          "user": "seafood di senggigi",
+          "timestamp": "2025-11-17T06:19:58.046610"
+        },
+        {
+          "user": "seafood di senggigi",
+          "timestamp": "2025-11-17T06:19:58.274588"
+        },
+        {
+          "user": "pizza di seminyak",
+          "timestamp": "2025-11-17T06:20:14.728801"
+        },
+        {
+          "user": "pizza di seminyak",
+          "timestamp": "2025-11-17T06:20:14.780691"
+        },
+        {
+          "user": "masakan italia",
+          "timestamp": "2025-11-17T06:21:17.971413"
+        },
+        {
+          "user": "masakan italia",
+          "timestamp": "2025-11-17T06:21:18.122983"
+        },
+        {
+          "user": "seafood murah di seminyak",
+          "timestamp": "2025-11-17T06:23:41.617499"
+        },
+        {
+          "user": "seafood murah di seminyak",
+          "timestamp": "2025-11-17T06:23:41.768529"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'seafood murah di seminyak' dengan masakan seafood dan harga cheap, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. The Kliff\n   Rating: 4.5/5.0 | Kecocokan: 58% \n   Indulge in a delicious selection of grills, meat, and seafood with a stunning view overlooking the o...\n   Jenis masakan: ['Italian', 'Japanese', 'Seafood', 'European', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan italian, seafood\n\n2. Ocean Blue Seafood Restaurant\n   Rating: 3.5/5.0 | Kecocokan: 46% \n   Outdoor Seating\n   Jenis masakan: ['Seafood', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n3. Nuff Said Warung\n   Rating: 4.5/5.0 | Kecocokan: 46% \n   Outdoor Seating\n   Jenis masakan: ['Seafood', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n4. Ana Warung\n   Rating: 4.0/5.0 | Kecocokan: 42% \n   Accepts Credit Cards\n   Jenis masakan: ['Seafood', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n5. Coco Beach\n   Rating: 4.5/5.0 | Kecocokan: 42% \n   Outdoor Seating\n   Jenis masakan: ['Seafood', 'Barbecue', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\nMau cari di lokasi tertentu?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_94556303",
+      "timestamp": "2025-11-17T06:24:26.820958",
+      "messages": [
+        {
+          "user": "seafood di senggigi",
+          "timestamp": "2025-11-17T06:19:58.046610"
+        },
+        {
+          "user": "seafood di senggigi",
+          "timestamp": "2025-11-17T06:19:58.274588"
+        },
+        {
+          "user": "pizza di seminyak",
+          "timestamp": "2025-11-17T06:20:14.728801"
+        },
+        {
+          "user": "pizza di seminyak",
+          "timestamp": "2025-11-17T06:20:14.780691"
+        },
+        {
+          "user": "masakan italia",
+          "timestamp": "2025-11-17T06:21:17.971413"
+        },
+        {
+          "user": "masakan italia",
+          "timestamp": "2025-11-17T06:21:18.122983"
+        },
+        {
+          "user": "seafood murah di seminyak",
+          "timestamp": "2025-11-17T06:23:41.617499"
+        },
+        {
+          "user": "seafood murah di seminyak",
+          "timestamp": "2025-11-17T06:23:41.768529"
+        },
+        {
+          "user": "tempat yang romantis dimana",
+          "timestamp": "2025-11-17T06:24:26.765511"
+        },
+        {
+          "user": "tempat yang romantis dimana",
+          "timestamp": "2025-11-17T06:24:26.802625"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'tempat yang romantis dimana' dengan suasana romantic, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Danima Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 62% \n   Beach\n   Jenis masakan: ['Italian', 'Seafood', 'Mediterranean', 'Barbecue', 'European']\n  Sesuai preferensi Anda, masakan italian, seafood\n\n2. Pearl Beach Lounge\n   Rating: 4.5/5.0 | Kecocokan: 44% \n   We have re-opened our restaurant after renovations and are currently in the process of getting new p...\n   Jenis masakan: ['Seafood', 'International', 'European', 'Asian', 'Fusion', 'Healthy', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n3. Italo Pizza Cafe & Mart\n   Rating: 4.5/5.0 | Kecocokan: 44% \n   Restoran Italia\n   Jenis masakan: ['Italian', 'Pizza']\n  Sesuai preferensi Anda, masakan italian\n\n4. Gili Trawangan Night Market\n   Rating: 4.0/5.0 | Kecocokan: 44% \n   Outdoor Seating\n   Jenis masakan: ['Seafood', 'Barbecue', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n5. Margarita Bar\n   Rating: 5.0/5.0 | Kecocokan: 27%\n   Beach\n   Jenis masakan: ['Bar']\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_94556303",
+      "timestamp": "2025-11-17T06:25:55.973148",
+      "messages": [
+        {
+          "user": "pizza di seminyak",
+          "timestamp": "2025-11-17T06:20:14.728801"
+        },
+        {
+          "user": "pizza di seminyak",
+          "timestamp": "2025-11-17T06:20:14.780691"
+        },
+        {
+          "user": "masakan italia",
+          "timestamp": "2025-11-17T06:21:17.971413"
+        },
+        {
+          "user": "masakan italia",
+          "timestamp": "2025-11-17T06:21:18.122983"
+        },
+        {
+          "user": "seafood murah di seminyak",
+          "timestamp": "2025-11-17T06:23:41.617499"
+        },
+        {
+          "user": "seafood murah di seminyak",
+          "timestamp": "2025-11-17T06:23:41.768529"
+        },
+        {
+          "user": "tempat yang romantis dimana",
+          "timestamp": "2025-11-17T06:24:26.765511"
+        },
+        {
+          "user": "tempat yang romantis dimana",
+          "timestamp": "2025-11-17T06:24:26.802625"
+        },
+        {
+          "user": "saya suka Danima Restaurant",
+          "timestamp": "2025-11-17T06:25:55.722418"
+        },
+        {
+          "user": "saya suka danima restaurant",
+          "timestamp": "2025-11-17T06:25:55.957525"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'saya suka danima restaurant', saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Danima Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 62% \n   Beach\n   Jenis masakan: ['Italian', 'Seafood', 'Mediterranean', 'Barbecue', 'European']\n  Sesuai preferensi Anda, masakan italian, seafood\n\n2. Pearl Beach Lounge\n   Rating: 4.5/5.0 | Kecocokan: 59% \n   We have re-opened our restaurant after renovations and are currently in the process of getting new p...\n   Jenis masakan: ['Seafood', 'International', 'European', 'Asian', 'Fusion', 'Healthy', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n3. Italo Pizza Cafe & Mart\n   Rating: 4.5/5.0 | Kecocokan: 44% \n   Restoran Italia\n   Jenis masakan: ['Italian', 'Pizza']\n  Sesuai preferensi Anda, masakan italian\n\n4. Gili Trawangan Night Market\n   Rating: 4.0/5.0 | Kecocokan: 44% \n   Outdoor Seating\n   Jenis masakan: ['Seafood', 'Barbecue', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n5. Hellocapitano Lifestyle Café\n   Rating: 4.5/5.0 | Kecocokan: 36% (Sesuai preferensi Anda) \n   We Are ON NOW !!! Your Healthy Travel And Tour Cafe in Gili Trawangan island. Hellocapitano is every...\n   Jenis masakan: ['Cafe', 'International', 'Healthy']\n  Suasana romantis yang Anda suka\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_94556303",
+      "timestamp": "2025-11-17T06:29:05.676188",
+      "messages": [
+        {
+          "user": "masakan italia",
+          "timestamp": "2025-11-17T06:21:17.971413"
+        },
+        {
+          "user": "masakan italia",
+          "timestamp": "2025-11-17T06:21:18.122983"
+        },
+        {
+          "user": "seafood murah di seminyak",
+          "timestamp": "2025-11-17T06:23:41.617499"
+        },
+        {
+          "user": "seafood murah di seminyak",
+          "timestamp": "2025-11-17T06:23:41.768529"
+        },
+        {
+          "user": "tempat yang romantis dimana",
+          "timestamp": "2025-11-17T06:24:26.765511"
+        },
+        {
+          "user": "tempat yang romantis dimana",
+          "timestamp": "2025-11-17T06:24:26.802625"
+        },
+        {
+          "user": "saya suka Danima Restaurant",
+          "timestamp": "2025-11-17T06:25:55.722418"
+        },
+        {
+          "user": "saya suka danima restaurant",
+          "timestamp": "2025-11-17T06:25:55.957525"
+        },
+        {
+          "user": "restoran seafood di kuta",
+          "timestamp": "2025-11-17T06:29:05.564258"
+        },
+        {
+          "user": "restoran seafood di kuta",
+          "timestamp": "2025-11-17T06:29:05.663183"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'restoran seafood di kuta' dengan masakan seafood dan di kuta, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Danima Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 64% \n   Beach\n   Jenis masakan: ['Italian', 'Seafood', 'Mediterranean', 'Barbecue', 'European']\n  Sesuai preferensi Anda, masakan italian, seafood\n\n2. Seasalt Lombok\n   Rating: 4.5/5.0 | Kecocokan: 48% \n   Serving only the freshest locally sourced seafood from the nearby fishing villages and markets. Casu...\n   Jenis masakan: ['Seafood', 'International', 'Mediterranean', 'Grill', 'Healthy', 'Caucasian']\n  Sesuai preferensi Anda, masakan seafood\n\n3. Natys Restaurant\n   Rating: 4.0/5.0 | Kecocokan: 48% \n   Free Wifi\n   Jenis masakan: ['Bar', 'Seafood', 'Barbecue', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n4. Tasty Hesty Cafe\n   Rating: 5.0/5.0 | Kecocokan: 47% \n   The legendary Tasty Hesty Cafe has been renovated and is better than ever! Come join us and enjoy: -...\n   Jenis masakan: ['Seafood', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n5. Pearl Beach Lounge\n   Rating: 4.5/5.0 | Kecocokan: 47% \n   We have re-opened our restaurant after renovations and are currently in the process of getting new p...\n   Jenis masakan: ['Seafood', 'International', 'European', 'Asian', 'Fusion', 'Healthy', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\nAda budget khusus?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_94556303",
+      "timestamp": "2025-11-17T06:31:00.358586",
+      "messages": [
+        {
+          "user": "seafood murah di seminyak",
+          "timestamp": "2025-11-17T06:23:41.617499"
+        },
+        {
+          "user": "seafood murah di seminyak",
+          "timestamp": "2025-11-17T06:23:41.768529"
+        },
+        {
+          "user": "tempat yang romantis dimana",
+          "timestamp": "2025-11-17T06:24:26.765511"
+        },
+        {
+          "user": "tempat yang romantis dimana",
+          "timestamp": "2025-11-17T06:24:26.802625"
+        },
+        {
+          "user": "saya suka Danima Restaurant",
+          "timestamp": "2025-11-17T06:25:55.722418"
+        },
+        {
+          "user": "saya suka danima restaurant",
+          "timestamp": "2025-11-17T06:25:55.957525"
+        },
+        {
+          "user": "restoran seafood di kuta",
+          "timestamp": "2025-11-17T06:29:05.564258"
+        },
+        {
+          "user": "restoran seafood di kuta",
+          "timestamp": "2025-11-17T06:29:05.663183"
+        },
+        {
+          "user": "/api/favorite/add",
+          "timestamp": "2025-11-17T06:31:00.201106"
+        },
+        {
+          "user": "/api/favorite/add",
+          "timestamp": "2025-11-17T06:31:00.339670"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian '/api/favorite/add', saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Danima Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 76% \n   Beach\n   Jenis masakan: ['Italian', 'Seafood', 'Mediterranean', 'Barbecue', 'European']\n  Sesuai preferensi Anda, masakan italian, seafood\n\n2. Pearl Beach Lounge\n   Rating: 4.5/5.0 | Kecocokan: 59% \n   We have re-opened our restaurant after renovations and are currently in the process of getting new p...\n   Jenis masakan: ['Seafood', 'International', 'European', 'Asian', 'Fusion', 'Healthy', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n3. Italo Pizza Cafe & Mart\n   Rating: 4.5/5.0 | Kecocokan: 59% \n   Restoran Italia\n   Jenis masakan: ['Italian', 'Pizza']\n  Sesuai preferensi Anda, masakan italian\n\n4. Gili Trawangan Night Market\n   Rating: 4.0/5.0 | Kecocokan: 58% \n   Outdoor Seating\n   Jenis masakan: ['Seafood', 'Barbecue', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n5. Hellocapitano Lifestyle Café\n   Rating: 4.5/5.0 | Kecocokan: 50% (Sesuai preferensi Anda) \n   We Are ON NOW !!! Your Healthy Travel And Tour Cafe in Gili Trawangan island. Hellocapitano is every...\n   Jenis masakan: ['Cafe', 'International', 'Healthy']\n  Suasana romantis yang Anda suka\n\nMau cari di lokasi tertentu?\nAda budget khusus?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_94556303",
+      "timestamp": "2025-11-17T06:35:16.399050",
+      "messages": [
+        {
+          "user": "tempat yang romantis dimana",
+          "timestamp": "2025-11-17T06:24:26.765511"
+        },
+        {
+          "user": "tempat yang romantis dimana",
+          "timestamp": "2025-11-17T06:24:26.802625"
+        },
+        {
+          "user": "saya suka Danima Restaurant",
+          "timestamp": "2025-11-17T06:25:55.722418"
+        },
+        {
+          "user": "saya suka danima restaurant",
+          "timestamp": "2025-11-17T06:25:55.957525"
+        },
+        {
+          "user": "restoran seafood di kuta",
+          "timestamp": "2025-11-17T06:29:05.564258"
+        },
+        {
+          "user": "restoran seafood di kuta",
+          "timestamp": "2025-11-17T06:29:05.663183"
+        },
+        {
+          "user": "/api/favorite/add",
+          "timestamp": "2025-11-17T06:31:00.201106"
+        },
+        {
+          "user": "/api/favorite/add",
+          "timestamp": "2025-11-17T06:31:00.339670"
+        },
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-11-17T06:35:16.288705"
+        },
+        {
+          "user": "tempat makan seafood murah",
+          "timestamp": "2025-11-17T06:35:16.387739"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'tempat makan seafood murah' dengan masakan seafood dan harga cheap, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Danima Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 64% \n   Beach\n   Jenis masakan: ['Italian', 'Seafood', 'Mediterranean', 'Barbecue', 'European']\n  Sesuai preferensi Anda, masakan italian, seafood\n\n2. Natys Restaurant\n   Rating: 4.0/5.0 | Kecocokan: 47% \n   Free Wifi\n   Jenis masakan: ['Bar', 'Seafood', 'Barbecue', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n3. Pearl Beach Lounge\n   Rating: 4.5/5.0 | Kecocokan: 47% \n   We have re-opened our restaurant after renovations and are currently in the process of getting new p...\n   Jenis masakan: ['Seafood', 'International', 'European', 'Asian', 'Fusion', 'Healthy', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n4. Ocean Blue Seafood Restaurant\n   Rating: 3.5/5.0 | Kecocokan: 46% \n   Outdoor Seating\n   Jenis masakan: ['Seafood', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n5. Gili Trawangan Night Market\n   Rating: 4.0/5.0 | Kecocokan: 46% \n   Outdoor Seating\n   Jenis masakan: ['Seafood', 'Barbecue', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\nMau cari di lokasi tertentu?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_94556303",
+      "timestamp": "2025-11-17T06:35:35.387183",
+      "messages": [
+        {
+          "user": "saya suka Danima Restaurant",
+          "timestamp": "2025-11-17T06:25:55.722418"
+        },
+        {
+          "user": "saya suka danima restaurant",
+          "timestamp": "2025-11-17T06:25:55.957525"
+        },
+        {
+          "user": "restoran seafood di kuta",
+          "timestamp": "2025-11-17T06:29:05.564258"
+        },
+        {
+          "user": "restoran seafood di kuta",
+          "timestamp": "2025-11-17T06:29:05.663183"
+        },
+        {
+          "user": "/api/favorite/add",
+          "timestamp": "2025-11-17T06:31:00.201106"
+        },
+        {
+          "user": "/api/favorite/add",
+          "timestamp": "2025-11-17T06:31:00.339670"
+        },
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-11-17T06:35:16.288705"
+        },
+        {
+          "user": "tempat makan seafood murah",
+          "timestamp": "2025-11-17T06:35:16.387739"
+        },
+        {
+          "user": "restoran di senggigi yang murah dan romantis",
+          "timestamp": "2025-11-17T06:35:35.227314"
+        },
+        {
+          "user": "restoran di senggigi yang murah dan romantis",
+          "timestamp": "2025-11-17T06:35:35.373395"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'restoran di senggigi yang murah dan romantis' dengan di senggigi dan suasana romantic dan harga cheap, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. The Kliff\n   Rating: 4.5/5.0 | Kecocokan: 70% \n   Indulge in a delicious selection of grills, meat, and seafood with a stunning view overlooking the o...\n   Jenis masakan: ['Italian', 'Japanese', 'Seafood', 'European', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan italian, seafood. Suasana romantis yang Anda suka\n\n2. Danima Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 62% \n   Beach\n   Jenis masakan: ['Italian', 'Seafood', 'Mediterranean', 'Barbecue', 'European']\n  Sesuai preferensi Anda, masakan italian, seafood\n\n3. Pasta Pojok Senggigi\n   Rating: 4.5/5.0 | Kecocokan: 44% \n   Authentic Italian home-made fresh Pasta, Pizza and Gelato restaurant in Senggigi from a secret Itali...\n   Jenis masakan: ['Italian']\n  Sesuai preferensi Anda, masakan italian\n\n4. Puri Mas Beachfront Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 44% \n   Puri Mas Beachfront Restaurant offers in house guests and visitors one of the most amazing dining lo...\n   Jenis masakan: ['Seafood', 'International', 'Asian', 'Grill', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n5. Nuf'said Warung\n   Rating: 4.5/5.0 | Kecocokan: 44% \n   On beach in front of Verve Villas, Qunice Villas and just next to Holiday Resort Lombok at Senggigi ...\n   Jenis masakan: ['Seafood', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\nButuh info lebih detail?\nAtau mau cari dengan kriteria lain?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_94556303",
+      "timestamp": "2025-11-17T06:38:36.122700",
+      "messages": [
+        {
+          "user": "restoran seafood di kuta",
+          "timestamp": "2025-11-17T06:29:05.564258"
+        },
+        {
+          "user": "restoran seafood di kuta",
+          "timestamp": "2025-11-17T06:29:05.663183"
+        },
+        {
+          "user": "/api/favorite/add",
+          "timestamp": "2025-11-17T06:31:00.201106"
+        },
+        {
+          "user": "/api/favorite/add",
+          "timestamp": "2025-11-17T06:31:00.339670"
+        },
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-11-17T06:35:16.288705"
+        },
+        {
+          "user": "tempat makan seafood murah",
+          "timestamp": "2025-11-17T06:35:16.387739"
+        },
+        {
+          "user": "restoran di senggigi yang murah dan romantis",
+          "timestamp": "2025-11-17T06:35:35.227314"
+        },
+        {
+          "user": "restoran di senggigi yang murah dan romantis",
+          "timestamp": "2025-11-17T06:35:35.373395"
+        },
+        {
+          "user": "ayam taliwang di senggigi yang enak dimana",
+          "timestamp": "2025-11-17T06:38:35.865193"
+        },
+        {
+          "user": "ayam taliwang di senggigi yang enak dimana",
+          "timestamp": "2025-11-17T06:38:36.108800"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'ayam taliwang di senggigi yang enak dimana' dengan di senggigi, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. The Kliff\n   Rating: 4.5/5.0 | Kecocokan: 85% \n   Indulge in a delicious selection of grills, meat, and seafood with a stunning view overlooking the o...\n   Jenis masakan: ['Italian', 'Japanese', 'Seafood', 'European', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan italian, seafood. Suasana romantis yang Anda suka\n\n2. Danima Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 76% \n   Beach\n   Jenis masakan: ['Italian', 'Seafood', 'Mediterranean', 'Barbecue', 'European']\n  Sesuai preferensi Anda, masakan italian, seafood\n\n3. Pasta Pojok Senggigi\n   Rating: 4.5/5.0 | Kecocokan: 59% \n   Authentic Italian home-made fresh Pasta, Pizza and Gelato restaurant in Senggigi from a secret Itali...\n   Jenis masakan: ['Italian']\n  Sesuai preferensi Anda, masakan italian\n\n4. Puri Mas Beachfront Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 59% \n   Puri Mas Beachfront Restaurant offers in house guests and visitors one of the most amazing dining lo...\n   Jenis masakan: ['Seafood', 'International', 'Asian', 'Grill', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n5. Nuf'said Warung\n   Rating: 4.5/5.0 | Kecocokan: 59% \n   On beach in front of Verve Villas, Qunice Villas and just next to Holiday Resort Lombok at Senggigi ...\n   Jenis masakan: ['Seafood', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\nAda budget khusus?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_94556303",
+      "timestamp": "2025-11-17T06:38:56.853305",
+      "messages": [
+        {
+          "user": "/api/favorite/add",
+          "timestamp": "2025-11-17T06:31:00.201106"
+        },
+        {
+          "user": "/api/favorite/add",
+          "timestamp": "2025-11-17T06:31:00.339670"
+        },
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-11-17T06:35:16.288705"
+        },
+        {
+          "user": "tempat makan seafood murah",
+          "timestamp": "2025-11-17T06:35:16.387739"
+        },
+        {
+          "user": "restoran di senggigi yang murah dan romantis",
+          "timestamp": "2025-11-17T06:35:35.227314"
+        },
+        {
+          "user": "restoran di senggigi yang murah dan romantis",
+          "timestamp": "2025-11-17T06:35:35.373395"
+        },
+        {
+          "user": "ayam taliwang di senggigi yang enak dimana",
+          "timestamp": "2025-11-17T06:38:35.865193"
+        },
+        {
+          "user": "ayam taliwang di senggigi yang enak dimana",
+          "timestamp": "2025-11-17T06:38:36.108800"
+        },
+        {
+          "user": "ayam taliwang di senggigi yang enak",
+          "timestamp": "2025-11-17T06:38:56.776243"
+        },
+        {
+          "user": "ayam taliwang di senggigi yang enak",
+          "timestamp": "2025-11-17T06:38:56.835450"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'ayam taliwang di senggigi yang enak' dengan di senggigi, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. The Kliff\n   Rating: 4.5/5.0 | Kecocokan: 85% \n   Indulge in a delicious selection of grills, meat, and seafood with a stunning view overlooking the o...\n   Jenis masakan: ['Italian', 'Japanese', 'Seafood', 'European', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan italian, seafood. Suasana romantis yang Anda suka\n\n2. Danima Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 76% \n   Beach\n   Jenis masakan: ['Italian', 'Seafood', 'Mediterranean', 'Barbecue', 'European']\n  Sesuai preferensi Anda, masakan italian, seafood\n\n3. Pasta Pojok Senggigi\n   Rating: 4.5/5.0 | Kecocokan: 59% \n   Authentic Italian home-made fresh Pasta, Pizza and Gelato restaurant in Senggigi from a secret Itali...\n   Jenis masakan: ['Italian']\n  Sesuai preferensi Anda, masakan italian\n\n4. Puri Mas Beachfront Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 59% \n   Puri Mas Beachfront Restaurant offers in house guests and visitors one of the most amazing dining lo...\n   Jenis masakan: ['Seafood', 'International', 'Asian', 'Grill', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n5. Nuf'said Warung\n   Rating: 4.5/5.0 | Kecocokan: 59% \n   On beach in front of Verve Villas, Qunice Villas and just next to Holiday Resort Lombok at Senggigi ...\n   Jenis masakan: ['Seafood', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\nAda budget khusus?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_94556303",
+      "timestamp": "2025-11-17T06:40:27.045600",
+      "messages": [
+        {
+          "user": "Tempat makan seafood murah",
+          "timestamp": "2025-11-17T06:35:16.288705"
+        },
+        {
+          "user": "tempat makan seafood murah",
+          "timestamp": "2025-11-17T06:35:16.387739"
+        },
+        {
+          "user": "restoran di senggigi yang murah dan romantis",
+          "timestamp": "2025-11-17T06:35:35.227314"
+        },
+        {
+          "user": "restoran di senggigi yang murah dan romantis",
+          "timestamp": "2025-11-17T06:35:35.373395"
+        },
+        {
+          "user": "ayam taliwang di senggigi yang enak dimana",
+          "timestamp": "2025-11-17T06:38:35.865193"
+        },
+        {
+          "user": "ayam taliwang di senggigi yang enak dimana",
+          "timestamp": "2025-11-17T06:38:36.108800"
+        },
+        {
+          "user": "ayam taliwang di senggigi yang enak",
+          "timestamp": "2025-11-17T06:38:56.776243"
+        },
+        {
+          "user": "ayam taliwang di senggigi yang enak",
+          "timestamp": "2025-11-17T06:38:56.835450"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:40:26.782677"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:40:27.028603"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'ayam taliwang di senggigi' dengan di senggigi, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. The Kliff\n   Rating: 4.5/5.0 | Kecocokan: 85% \n   Indulge in a delicious selection of grills, meat, and seafood with a stunning view overlooking the o...\n   Jenis masakan: ['Italian', 'Japanese', 'Seafood', 'European', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan italian, seafood. Suasana romantis yang Anda suka\n\n2. Danima Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 76% \n   Beach\n   Jenis masakan: ['Italian', 'Seafood', 'Mediterranean', 'Barbecue', 'European']\n  Sesuai preferensi Anda, masakan italian, seafood\n\n3. Pasta Pojok Senggigi\n   Rating: 4.5/5.0 | Kecocokan: 59% \n   Authentic Italian home-made fresh Pasta, Pizza and Gelato restaurant in Senggigi from a secret Itali...\n   Jenis masakan: ['Italian']\n  Sesuai preferensi Anda, masakan italian\n\n4. Puri Mas Beachfront Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 59% \n   Puri Mas Beachfront Restaurant offers in house guests and visitors one of the most amazing dining lo...\n   Jenis masakan: ['Seafood', 'International', 'Asian', 'Grill', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n5. Nuf'said Warung\n   Rating: 4.5/5.0 | Kecocokan: 59% \n   On beach in front of Verve Villas, Qunice Villas and just next to Holiday Resort Lombok at Senggigi ...\n   Jenis masakan: ['Seafood', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\nAda budget khusus?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_94556303",
+      "timestamp": "2025-11-17T06:42:52.589459",
+      "messages": [
+        {
+          "user": "restoran di senggigi yang murah dan romantis",
+          "timestamp": "2025-11-17T06:35:35.227314"
+        },
+        {
+          "user": "restoran di senggigi yang murah dan romantis",
+          "timestamp": "2025-11-17T06:35:35.373395"
+        },
+        {
+          "user": "ayam taliwang di senggigi yang enak dimana",
+          "timestamp": "2025-11-17T06:38:35.865193"
+        },
+        {
+          "user": "ayam taliwang di senggigi yang enak dimana",
+          "timestamp": "2025-11-17T06:38:36.108800"
+        },
+        {
+          "user": "ayam taliwang di senggigi yang enak",
+          "timestamp": "2025-11-17T06:38:56.776243"
+        },
+        {
+          "user": "ayam taliwang di senggigi yang enak",
+          "timestamp": "2025-11-17T06:38:56.835450"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:40:26.782677"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:40:27.028603"
+        },
+        {
+          "user": "ayam taliwang di gili",
+          "timestamp": "2025-11-17T06:42:52.432195"
+        },
+        {
+          "user": "ayam taliwang di gili",
+          "timestamp": "2025-11-17T06:42:52.571465"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'ayam taliwang di gili' dengan di gili_trawangan, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Danima Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 76% \n   Beach\n   Jenis masakan: ['Italian', 'Seafood', 'Mediterranean', 'Barbecue', 'European']\n  Sesuai preferensi Anda, masakan italian, seafood\n\n2. Classico Italiano pizza\n   Rating: 4.5/5.0 | Kecocokan: 59% \n   CLASSICO ITALIANO PIZZERIA Wood fired oven and Real Italian Taste. Located in the heart of our speci...\n   Jenis masakan: ['Italian', 'Pizza', 'Romana', 'Lazio', 'Central-Italian']\n  Sesuai preferensi Anda, masakan italian\n\n3. Pearl Beach Lounge\n   Rating: 4.5/5.0 | Kecocokan: 59% \n   We have re-opened our restaurant after renovations and are currently in the process of getting new p...\n   Jenis masakan: ['Seafood', 'International', 'European', 'Asian', 'Fusion', 'Healthy', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n4. Italo Pizza Cafe & Mart\n   Rating: 4.5/5.0 | Kecocokan: 59% \n   Restoran Italia\n   Jenis masakan: ['Italian', 'Pizza']\n  Sesuai preferensi Anda, masakan italian\n\n5. Hellocapitano Lifestyle Café\n   Rating: 4.5/5.0 | Kecocokan: 50% (Sesuai preferensi Anda) \n   We Are ON NOW !!! Your Healthy Travel And Tour Cafe in Gili Trawangan island. Hellocapitano is every...\n   Jenis masakan: ['Cafe', 'International', 'Healthy']\n  Suasana romantis yang Anda suka\n\nAda budget khusus?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_94556303",
+      "timestamp": "2025-11-17T06:43:10.551496",
+      "messages": [
+        {
+          "user": "ayam taliwang di senggigi yang enak dimana",
+          "timestamp": "2025-11-17T06:38:35.865193"
+        },
+        {
+          "user": "ayam taliwang di senggigi yang enak dimana",
+          "timestamp": "2025-11-17T06:38:36.108800"
+        },
+        {
+          "user": "ayam taliwang di senggigi yang enak",
+          "timestamp": "2025-11-17T06:38:56.776243"
+        },
+        {
+          "user": "ayam taliwang di senggigi yang enak",
+          "timestamp": "2025-11-17T06:38:56.835450"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:40:26.782677"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:40:27.028603"
+        },
+        {
+          "user": "ayam taliwang di gili",
+          "timestamp": "2025-11-17T06:42:52.432195"
+        },
+        {
+          "user": "ayam taliwang di gili",
+          "timestamp": "2025-11-17T06:42:52.571465"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:43:10.368713"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:43:10.538610"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'ayam taliwang di senggigi' dengan di senggigi, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. The Kliff\n   Rating: 4.5/5.0 | Kecocokan: 85% \n   Indulge in a delicious selection of grills, meat, and seafood with a stunning view overlooking the o...\n   Jenis masakan: ['Italian', 'Japanese', 'Seafood', 'European', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan italian, seafood. Suasana romantis yang Anda suka\n\n2. Danima Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 76% \n   Beach\n   Jenis masakan: ['Italian', 'Seafood', 'Mediterranean', 'Barbecue', 'European']\n  Sesuai preferensi Anda, masakan italian, seafood\n\n3. Pasta Pojok Senggigi\n   Rating: 4.5/5.0 | Kecocokan: 59% \n   Authentic Italian home-made fresh Pasta, Pizza and Gelato restaurant in Senggigi from a secret Itali...\n   Jenis masakan: ['Italian']\n  Sesuai preferensi Anda, masakan italian\n\n4. Puri Mas Beachfront Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 59% \n   Puri Mas Beachfront Restaurant offers in house guests and visitors one of the most amazing dining lo...\n   Jenis masakan: ['Seafood', 'International', 'Asian', 'Grill', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n5. Nuf'said Warung\n   Rating: 4.5/5.0 | Kecocokan: 59% \n   On beach in front of Verve Villas, Qunice Villas and just next to Holiday Resort Lombok at Senggigi ...\n   Jenis masakan: ['Seafood', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\nAda budget khusus?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_94556303",
+      "timestamp": "2025-11-17T06:44:35.899678",
+      "messages": [
+        {
+          "user": "ayam taliwang di senggigi yang enak",
+          "timestamp": "2025-11-17T06:38:56.776243"
+        },
+        {
+          "user": "ayam taliwang di senggigi yang enak",
+          "timestamp": "2025-11-17T06:38:56.835450"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:40:26.782677"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:40:27.028603"
+        },
+        {
+          "user": "ayam taliwang di gili",
+          "timestamp": "2025-11-17T06:42:52.432195"
+        },
+        {
+          "user": "ayam taliwang di gili",
+          "timestamp": "2025-11-17T06:42:52.571465"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:43:10.368713"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:43:10.538610"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:44:35.615316"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:44:35.887443"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'ayam taliwang di senggigi' dengan di senggigi, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. The Kliff\n   Rating: 4.5/5.0 | Kecocokan: 100% \n   Indulge in a delicious selection of grills, meat, and seafood with a stunning view overlooking the o...\n   Jenis masakan: ['Italian', 'Japanese', 'Seafood', 'European', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan italian, seafood. Suasana romantis yang Anda suka\n\n2. Pasta Pojok Senggigi\n   Rating: 4.5/5.0 | Kecocokan: 100% \n   Authentic Italian home-made fresh Pasta, Pizza and Gelato restaurant in Senggigi from a secret Itali...\n   Jenis masakan: ['Italian']\n  Sesuai preferensi Anda, masakan italian\n\n3. Puri Mas Beachfront Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 100% \n   Puri Mas Beachfront Restaurant offers in house guests and visitors one of the most amazing dining lo...\n   Jenis masakan: ['Seafood', 'International', 'Asian', 'Grill', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n4. Nuf'said Warung\n   Rating: 4.5/5.0 | Kecocokan: 100% \n   On beach in front of Verve Villas, Qunice Villas and just next to Holiday Resort Lombok at Senggigi ...\n   Jenis masakan: ['Seafood', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n5. Quah Elegant Italian\n   Rating: 4.5/5.0 | Kecocokan: 100% \n   Elegant Italian Dining on the beach. Our culinary Chef, Vittorio Negri, is dedicated to creating fre...\n   Jenis masakan: ['Italian']\n  Sesuai preferensi Anda, masakan italian\n\nAda budget khusus?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_94556303",
+      "timestamp": "2025-11-17T06:45:59.138567",
+      "messages": [
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:40:26.782677"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:40:27.028603"
+        },
+        {
+          "user": "ayam taliwang di gili",
+          "timestamp": "2025-11-17T06:42:52.432195"
+        },
+        {
+          "user": "ayam taliwang di gili",
+          "timestamp": "2025-11-17T06:42:52.571465"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:43:10.368713"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:43:10.538610"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:44:35.615316"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:44:35.887443"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:45:58.872222"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:45:59.126313"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'ayam taliwang di senggigi' dengan di senggigi, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. The Kliff\n   Rating: 4.5/5.0 | Kecocokan: 87% \n   Indulge in a delicious selection of grills, meat, and seafood with a stunning view overlooking the o...\n   Jenis masakan: ['Italian', 'Japanese', 'Seafood', 'European', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan italian, seafood. Suasana romantis yang Anda suka\n\n2. Pasta Pojok Senggigi\n   Rating: 4.5/5.0 | Kecocokan: 71% \n   Authentic Italian home-made fresh Pasta, Pizza and Gelato restaurant in Senggigi from a secret Itali...\n   Jenis masakan: ['Italian']\n  Sesuai preferensi Anda, masakan italian\n\n3. Puri Mas Beachfront Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 71% \n   Puri Mas Beachfront Restaurant offers in house guests and visitors one of the most amazing dining lo...\n   Jenis masakan: ['Seafood', 'International', 'Asian', 'Grill', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n4. Nuf'said Warung\n   Rating: 4.5/5.0 | Kecocokan: 71% \n   On beach in front of Verve Villas, Qunice Villas and just next to Holiday Resort Lombok at Senggigi ...\n   Jenis masakan: ['Seafood', 'Asian', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n5. Quah Elegant Italian\n   Rating: 4.5/5.0 | Kecocokan: 71% \n   Elegant Italian Dining on the beach. Our culinary Chef, Vittorio Negri, is dedicated to creating fre...\n   Jenis masakan: ['Italian']\n  Sesuai preferensi Anda, masakan italian\n\nAda budget khusus?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_94556303",
+      "timestamp": "2025-11-17T06:46:33.343654",
+      "messages": [
+        {
+          "user": "ayam taliwang di gili",
+          "timestamp": "2025-11-17T06:42:52.432195"
+        },
+        {
+          "user": "ayam taliwang di gili",
+          "timestamp": "2025-11-17T06:42:52.571465"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:43:10.368713"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:43:10.538610"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:44:35.615316"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:44:35.887443"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:45:58.872222"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:45:59.126313"
+        },
+        {
+          "user": "ayam taliwang di gili",
+          "timestamp": "2025-11-17T06:46:33.184094"
+        },
+        {
+          "user": "ayam taliwang di gili",
+          "timestamp": "2025-11-17T06:46:33.325652"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'ayam taliwang di gili' dengan di gili_trawangan, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Danima Restaurant\n   Rating: 4.5/5.0 | Kecocokan: 82% \n   Beach\n   Jenis masakan: ['Italian', 'Seafood', 'Mediterranean', 'Barbecue', 'European']\n  Sesuai preferensi Anda, masakan italian, seafood\n\n2. Pearl Beach Lounge\n   Rating: 4.5/5.0 | Kecocokan: 71% \n   We have re-opened our restaurant after renovations and are currently in the process of getting new p...\n   Jenis masakan: ['Seafood', 'International', 'European', 'Asian', 'Fusion', 'Healthy', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood\n\n3. Italo Pizza Cafe & Mart\n   Rating: 4.5/5.0 | Kecocokan: 71% \n   Restoran Italia\n   Jenis masakan: ['Italian', 'Pizza']\n  Sesuai preferensi Anda, masakan italian\n\n4. Hellocapitano Lifestyle Café\n   Rating: 4.5/5.0 | Kecocokan: 66% (Sesuai preferensi Anda) \n   We Are ON NOW !!! Your Healthy Travel And Tour Cafe in Gili Trawangan island. Hellocapitano is every...\n   Jenis masakan: ['Cafe', 'International', 'Healthy']\n  Suasana romantis yang Anda suka\n\n5. Margarita Bar\n   Rating: 5.0/5.0 | Kecocokan: 61%\n   Beach\n   Jenis masakan: ['Bar']\n\nAda budget khusus?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_94556303",
+      "timestamp": "2025-11-17T06:49:11.220433",
+      "messages": [
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:43:10.368713"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:43:10.538610"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:44:35.615316"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:44:35.887443"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:45:58.872222"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:45:59.126313"
+        },
+        {
+          "user": "ayam taliwang di gili",
+          "timestamp": "2025-11-17T06:46:33.184094"
+        },
+        {
+          "user": "ayam taliwang di gili",
+          "timestamp": "2025-11-17T06:46:33.325652"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:49:11.093200"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:49:11.208320"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'cari restoran pizza di kuta' dengan masakan pizza dan di kuta, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Sapori\n   Rating: 4.5/5.0 | Kecocokan: 79% \n   Delivery\n   Jenis masakan: ['Italian', 'Pizza', 'Cafe', 'Mediterranean', 'Neapolitan', 'Campania', 'Southern-Italian']\n  Sesuai preferensi Anda, masakan italian\n\n2. Mama Pizza Kuta Lombok\n   Rating: 4.5/5.0 | Kecocokan: 79% \n   Reservations\n   Jenis masakan: ['Italian', 'Pizza', 'Cafe', 'European', 'Neapolitan', 'Campania', 'Southern-Italian']\n  Sesuai preferensi Anda, masakan italian\n\n3. KRNK Restaurant & Bar\n   Rating: 4.5/5.0 | Kecocokan: 68%\n   KRNK Kuta Lombok is a restaurant bar that specialises in burgers, Pizza, cocktails and art. Inspired...\n   Jenis masakan: ['Bar', 'Pizza', 'International', 'Mediterranean', 'Grill']\n\n4. Warung Aldi's\n   Rating: 3.0/5.0 | Kecocokan: 67%\n   Warung Aldy's\n   Jenis masakan: ['Pizza', 'Indonesian']\n\n5. Kayangan Restaurant\n   Rating: 5.0/5.0 | Kecocokan: -4% \n   Located within the stunning Holiday Resort Lombok, Kayangan Restaurant offers a sophisticated dining...\n   Jenis masakan: ['Chinese', 'Pizza', 'Seafood', 'International', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood. Suasana romantis yang Anda suka\n\nAda budget khusus?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_94556303",
+      "timestamp": "2025-11-17T06:51:20.142373",
+      "messages": [
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:44:35.615316"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:44:35.887443"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:45:58.872222"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:45:59.126313"
+        },
+        {
+          "user": "ayam taliwang di gili",
+          "timestamp": "2025-11-17T06:46:33.184094"
+        },
+        {
+          "user": "ayam taliwang di gili",
+          "timestamp": "2025-11-17T06:46:33.325652"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:49:11.093200"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:49:11.208320"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:51:20.013648"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:51:20.131183"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'cari restoran pizza di kuta' dengan masakan pizza dan di kuta, saya menemukan 5 restoran terbaik (sesuai preferensi Anda):\n\n1. Sapori\n   Rating: 4.5/5.0 | Kecocokan: 79% \n   Delivery\n   Jenis masakan: ['Italian', 'Pizza', 'Cafe', 'Mediterranean', 'Neapolitan', 'Campania', 'Southern-Italian']\n  Sesuai preferensi Anda, masakan italian\n\n2. Mama Pizza Kuta Lombok\n   Rating: 4.5/5.0 | Kecocokan: 79% \n   Reservations\n   Jenis masakan: ['Italian', 'Pizza', 'Cafe', 'European', 'Neapolitan', 'Campania', 'Southern-Italian']\n  Sesuai preferensi Anda, masakan italian\n\n3. KRNK Restaurant & Bar\n   Rating: 4.5/5.0 | Kecocokan: 68%\n   KRNK Kuta Lombok is a restaurant bar that specialises in burgers, Pizza, cocktails and art. Inspired...\n   Jenis masakan: ['Bar', 'Pizza', 'International', 'Mediterranean', 'Grill']\n\n4. Warung Aldi's\n   Rating: 3.0/5.0 | Kecocokan: 67%\n   Warung Aldy's\n   Jenis masakan: ['Pizza', 'Indonesian']\n\n5. Kayangan Restaurant\n   Rating: 5.0/5.0 | Kecocokan: -4% \n   Located within the stunning Holiday Resort Lombok, Kayangan Restaurant offers a sophisticated dining...\n   Jenis masakan: ['Chinese', 'Pizza', 'Seafood', 'International', 'Indonesian']\n  Sesuai preferensi Anda, masakan seafood. Suasana romantis yang Anda suka\n\nAda budget khusus?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    },
+    {
+      "session_id": "session_94556303",
+      "timestamp": "2025-11-17T06:55:15.189570",
+      "messages": [
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:45:58.872222"
+        },
+        {
+          "user": "ayam taliwang di senggigi",
+          "timestamp": "2025-11-17T06:45:59.126313"
+        },
+        {
+          "user": "ayam taliwang di gili",
+          "timestamp": "2025-11-17T06:46:33.184094"
+        },
+        {
+          "user": "ayam taliwang di gili",
+          "timestamp": "2025-11-17T06:46:33.325652"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:49:11.093200"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:49:11.208320"
+        },
+        {
+          "user": "Cari restoran pizza di Kuta",
+          "timestamp": "2025-11-17T06:51:20.013648"
+        },
+        {
+          "user": "cari restoran pizza di kuta",
+          "timestamp": "2025-11-17T06:51:20.131183"
+        },
+        {
+          "user": "pizza di kuta",
+          "timestamp": "2025-11-17T06:55:15.000255"
+        },
+        {
+          "user": "pizza di kuta",
+          "timestamp": "2025-11-17T06:55:15.169868"
+        }
+      ],
+      "recommendations_given": "Berdasarkan pencarian 'pizza di kuta' dengan masakan pizza dan di kuta, saya menemukan 4 restoran terbaik (sesuai preferensi Anda):\n\n1. Sapori\n   Rating: 4.5/5.0 | Kecocokan: 79% \n   Delivery\n   Jenis masakan: ['Italian', 'Pizza', 'Cafe', 'Mediterranean', 'Neapolitan', 'Campania', 'Southern-Italian']\n  Sesuai preferensi Anda, masakan italian\n\n2. Mama Pizza Kuta Lombok\n   Rating: 4.5/5.0 | Kecocokan: 79% \n   Reservations\n   Jenis masakan: ['Italian', 'Pizza', 'Cafe', 'European', 'Neapolitan', 'Campania', 'Southern-Italian']\n  Sesuai preferensi Anda, masakan italian\n\n3. KRNK Restaurant & Bar\n   Rating: 4.5/5.0 | Kecocokan: 68%\n   KRNK Kuta Lombok is a restaurant bar that specialises in burgers, Pizza, cocktails and art. Inspired...\n   Jenis masakan: ['Bar', 'Pizza', 'International', 'Mediterranean', 'Grill']\n\n4. Warung Aldi's\n   Rating: 3.0/5.0 | Kecocokan: 67%\n   Warung Aldy's\n   Jenis masakan: ['Pizza', 'Indonesian']\n\nAda budget khusus?\nUntuk acara apa?\nAtau butuh info lebih detail?",
+      "user_feedback": {}
+    }
+  ],
+  "preferences": {
+    "preferred_cuisines": [
+      "italian",
+      "seafood"
+    ],
+    "preferred_locations": [
+      "kuta",
+      "senggigi",
+      "seminyak"
+    ],
+    "price_preference": "budget",
+    "mood_preferences": [
+      "romantic"
+    ],
+    "dietary_restrictions": []
+  },
+  "interaction_stats": {
+    "total_messages": 283,
+    "total_sessions": 29,
+    "favorite_restaurants": [],
+    "search_patterns": {}
+  },
+  "last_updated": "2025-11-17T06:55:15.191570",
+  "search_patterns": {
+    "seafood": 2,
+    "kuta": 4,
+    "apifavoriteadd": 1,
+    "tempat": 1,
+    "makan": 1,
+    "murah": 2,
+    "senggigi": 7,
+    "romantis": 1,
+    "ayam": 8,
+    "taliwang": 8,
+    "enak": 2,
+    "dimana": 1,
+    "gili": 2,
+    "pizza": 3
+  }
+}

@@ -126,14 +126,18 @@ def calculate_similarity_score(query_entities: Dict[str, List[str]],
                              restaurant: Restaurant) -> float:
     total_score = 0.0
     total_weight = 0.0
+    
     weights = {
-        'lokasi': 0.3,
-        'jenis_makanan': 0.25,
-        'menu': 0.2,
+        'lokasi': 0.25,
+        'jenis_makanan': 0.35,
+        'cuisine': 0.35,
+        'menu': 0.15,
         'preferensi': 0.15,
+        'preferences': 0.15,
         'fitur': 0.1
     }
-    if 'lokasi' in query_entities:
+    
+    if 'lokasi' in query_entities and query_entities['lokasi']:
         location_score = 0.0
         if restaurant.entitas_lokasi:
             for location in query_entities['lokasi']:
@@ -142,43 +146,63 @@ def calculate_similarity_score(query_entities: Dict[str, List[str]],
                     break
         total_score += location_score * weights['lokasi']
         total_weight += weights['lokasi']
-    if 'jenis_makanan' in query_entities:
-        cuisine_score = 0.0
-        restaurant_cuisines = [c.lower() for c in restaurant.entitas_jenis_makanan]
-        query_cuisines = [c.lower() for c in query_entities['jenis_makanan']]
-        matches = sum(1 for cuisine in query_cuisines if cuisine in restaurant_cuisines)
-        if query_cuisines:
-            cuisine_score = matches / len(query_cuisines)
-        total_score += cuisine_score * weights['jenis_makanan']
-        total_weight += weights['jenis_makanan']
-    if 'menu' in query_entities:
+    
+    cuisine_keys = ['jenis_makanan', 'cuisine']
+    for key in cuisine_keys:
+        if key in query_entities and query_entities[key]:
+            cuisine_score = 0.0
+            restaurant_cuisines = [c.lower() for c in restaurant.entitas_jenis_makanan]
+            query_cuisines = [c.lower() for c in query_entities[key]]
+            
+            matches = 0
+            for query_cuisine in query_cuisines:
+                for restaurant_cuisine in restaurant_cuisines:
+                    if query_cuisine == restaurant_cuisine or \
+                       query_cuisine in restaurant_cuisine or \
+                       restaurant_cuisine in query_cuisine:
+                        matches += 1
+                        break
+            
+            if query_cuisines:
+                cuisine_score = min(matches / len(query_cuisines), 1.0)
+            
+            total_score += cuisine_score * weights[key]
+            total_weight += weights[key]
+    
+    if 'menu' in query_entities and query_entities['menu']:
         menu_score = 0.0
         restaurant_menus = [m.lower() for m in restaurant.entitas_menu]
         query_menus = [m.lower() for m in query_entities['menu']]
-        matches = sum(1 for menu in query_menus if menu in restaurant_menus)
+        matches = sum(1 for menu in query_menus if any(menu in rest_menu or rest_menu in menu for rest_menu in restaurant_menus))
         if query_menus:
-            menu_score = matches / len(query_menus)
+            menu_score = min(matches / len(query_menus), 1.0)
         total_score += menu_score * weights['menu']
         total_weight += weights['menu']
-    if 'preferensi' in query_entities:
-        pref_score = 0.0
-        restaurant_prefs = [p.lower() for p in restaurant.entitas_preferensi]
-        query_prefs = [p.lower() for p in query_entities['preferensi']]
-        matches = sum(1 for pref in query_prefs if pref in restaurant_prefs)
-        if query_prefs:
-            pref_score = matches / len(query_prefs)
-        total_score += pref_score * weights['preferensi']
-        total_weight += weights['preferensi']
-    if 'fitur' in query_entities:
+    
+    pref_keys = ['preferensi', 'preferences']
+    for key in pref_keys:
+        if key in query_entities and query_entities[key]:
+            pref_score = 0.0
+            restaurant_prefs = [p.lower() for p in restaurant.entitas_preferensi]
+            query_prefs = [p.lower() for p in query_entities[key]]
+            matches = sum(1 for pref in query_prefs if any(pref in rest_pref or rest_pref in pref for rest_pref in restaurant_prefs))
+            if query_prefs:
+                pref_score = min(matches / len(query_prefs), 1.0)
+            total_score += pref_score * weights[key]
+            total_weight += weights[key]
+    
+    if 'fitur' in query_entities and query_entities['fitur']:
         feature_score = 0.0
         restaurant_features = [f.lower() for f in restaurant.entitas_features]
         query_features = [f.lower() for f in query_entities['fitur']]
-        matches = sum(1 for feature in query_features if feature in restaurant_features)
+        matches = sum(1 for feature in query_features if any(feature in rest_feat or rest_feat in feature for rest_feat in restaurant_features))
         if query_features:
-            feature_score = matches / len(query_features)
+            feature_score = min(matches / len(query_features), 1.0)
         total_score += feature_score * weights['fitur']
         total_weight += weights['fitur']
+    
     if total_weight > 0:
-        return total_score / total_weight
+        final_score = total_score / total_weight
+        return min(final_score, 1.0)
     else:
         return 0.0
