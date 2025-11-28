@@ -1,0 +1,15 @@
+# Backend Flask Dependencies
+Flask==3.0.0
+flask-cors==4.0.0
+flask-sqlalchemy==3.1.1
+SQLAlchemy==2.0.23
+
+# Untuk existing chatbot service
+pandas==2.1.3
+numpy==1.26.2
+scikit-learn==1.3.2
+Sastrawi==1.0.1
+unidecode==1.3.7
+
+# Optional - untuk production
+python-dotenv==1.0.0
