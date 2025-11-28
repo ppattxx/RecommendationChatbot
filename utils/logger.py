@@ -24,9 +24,11 @@ class ChatbotLogger:
             self.logger = logging.getLogger(self.name)
             self.logger.warning(f"Could not setup advanced logging config: {e}")
     def info(self, message: str, **kwargs):
-        self.logger.info(message, extra=kwargs)
+        pass
+    
     def debug(self, message: str, **kwargs):
-        self.logger.debug(message, extra=kwargs)
+        pass
+    
     def warning(self, message: str, **kwargs):
         self.logger.warning(message, extra=kwargs)
     def error(self, message: str, **kwargs):

@@ -75,15 +75,12 @@ class DeviceTokenService:
             with open(token_file, 'w', encoding='utf-8') as f:
                 json.dump(metadata, f, indent=2, ensure_ascii=False)
             
-            logger.info(f"Device token metadata saved: {token_file}")
-                
         except Exception as e:
             logger.error(f"Error saving token metadata for {token}: {e}")
             try:
                 self.tokens_dir.mkdir(parents=True, exist_ok=True)
                 with open(token_file, 'w', encoding='utf-8') as f:
                     json.dump(metadata, f, indent=2, ensure_ascii=False)
-                logger.info(f"Device token metadata saved on retry: {token_file}")
             except Exception as retry_error:
                 logger.error(f"Failed to save token metadata on retry: {retry_error}")
     
@@ -100,7 +97,6 @@ class DeviceTokenService:
                 with open(token_file, 'w', encoding='utf-8') as f:
                     json.dump(metadata, f, indent=2, ensure_ascii=False)
                 
-                logger.debug(f"Updated token activity: {token}")
             else:
                 logger.warning(f"Token file not found for update: {token_file}")
                 self._create_missing_token_file(token)
@@ -119,7 +115,6 @@ class DeviceTokenService:
                 'is_recreated': True
             }
             self._save_token_metadata(token, basic_device_info)
-            logger.info(f"Created missing token file: {token}")
         except Exception as e:
             logger.error(f"Failed to create missing token file: {e}")
     
@@ -213,12 +208,6 @@ class DeviceTokenService:
                 'user_feedback': session_data.get('feedback', {})
             }
             
-            print(session_entry['messages'])
-            print(session_entry['timestamp'])
-            print(session_entry['recommendations_given'])
-            print(session_entry['user_feedback'])
-            print(session_entry['session_id'])
-
             history['chat_sessions'].append(session_entry)
             history['interaction_stats']['total_sessions'] += 1
             history['interaction_stats']['total_messages'] += len(session_entry['messages'])
@@ -299,25 +288,21 @@ class DeviceTokenService:
             return {}
     
     def add_favorite_restaurant(self, device_token: str, restaurant_id: str, restaurant_name: str = None):
-        """Add a restaurant to user's favorites"""
         try:
             history = self.get_or_create_user_history(device_token)
             preferences = history.get('preferences', {})
             
             favorite_restaurants = preferences.get('favorite_restaurants', [])
             
-            # Add if not already in favorites
             if restaurant_id not in favorite_restaurants:
                 favorite_restaurants.append(restaurant_id)
-                preferences['favorite_restaurants'] = favorite_restaurants[-10:]  # Keep last 10
+                preferences['favorite_restaurants'] = favorite_restaurants[-10:]
                 
                 history['preferences'] = preferences
                 self._save_user_history(device_token, history)
                 
-                logger.info(f"Added restaurant {restaurant_id} ({restaurant_name}) to favorites for {device_token}")
                 return True
             else:
-                logger.info(f"Restaurant {restaurant_id} already in favorites")
                 return False
                 
         except Exception as e:
@@ -325,7 +310,6 @@ class DeviceTokenService:
             return False
     
     def remove_favorite_restaurant(self, device_token: str, restaurant_id: str):
-        """Remove a restaurant from user's favorites"""
         try:
             history = self.get_or_create_user_history(device_token)
             preferences = history.get('preferences', {})
@@ -339,10 +323,8 @@ class DeviceTokenService:
                 history['preferences'] = preferences
                 self._save_user_history(device_token, history)
                 
-                logger.info(f"Removed restaurant {restaurant_id} from favorites for {device_token}")
                 return True
             else:
-                logger.info(f"Restaurant {restaurant_id} not in favorites")
                 return False
                 
         except Exception as e:
@@ -350,7 +332,6 @@ class DeviceTokenService:
             return False
     
     def get_favorite_restaurants(self, device_token: str) -> list:
-        """Get list of user's favorite restaurant IDs"""
         try:
             history = self.get_or_create_user_history(device_token)
             preferences = history.get('preferences', {})
@@ -379,8 +360,6 @@ class DeviceTokenService:
                         if history_file.exists():
                             history_file.unlink()
                             
-                        logger.info(f"Cleaned up old token: {token_name}")
-                        
                 except Exception as e:
                     logger.error(f"Error processing token file {token_file}: {e}")
                     
@@ -554,7 +533,6 @@ class DeviceTokenService:
     def update_user_preferences_from_interaction(self, device_token: str, user_query: str, selected_restaurant: Dict = None):
 
         try:
-            logger.info(f"Updating preferences for device_token: {device_token}, query: '{user_query}'")
             
             new_cuisines = self._extract_cuisines(user_query.lower())
             new_locations = self._extract_locations(user_query.lower())
@@ -562,39 +540,40 @@ class DeviceTokenService:
             new_dietary = self._extract_dietary_restrictions(user_query.lower())
             new_price = self._extract_price_preferences(user_query.lower())
             
-            logger.info(f"Extracted - cuisines: {new_cuisines}, locations: {new_locations}, moods: {new_moods}, dietary: {new_dietary}, price: {new_price}")
-            
             history = self.get_or_create_user_history(device_token)
             current_prefs = history.get('preferences', {})
             
-            # Track search patterns (keywords frequency)
             self._update_search_patterns(history, user_query)
             
-            logger.info(f"Current preferences before update: {current_prefs}")
-            
-            if new_cuisines:
-                current_cuisines = current_prefs.get('preferred_cuisines', [])
-                for cuisine in new_cuisines:
-                    if cuisine not in current_cuisines:
-                        current_cuisines.append(cuisine)
-                current_prefs['preferred_cuisines'] = current_cuisines[:5]  # Keep top 5
-                logger.info(f"Updated cuisines: {current_prefs['preferred_cuisines']}")
-            
-            if new_locations:
-                current_locations = current_prefs.get('preferred_locations', [])
-                for location in new_locations:
-                    if location not in current_locations:
-                        current_locations.append(location)
-                current_prefs['preferred_locations'] = current_locations[:3] 
-                logger.info(f"Updated locations: {current_prefs['preferred_locations']}")
-            
-            if new_moods:
-                current_moods = current_prefs.get('mood_preferences', [])
-                for mood in new_moods:
-                    if mood not in current_moods:
-                        current_moods.append(mood)
-                current_prefs['mood_preferences'] = current_moods
-                logger.info(f"Updated moods: {current_prefs['mood_preferences']}")
+            if new_cuisines or new_locations or new_moods:
+                cuisine_counts = {}
+                location_counts = {}
+                mood_counts = {}
+                
+                for session in history.get('chat_sessions', []):
+                    for message in session.get('messages', []):
+                        user_query = message.get('user', '').lower()
+                        
+                        for cuisine in self._extract_cuisines(user_query):
+                            cuisine_counts[cuisine] = cuisine_counts.get(cuisine, 0) + 1
+                        
+                        for location in self._extract_locations(user_query):
+                            location_counts[location] = location_counts.get(location, 0) + 1
+                        
+                        for mood in self._extract_mood_preferences(user_query):
+                            mood_counts[mood] = mood_counts.get(mood, 0) + 1
+                
+                if cuisine_counts:
+                    current_prefs['preferred_cuisines'] = [cuisine for cuisine, count in 
+                                                           sorted(cuisine_counts.items(), key=lambda x: x[1], reverse=True)[:5]]
+                
+                if location_counts:
+                    current_prefs['preferred_locations'] = [location for location, count in 
+                                                            sorted(location_counts.items(), key=lambda x: x[1], reverse=True)[:3]]
+                
+                if mood_counts:
+                    current_prefs['mood_preferences'] = [mood for mood, count in 
+                                                         sorted(mood_counts.items(), key=lambda x: x[1], reverse=True)[:5]]
             
             if new_dietary:
                 current_dietary = current_prefs.get('dietary_restrictions', [])
@@ -602,11 +581,9 @@ class DeviceTokenService:
                     if diet not in current_dietary:
                         current_dietary.append(diet)
                 current_prefs['dietary_restrictions'] = current_dietary
-                logger.info(f"Updated dietary restrictions: {current_prefs['dietary_restrictions']}")
             
             if new_price:
                 current_prefs['price_preference'] = new_price[-1]
-                logger.info(f"Updated price preference: {current_prefs['price_preference']}")
             
             if selected_restaurant:
                 fav_restaurants = current_prefs.get('favorite_restaurants', [])
@@ -616,9 +593,7 @@ class DeviceTokenService:
                     current_prefs['favorite_restaurants'] = fav_restaurants[-10:]  
             
             history['preferences'] = current_prefs
-            logger.info(f"Final preferences after update: {current_prefs}")
             self._save_user_history(device_token, history)
-            logger.info(f"Preferences saved successfully for device_token: {device_token}")
             
         except Exception as e:
             logger.error(f"Error updating user preferences: {e}")
@@ -640,31 +615,26 @@ class DeviceTokenService:
         return list(set(dietary_keywords))
     
     def _update_search_patterns(self, history: Dict, user_query: str):
-        """Track keyword frequency from user queries"""
         try:
-            # Stopwords to ignore
+
             stopwords = {'cari', 'restoran', 'restaurant', 'mau', 'aku', 'saya', 'di', 'yang', 'untuk', 
                         'dengan', 'dan', 'atau', 'ke', 'dari', 'ini', 'itu', 'ada', 'butuh', 'ingin'}
             
-            # Extract meaningful keywords
             words = user_query.lower().split()
             search_patterns = history.get('search_patterns', {})
             
             for word in words:
-                # Clean word (remove punctuation)
+
                 word = ''.join(c for c in word if c.isalnum())
                 
-                # Only track words >= 3 characters and not stopwords
                 if len(word) >= 3 and word not in stopwords:
                     search_patterns[word] = search_patterns.get(word, 0) + 1
             
-            # Keep only top 20 most frequent patterns
             if len(search_patterns) > 20:
                 sorted_patterns = sorted(search_patterns.items(), key=lambda x: x[1], reverse=True)
                 search_patterns = dict(sorted_patterns[:20])
             
             history['search_patterns'] = search_patterns
-            logger.info(f"Updated search patterns: {search_patterns}")
             
         except Exception as e:
             logger.error(f"Error updating search patterns: {e}")

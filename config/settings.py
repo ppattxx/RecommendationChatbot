@@ -18,13 +18,13 @@ MODEL_CONFIG = {
     },
     "similarity": {
         "metric": "cosine",
-        "threshold": 0.01  # Lowered from 0.1 to be more lenient after TF-IDF optimization
+        "threshold": 0.01
     }
 }
 RECOMMENDATION_CONFIG = {
     "default_top_n": 5,
     "max_recommendations": 10,
-    "min_similarity_score": 0.05,  # Lowered from 0.15 to be more lenient after removing about field preprocessing
+    "min_similarity_score": 0.05,
     "enable_learning": True
 }
 ENTITY_BONUS_WEIGHTS = {

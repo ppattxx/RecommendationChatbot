@@ -54,7 +54,6 @@ class SessionManager:
         
         greeting = "Halo! Saya siap membantu Anda mencari restoran yang pas!\\n\\nCeritakan apa yang Anda inginkan, misalnya:\\n- 'Cari pizza enak di Kuta'\\n- 'Restoran seafood murah'\\n- 'Tempat romantis untuk dinner'"
         
-        logger.info(f"Created new session {session_id} for device {device_token}")
         return session_id, greeting
     
     def get_session(self, session_id: str) -> Optional[Dict]:
@@ -95,7 +94,6 @@ class SessionManager:
         device_token = session_info['device_token']
         session_data = session_info['session_data']
         
-        # Get fresh history data to avoid overwriting recent updates (like preferences)
         history_data = self.device_token_service.get_or_create_user_history(device_token)
         
         new_message = {
@@ -109,7 +107,6 @@ class SessionManager:
         history_data['interaction_stats']['total_messages'] += 1
         history_data['last_updated'] = datetime.now().isoformat()
         
-        # Update the session data in history
         found_session = False
         for chat_session in history_data.get('chat_sessions', []):
             if chat_session.get('session_id') == session_id:
@@ -120,7 +117,7 @@ class SessionManager:
                 break
         
         if not found_session:
-            # Add new session if not found
+
             if 'chat_sessions' not in history_data:
                 history_data['chat_sessions'] = []
             history_data['chat_sessions'].append({
@@ -133,11 +130,9 @@ class SessionManager:
         
         self._save_user_history(device_token, history_data)
         
-        # Update memory session with fresh data
         session_info['history_data'] = history_data
         self.memory_sessions[session_id] = session_info
         
-        logger.debug(f"Updated session {session_id} with new message")
         return True
     
     def get_active_session_for_device(self, device_token: str) -> Optional[str]:
@@ -233,7 +228,6 @@ class SessionManager:
                     history_data['last_updated'] = datetime.now().isoformat()
                     with open(history_file, 'w', encoding='utf-8') as f:
                         json.dump(history_data, f, indent=2, ensure_ascii=False)
-                    logger.info(f"Cleaned up {cleaned_count} old sessions from {history_file}")
                     
             except Exception as e:
                 logger.error(f"Error cleaning up history file {history_file}: {e}")

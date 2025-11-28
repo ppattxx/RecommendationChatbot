@@ -16,7 +16,6 @@ class DataLoader:
             if not file_path.exists():
                 raise FileNotFoundError(f"File {file_path} not found")
             df = pd.read_csv(file_path)
-            logger.info(f"Loaded {len(df)} restaurants from {file_path}")
             return df
         except Exception as e:
             logger.error(f"Error loading restaurants CSV: {e}")
@@ -29,7 +28,6 @@ class DataLoader:
             if not file_path.exists():
                 raise FileNotFoundError(f"File {file_path} not found")
             df = pd.read_csv(file_path)
-            logger.info(f"Loaded {len(df)} processed restaurants from {file_path}")
             return df
         except Exception as e:
             logger.error(f"Error loading processed restaurants: {e}")
@@ -82,7 +80,6 @@ class DataLoader:
             except Exception as e:
                 logger.warning(f"Error parsing restaurant row {row.get('id', 'unknown')}: {e}")
                 continue
-        logger.info(f"Converted {len(restaurants)} restaurants to objects")
         return restaurants
 
 class DataValidator:

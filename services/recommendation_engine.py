@@ -28,10 +28,8 @@ class ContentBasedRecommendationEngine:
     @timing_decorator
     def _initialize_engine(self):
         try:
-            logger.info("Initializing recommendation engine...")
             self._load_data()
             self._build_tfidf_model()
-            logger.info("Recommendation engine initialized successfully")
         except Exception as e:
             logger.error(f"Failed to initialize recommendation engine: {e}")
             raise
@@ -39,14 +37,11 @@ class ContentBasedRecommendationEngine:
         try:
             self.restaurants_df = DataLoader.load_processed_restaurants(self.data_path)
             self.restaurants_objects = DataLoader.restaurants_df_to_objects(self.restaurants_df)
-            logger.info(f"Loaded {len(self.restaurants_objects)} restaurants")
         except Exception as e:
             logger.error(f"Error loading restaurant data: {e}")
             raise
     def _build_tfidf_model(self):
         try:
-            logger.info("Building TF-IDF model...")
-            print("DEBUG: Starting TF-IDF model building...")
             content_texts = []
             for idx, row in self.restaurants_df.iterrows():
                 content_parts = []
@@ -75,7 +70,6 @@ class ContentBasedRecommendationEngine:
                 combined_content = ' '.join(content_parts).lower()
                 content_texts.append(combined_content)
             
-            print(f"DEBUG: Processed {len(content_texts)} restaurants content")
             self.tfidf_vectorizer = TfidfVectorizer(
                 max_features=self.model_config['tfidf']['max_features'],
                 min_df=self.model_config['tfidf']['min_df'],
@@ -84,7 +78,6 @@ class ContentBasedRecommendationEngine:
                 stop_words=None
             )
             self.tfidf_matrix = self.tfidf_vectorizer.fit_transform(content_texts)
-            logger.info(f"TF-IDF model built with {self.tfidf_matrix.shape[1]} features")
         except Exception as e:
             logger.error(f"Error building TF-IDF model: {e}")
             raise
@@ -110,18 +103,14 @@ class ContentBasedRecommendationEngine:
             entity_recommendations = self._get_entity_based_recommendations(
                 query_result.entities, top_n * 2
             )
-            logger.debug(f"Entity-based recommendations: {len(entity_recommendations)}")
             recommendations.extend(entity_recommendations)
             tfidf_recommendations = self._get_tfidf_recommendations(
                 user_query, top_n * 2
             )
-            logger.debug(f"TF-IDF recommendations: {len(tfidf_recommendations)}")
             recommendations.extend(tfidf_recommendations)
-            logger.debug(f"Total before combining: {len(recommendations)}")
             final_recommendations = self._combine_and_rank_recommendations(
                 recommendations, top_n
             )
-            logger.info(f"Generated {len(final_recommendations)} recommendations for query: '{user_query}'")
             return final_recommendations
         except Exception as e:
             logger.error(f"Error generating recommendations: {e}")

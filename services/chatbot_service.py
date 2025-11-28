@@ -10,6 +10,7 @@ from services.recommendation_engine import ContentBasedRecommendationEngine
 from utils.session_manager import SessionManager
 from config.settings import RESTAURANTS_ENTITAS_CSV
 from utils.logger import get_logger
+from utils.entity_builder import EntityBuilder
 
 logger = get_logger("chatbot_service")
 
@@ -21,6 +22,9 @@ class ChatbotService:
         self.device_token_service = DeviceTokenService()
         self.session_manager = SessionManager(device_token_service=self.device_token_service)
         self.recommendation_engine = ContentBasedRecommendationEngine(data_path=self.data_path)
+        
+        self.entity_builder = EntityBuilder(data_path=self.data_path)
+        self.entity_patterns = None
         
         self._load_restaurant_data()
     def _load_restaurant_data(self):
@@ -35,7 +39,6 @@ class ChatbotService:
                     if fallback_file.exists():
                         self.restaurants_data = pd.read_csv(fallback_file)
                         break
-            logger.info(f"Loaded {len(self.restaurants_data) if self.restaurants_data is not None else 0} restaurants for display")
         except Exception as e:
             logger.error(f"Error loading restaurant data: {e}")
             self.restaurants_data = None
@@ -79,7 +82,6 @@ class ChatbotService:
             session_info = self.session_manager.get_session(session_id)
             
             if not session_info:
-                print(f"Warning: Session {session_id} not found or expired")
                 return "Maaf, sesi Anda telah berakhir. Silakan mulai percakapan baru."
             
             if session_id not in self.sessions:
@@ -98,16 +100,14 @@ class ChatbotService:
             
             message = message.lower().strip()
         except Exception as e:
-            print(f"Error in process_message initialization: {e}")
             return "Maaf, terjadi kesalahan sistem. Silakan coba lagi."
         
-        # Filter invalid inputs (API endpoints, technical terms, gibberish)
         invalid_patterns = [
-            r'^/api/',           # API endpoints
-            r'^\w+\.\w+',        # file.extension
-            r'^http[s]?://',     # URLs
-            r'^[^a-zA-Z0-9\s]{5,}',  # Too many special chars
-            r'^\d{10,}$'         # Long numbers only
+            r'^/api/',
+            r'^\w+\.\w+',
+            r'^http[s]?://',
+            r'^[^a-zA-Z0-9\s]{5,}',
+            r'^\d{10,}$'
         ]
         
         for pattern in invalid_patterns:
@@ -133,7 +133,6 @@ class ChatbotService:
         
         try:
             intent, entities = self._extract_intent_and_entities(message)
-            print(f"Intent: {intent}, Entities: {entities}")
             
             if intent == 'restaurant_search':
                 bot_response = self._get_restaurant_recommendations_nlp(message, entities, session_id)
@@ -148,7 +147,6 @@ class ChatbotService:
             return bot_response
                 
         except Exception as e:
-            print(f"Error in processing intent/entities: {e}")
             fallback_entities = {'cuisine': [], 'location': [], 'price': []}
             bot_response = self._get_restaurant_recommendations_nlp(message, fallback_entities, session_id)
             
@@ -184,7 +182,6 @@ class ChatbotService:
             return "".join(greeting_parts)
             
         except Exception as e:
-            print(f"Error generating personalized greeting: {e}")
             return "Selamat datang kembali! Mari lanjutkan percakapan kita."
     
     def _get_greeting_response(self):
@@ -213,6 +210,7 @@ Perintah Lain:
 • "help" - Menampilkan bantuan ini
 
 Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berikan!""" 
+    
     def _extract_intent_and_entities(self, message: str):
         entities = {
             'cuisine': [],
@@ -221,43 +219,77 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
             'price': [],
             'restaurant_name': ''
         }
-        cuisine_patterns = {
-            'pizza': ['pizza', 'pizzeria'],
-            'seafood': ['seafood', 'sea food', 'ikan', 'udang', 'kepiting'],
-            'sushi': ['sushi', 'japanese', 'jepang'],
-            'italian': ['italian', 'italia', 'pasta'],
-            'chinese': ['chinese', 'china', 'dim sum'],
-            'local': ['local', 'lokal', 'tradisional', 'nusantara'],
-            'western': ['western', 'barat', 'steak', 'burger']
-        }
-        location_patterns = {
-            'kuta': ['kuta'],
-            'gili_trawangan': ['gili trawangan', 'trawangan', 'gili'],
-            'senggigi': ['senggigi'],
-            'mataram': ['mataram'],
-            'gili_air': ['gili air'],
-            'gili_meno': ['gili meno']
-        }
-        mood_patterns = {
-            'romantic': ['romantis', 'romantic', 'dinner', 'malam'],
-            'family': ['keluarga', 'family', 'anak', 'kids'],
-            'casual': ['santai', 'casual', 'biasa'],
-            'beachside': ['tepi pantai', 'beach', 'pantai']
-        }
+        
+        if self.entity_patterns is None:
+            self.entity_patterns = self.entity_builder.get_flattened_patterns()
+        
+        message_lower = message.lower()
+        
+        matched_tokens = set()
+        
+        for location in sorted(self.entity_patterns['location'], key=len, reverse=True):
+            if re.search(r'\b' + re.escape(location) + r'\b', message_lower):
+                if location not in entities['location']:
+                    entities['location'].append(location)
+                    matched_tokens.add(location)
+                    for word in location.split():
+                        matched_tokens.add(word)
+                    break
+        
+        for cuisine in sorted(self.entity_patterns['cuisine'], key=len, reverse=True):
+            if cuisine in matched_tokens:
+                continue
+            if re.search(r'\b' + re.escape(cuisine) + r'\b', message_lower):
+                if cuisine not in entities['cuisine']:
+                    entities['cuisine'].append(cuisine)
+                    matched_tokens.add(cuisine)
+                    for word in cuisine.split():
+                        matched_tokens.add(word)
+        
+        if not entities['cuisine']:
+            for menu_item in sorted(self.entity_patterns['menu'], key=len, reverse=True):
+                if menu_item in matched_tokens:
+                    continue
+                if re.search(r'\b' + re.escape(menu_item) + r'\b', message_lower):
+                    if menu_item not in entities['cuisine']:
+                        entities['cuisine'].append(menu_item)
+                        matched_tokens.add(menu_item)
+                        for word in menu_item.split():
+                            matched_tokens.add(word)
+        
+        food_related_keywords = ['pizza', 'pasta', 'burger', 'sushi', 'ramen', 'noodle', 'rice', 
+                                  'chicken', 'beef', 'pork', 'fish', 'seafood', 'vegetarian', 'vegan',
+                                  'taco', 'tacos', 'burrito', 'sandwich', 'salad', 'soup', 'curry',
+                                  'steak', 'bbq', 'barbecue', 'grill', 'fried', 'bakery', 'dessert']
+        
+        for mood in sorted(self.entity_patterns['mood'], key=len, reverse=True):
+            if mood in matched_tokens:
+                continue
+            skip_mood = False
+            for token in matched_tokens:
+                if mood in token or token in mood:
+                    skip_mood = True
+                    break
+            if skip_mood:
+                continue
+            
+            if not re.search(r'\b' + re.escape(mood) + r'\b', message_lower):
+                continue
+            
+            if mood.lower() in food_related_keywords:
+                if mood not in entities['cuisine']:
+                    entities['cuisine'].append(mood)
+            else:
+                if mood not in entities['mood']:
+                    entities['mood'].append(mood)
+        
         price_patterns = {
             'cheap': ['murah', 'terjangkau', 'budget'],
             'expensive': ['mahal', 'mewah', 'premium']
         }
-        for category, pattern_dict in [
-            ('cuisine', cuisine_patterns),
-            ('location', location_patterns), 
-            ('mood', mood_patterns),
-            ('price', price_patterns)
-        ]:
-            for entity, patterns in pattern_dict.items():
-                for pattern in patterns:
-                    if pattern in message:
-                        entities[category].append(entity)
+        for price_type, keywords in price_patterns.items():
+            if any(kw in message_lower for kw in keywords):
+                entities['price'].append(price_type)
         if 'restoran' in message or 'restaurant' in message:
             words = message.split()
             for i, word in enumerate(words):
@@ -273,7 +305,6 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
             return "Maaf, data restoran belum tersedia. Silakan coba lagi nanti."
         
         try:
-            logger.info(f"Getting recommendations for query: '{query}'")
             
             recommendations_objects = self.recommendation_engine.get_recommendations(query, top_n=15)
             
@@ -302,14 +333,16 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
                     restaurant_data = self._extract_restaurant_data(restaurant_row)
                     preference_boost = self.device_token_service.get_personalized_boost(device_token, restaurant_data)
                 
-                rating_factor = float(restaurant_row.get('rating', 0)) / 50.0
+                rating = float(restaurant_row.get('rating', 0))
+                rating_factor = (rating / 5.0) * 0.5
                 
-                total_score = rec_obj.similarity_score + bonus_score + (preference_boost * 1.5) + rating_factor
+                reviews_count = int(restaurant_row.get('reviews_count', 0))
+                popularity_factor = min(reviews_count / 1000.0, 0.3)
                 
-                # Debug logging for location filtering
+                total_score = rec_obj.similarity_score + bonus_score + (preference_boost * 1.5) + rating_factor + popularity_factor
+                
                 if entities.get('location'):
                     restaurant_location = restaurant_row['entitas_lokasi'] if 'entitas_lokasi' in restaurant_row.index else 'UNKNOWN'
-                    print(f"DEBUG {restaurant_row['name']}: location={restaurant_location}, bonus={bonus_score:.2f}, pref={preference_boost:.2f}, total={total_score:.2f}")
                 
                 recommendations.append({
                     'restaurant': restaurant_row,
@@ -324,36 +357,29 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
             if not recommendations:
                 logger.warning("No matching restaurants found in DataFrame")
                 return self._get_smart_fallback_response(query, entities)
-            
-            # CRITICAL: Filter out restaurants with negative scores (location mismatch penalty)
-            # If user specified a location, only show restaurants from that location
             if entities.get('location'):
                 initial_count = len(recommendations)
                 recommendations = [rec for rec in recommendations if rec['total_score'] > 0]
                 filtered_count = initial_count - len(recommendations)
-                if filtered_count > 0:
-                    logger.info(f"Filtered out {filtered_count} restaurants with negative scores (wrong location)")
             
             if not recommendations:
                 logger.warning("No recommendations after filtering negative scores")
                 return self._get_smart_fallback_response(query, entities)
             
-            logger.info(f"ContentBasedRecommendationEngine returned {len(recommendations)} recommendations")
-            
             if device_token:
                 self.device_token_service.update_user_preferences_from_interaction(device_token, query)
             
-            # Sort with multiple tie-breakers:
-            # 1. Total score (highest first)
-            # 2. Preference boost (personalized recs first)
-            # 3. Rating (highest first)
-            # 4. Similarity score (most relevant first)
+            for rec in recommendations:
+                rec['tie_breaker'] = random.random() * 0.01
+            
             recommendations.sort(
                 key=lambda x: (
                     x['total_score'], 
                     x.get('preference_boost', 0),
                     x['restaurant'].get('rating', 0),
-                    x.get('similarity', 0)
+                    x['restaurant'].get('reviews_count', 0),
+                    x.get('similarity', 0),
+                    x.get('tie_breaker', 0)
                 ), 
                 reverse=True
             )
@@ -369,11 +395,10 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
             return self._get_smart_fallback_response(query, entities)
     def _calculate_entity_bonus(self, restaurant, entities):
         bonus = 0.0
+        match_count = 0
         
-        # Location matching is CRITICAL - apply strong bonus/penalty
         location_match = False
         if entities.get('location'):
-            # FIX: Column name is 'entitas_lokasi' not 'location'
             restaurant_location = restaurant['entitas_lokasi'] if 'entitas_lokasi' in restaurant.index else None
             
             if pd.notna(restaurant_location):
@@ -381,23 +406,26 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
                 for location in entities['location']:
                     location_normalized = location.replace('_', ' ')
                     if location_normalized in location_text:
-                        bonus += 1.5  # Strong bonus for location match
+                        bonus += 2.0
                         location_match = True
+                        match_count += 1
                         break
                 
-                # PENALTY: If user specified location but restaurant is in different location
                 if not location_match:
-                    bonus -= 2.0  # Strong penalty for location mismatch
+                    bonus -= 3.0
         
-        # Cuisine matching
+        cuisine_matches = 0
         for cuisine in entities.get('cuisine', []):
             restaurant_cuisines = restaurant['cuisines'] if 'cuisines' in restaurant.index else None
             if pd.notna(restaurant_cuisines):
                 cuisine_text = str(restaurant_cuisines).lower()
                 if cuisine.replace('_', ' ') in cuisine_text:
-                    bonus += 0.3
+                    cuisine_matches += 1
+                    match_count += 1
         
-        # Price matching
+        if cuisine_matches > 0:
+            bonus += 0.5 + (cuisine_matches * 0.2)
+        
         if entities.get('price'):
             restaurant_price = restaurant['price_range'] if 'price_range' in restaurant.index else None
             if pd.notna(restaurant_price):
@@ -436,7 +464,6 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
                     if rec['preference_boost'] > 0.1:
                         personalized_group.append(rec)
                 
-                # Get IDs of personalized restaurants for comparison
                 personalized_ids = {r.get('restaurant_id') for r in personalized_group}
                 
                 for rec in group:
@@ -464,24 +491,37 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
         return final_recommendations
     
     def _format_recommendations_nlp(self, recommendations, query, entities, session_id: str = None):
-        entity_summary = []
-        if entities.get('cuisine'):
-            entity_summary.append(f"masakan {', '.join(entities['cuisine'])}")
-        if entities.get('location'):
-            entity_summary.append(f"di {', '.join(entities['location'])}")
-        if entities.get('mood'):
-            entity_summary.append(f"suasana {', '.join(entities['mood'])}")
-        if entities.get('price'):
-            entity_summary.append(f"harga {', '.join(entities['price'])}")
-        
-        context = " dengan " + " dan ".join(entity_summary) if entity_summary else ""
-        
         has_personal_recs = any(rec.get('preference_boost', 0) > 0.1 for rec in recommendations)
         
-        response = f"Berdasarkan pencarian '{query}'{context}, saya menemukan {len(recommendations)} restoran terbaik"
-        if has_personal_recs:
-            response += " (sesuai preferensi Anda)"
-        response += ":\n\n"
+        device_token = None
+        if session_id and session_id in self.sessions:
+            device_token = self.sessions[session_id].get('device_token')
+        
+        response = ""
+        
+        if has_personal_recs and device_token:
+            history = self.device_token_service.get_or_create_user_history(device_token)
+            preferences = history.get('preferences', {})
+            
+            pref_parts = []
+            if preferences.get('preferred_cuisines'):
+                top_cuisines = preferences['preferred_cuisines'][:3]
+                pref_parts.append(f"masakan {', '.join(top_cuisines)}")
+            if preferences.get('preferred_locations'):
+                top_locations = preferences['preferred_locations'][:2]
+                pref_parts.append(f"area {', '.join(top_locations)}")
+            if preferences.get('mood_preferences'):
+                top_moods = preferences['mood_preferences'][:2]
+                pref_parts.append(f"suasana {', '.join(top_moods)}")
+            
+            if pref_parts:
+                response = f"Berdasarkan preferensi Anda ({', '.join(pref_parts)}), "
+            else:
+                response = f"Berdasarkan pencarian '{query}', "
+        else:
+            response = f"Berdasarkan pencarian '{query}', "
+        
+        response += f"saya menemukan {len(recommendations)} restoran terbaik untuk Anda:\n\n"
         
         for i, rec in enumerate(recommendations, 1):
             restaurant = rec['restaurant']
@@ -497,17 +537,6 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
                 response += f"   Rating: {rating}/5.0"
             else:
                 response += f"   Rating: Belum tersedia"
-            
-            # Calculate match percentage properly
-            # similarity is 0-1 from cosine similarity
-            # bonus_score can be: 
-            #   - Location match: +1.5
-            #   - Cuisine match: +0.3
-            #   - Price match: +0.2
-            #   - Max positive bonus: 1.5 + 0.3 + 0.2 = 2.0
-            # preference_boost is 0-0.75 typically
-            # rating_factor is 0-0.1 (rating/50)
-            # Total max realistic score: 1 (similarity) + 2.0 (bonus) + 1.125 (preference*1.5) + 0.1 (rating) = 4.225
             max_realistic_score = 4.225
             normalized_total = min(total_score / max_realistic_score, 1.0)
             match_percentage = min(int(normalized_total * 100), 100)
@@ -621,7 +650,6 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
             return response
             
         except Exception as e:
-            print(f"Error in fallback response: {e}")
             return "Maaf, saya tidak dapat memproses permintaan Anda saat ini. Silakan coba dengan kata kunci yang lebih sederhana seperti 'pizza Kuta' atau 'seafood murah'."
     def get_conversation_history(self, session_id: str):
         return []
@@ -729,7 +757,7 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
         try:
             self.session_manager.update_session(session_id, user_message, bot_response)
         except Exception as e:
-            print(f"Error saving conversation to session: {e}")
+            pass
     
     def _get_personal_recommendation_reason(self, device_token: str, restaurant) -> str:
         try:
@@ -741,43 +769,61 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
             restaurant_cuisines = str(restaurant.get('cuisines', '')).lower()
             preferred_cuisines = preferences.get('preferred_cuisines', [])
             matching_cuisines = []
-            for cuisine in preferred_cuisines:
+            for cuisine in preferred_cuisines[:5]:
                 if cuisine.lower() in restaurant_cuisines:
                     matching_cuisines.append(cuisine)
             
             if matching_cuisines:
-                if len(matching_cuisines) == 1:
-                    reasons.append(f"Sesuai preferensi Anda, masakan {matching_cuisines[0]}")
+                reasons.append(f"Anda sering mencari {', '.join(matching_cuisines[:2])}")
+            
+            restaurant_location = str(restaurant.get('entitas_lokasi', '')).lower()
+            preferred_locations = preferences.get('preferred_locations', [])
+            matched_fav_location = None
+            if preferred_locations:
+                for i, location in enumerate(preferred_locations[:3]):
+                    if location.lower() in restaurant_location:
+                        matched_fav_location = (location, i + 1)
+                        break
+            
+            if matched_fav_location:
+                location_name, rank = matched_fav_location
+                if rank == 1:
+                    reasons.append(f"Lokasi favorit #1 Anda: {location_name}")
+                elif rank == 2:
+                    reasons.append(f"Area yang sering Anda cari: {location_name}")
                 else:
-                    reasons.append(f"Sesuai preferensi Anda, masakan {', '.join(matching_cuisines)}")
+                    reasons.append(f"Sesuai preferensi lokasi: {location_name}")
             
             restaurant_about = str(restaurant.get('about', '')).lower()
+            restaurant_features = str(restaurant.get('entitas_features', '')).lower()
             mood_preferences = preferences.get('mood_preferences', [])
             matching_moods = []
             
             mood_indicators = {
-                'romantic': ['romantic', 'couple', 'intimate', 'cozy'],
-                'family': ['family', 'kids', 'children', 'playground'],
-                'casual': ['casual', 'relax', 'laid-back', 'informal'],
-                'formal': ['formal', 'elegant', 'fine dining', 'upscale'],
-                'scenic': ['view', 'beach', 'sunset', 'ocean', 'garden']
+                'romantic': ['romantic', 'couple', 'intimate', 'cozy', 'romantis'],
+                'family': ['family', 'kids', 'children', 'playground', 'keluarga'],
+                'casual': ['casual', 'relax', 'laid-back', 'informal', 'santai'],
+                'formal': ['formal', 'elegant', 'fine dining', 'upscale', 'mewah'],
+                'scenic': ['view', 'beach', 'sunset', 'ocean', 'garden', 'pemandangan']
             }
             
-            for mood in mood_preferences:
-                if mood in mood_indicators:
-                    if any(indicator in restaurant_about for indicator in mood_indicators[mood]):
+            for mood in mood_preferences[:3]:
+                mood_lower = mood.lower()
+                if mood_lower in mood_indicators:
+                    if any(indicator in restaurant_about or indicator in restaurant_features 
+                           for indicator in mood_indicators[mood_lower]):
                         matching_moods.append(mood)
             
             if matching_moods:
-                if 'family' in matching_moods:
-                    reasons.append("Cocok untuk acara keluarga")
-                if 'romantic' in matching_moods:
-                    reasons.append("Suasana romantis yang Anda suka")
+                reasons.append(f"Sesuai preferensi suasana: {', '.join(matching_moods[:2])}")
             
-            return ". ".join(reasons) if reasons else ""
+            visit_count = history.get('interaction_count', 0)
+            if visit_count > 5 and reasons:
+                reasons.append(f"Berdasarkan {visit_count} pencarian Anda")
+            
+            return " | ".join(reasons) if reasons else ""
             
         except Exception as e:
-            print(f"Error generating personal reason: {e}")
             return ""
     
     def get_user_preferences_summary(self, session_id: str) -> Dict:

@@ -20,35 +20,24 @@ device_token_service = None
 def initialize_chatbot():
     global chatbot_service, device_token_service
     try:
-        print("DEBUG: Starting chatbot initialization...")
-        logger.info("Initializing chatbot service for web interface...")
         
-        print("DEBUG: Creating ChatbotService instance...")
         chatbot_service = ChatbotService(str(RESTAURANTS_ENTITAS_CSV))
-        print("DEBUG: ChatbotService created successfully")
         
-        print("DEBUG: Creating DeviceTokenService instance...")
         device_token_service = DeviceTokenService()
-        print("DEBUG: DeviceTokenService created successfully")
         
-        logger.info("Chatbot service initialized successfully")
-        print("DEBUG: Initialization complete!")
     except Exception as e:
         logger.error(f"Failed to initialize chatbot service: {e}")
-        print(f"DEBUG ERROR: {e}")
         import traceback
         traceback.print_exc()
         raise
 @app.route('/')
 def index():
     from flask import redirect, url_for
-    logger.info("Redirecting root URL to /chat")
     return redirect(url_for('chat_page'))
 
 @app.route('/index')
 def index_page():
     try:
-        logger.info("Rendering index.html template")
         return render_template('index.html')
     except Exception as e:
         logger.error(f"Error rendering index template: {e}")
@@ -56,11 +45,8 @@ def index_page():
 @app.route('/chat')
 def chat_page():
     try:
-        print("DEBUG: /chat route accessed")
-        logger.info("Rendering chat.html template")
         return render_template('chat.html')
     except Exception as e:
-        print(f"DEBUG ERROR: Error rendering chat template: {e}")
         logger.error(f"Error rendering chat template: {e}")
         import traceback
         traceback.print_exc()
@@ -115,7 +101,6 @@ def health_check():
 
 @app.route('/api/favorite/add', methods=['POST'])
 def add_favorite():
-    """Add a restaurant to user's favorites"""
     try:
         data = request.get_json()
         device_token = session.get('device_token') or data.get('device_token')
@@ -148,7 +133,6 @@ def add_favorite():
 
 @app.route('/api/favorite/remove', methods=['POST'])
 def remove_favorite():
-    """Remove a restaurant from user's favorites"""
     try:
         data = request.get_json()
         device_token = session.get('device_token') or data.get('device_token')
@@ -176,7 +160,6 @@ def remove_favorite():
 
 @app.route('/api/favorites', methods=['GET'])
 def get_favorites():
-    """Get user's favorite restaurants"""
     try:
         device_token = session.get('device_token') or request.args.get('device_token')
         
@@ -212,7 +195,6 @@ def get_session_info():
                 'error': 'No active session'
             }), 400
         
-        # Get session data
         session_data = chatbot_service.session_manager.get_session(session_id)
         
         if not session_data:
@@ -266,8 +248,6 @@ def generate_device_token():
         
         session['device_token'] = device_token
         
-        logger.info(f"Generated device token: {device_token}")
-        
         return jsonify({
             'success': True,
             'device_token': device_token,
@@ -294,7 +274,6 @@ def start_conversation():
                 ip_address=ip_address
             )
             session['device_token'] = device_token
-            logger.info(f"Generated new device token: {device_token}")
         else:
             device_token_service.update_token_activity(device_token)
         
@@ -315,8 +294,6 @@ def start_conversation():
             if user_preferences.get('preferred_cuisines'):
                 cuisines = ', '.join(user_preferences['preferred_cuisines'][:3])
                 greeting += f"\n\nSaya ingat Anda suka: {cuisines}"
-        
-        logger.info(f"Started/continued conversation for device {device_token}, session {session_id}")
         
         return jsonify({
             'success': True,
@@ -366,8 +343,6 @@ def send_message():
             })
         except Exception as e:
             logger.error(f"Error saving to device history: {e}")
-        
-        logger.info(f"Device {device_token} sent: {user_message}")
         
         return jsonify({
             'success': True,
@@ -559,10 +534,8 @@ def analyze_preferences():
                 'error': 'Device token not found'
             }), 400
         
-        # Analyze preferences from history
         preferences = device_token_service.analyze_user_preferences(device_token)
         
-        # Get user history stats
         user_history = device_token_service.get_or_create_user_history(device_token)
         stats = user_history.get('interaction_stats', {})
         
@@ -590,7 +563,6 @@ def reset_device_token():
         if 'device_token' in session:
             old_token = session['device_token']
             del session['device_token']
-            logger.info(f"Reset device token: {old_token}")
         
         return jsonify({
             'success': True,
@@ -617,7 +589,6 @@ def run_web_interface():
         )
     except Exception as e:
         logger.error(f"Failed to run web interface: {e}")
-        print(f"Error starting web interface: {e}")
         sys.exit(1)
 if __name__ == '__main__':
     run_web_interface()
