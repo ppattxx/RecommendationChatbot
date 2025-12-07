@@ -8,7 +8,7 @@ import time
 from models.data_models import Restaurant, Recommendation, UserQuery, EntityExtractionResult
 from utils.text_processing import TextPreprocessor, EntityExtractor
 from utils.data_loader import DataLoader
-from utils.helpers import timing_decorator, ResponseGenerator, calculate_similarity_score
+from utils.helpers import timing_decorator, ResponseGenerator, calculate_similarity_score, calculate_boosted_score
 from utils.logger import get_logger
 from config.settings import MODEL_CONFIG, RECOMMENDATION_CONFIG, RESTAURANTS_ENTITAS_CSV
 logger = get_logger("recommendation_engine")
@@ -111,12 +111,47 @@ class ContentBasedRecommendationEngine:
             final_recommendations = self._combine_and_rank_recommendations(
                 recommendations, top_n
             )
+            
+            # Fallback for ambiguous queries with no results
+            if not final_recommendations and self._is_ambiguous_query(query_result.entities):
+                final_recommendations = self._get_fallback_recommendations(query_result.entities, top_n)
+            
             return final_recommendations
         except Exception as e:
             logger.error(f"Error generating recommendations: {e}")
             import traceback
             traceback.print_exc()
             return []
+    
+    def _is_ambiguous_query(self, entities: Dict[str, List[str]]) -> bool:
+        """Check if query is ambiguous (has very few or no specific entities)"""
+        entity_count = sum(len(v) for v in entities.values())
+        return entity_count < 2
+    
+    def _get_fallback_recommendations(self, entities: Dict[str, List[str]], top_n: int) -> List[Recommendation]:
+        """Get fallback recommendations based on popularity and rating"""
+        # If location is specified, return top-rated in that location
+        if 'lokasi' in entities and entities['lokasi']:
+            location = entities['lokasi'][0].lower()
+            filtered = [r for r in self.restaurants_objects 
+                       if r.entitas_lokasi and location in r.entitas_lokasi.lower()]
+            if filtered:
+                filtered.sort(key=lambda x: x.rating, reverse=True)
+                return [Recommendation(
+                    restaurant=r,
+                    similarity_score=0.5 + (r.rating / 10.0),
+                    matching_features=['popular', 'highly rated'],
+                    explanation=f"Restoran populer di {location} dengan rating tinggi"
+                ) for r in filtered[:top_n]]
+        
+        # Return overall top-rated restaurants
+        sorted_restaurants = sorted(self.restaurants_objects, key=lambda x: x.rating, reverse=True)
+        return [Recommendation(
+            restaurant=r,
+            similarity_score=0.5 + (r.rating / 10.0),
+            matching_features=['popular', 'highly rated'],
+            explanation="Restoran populer dengan rating tinggi"
+        ) for r in sorted_restaurants[:top_n]]
     def _process_user_query(self, user_query: str) -> EntityExtractionResult:
         processed_text = self.text_preprocessor.preprocess(user_query)
         entities = self.entity_extractor.extract_entities(user_query)
@@ -130,12 +165,15 @@ class ContentBasedRecommendationEngine:
                                         top_n: int) -> List[Recommendation]:
         recommendations = []
         for restaurant in self.restaurants_objects:
-            similarity_score = calculate_similarity_score(entities, restaurant)
-            if similarity_score >= self.recommendation_config['min_similarity_score']:
+            base_score = calculate_similarity_score(entities, restaurant)
+            # Apply boosting for exact matches
+            boosted_score = calculate_boosted_score(base_score, entities, restaurant)
+            
+            if boosted_score >= self.recommendation_config['min_similarity_score']:
                 matching_features = self._find_matching_features(entities, restaurant)
                 recommendation = Recommendation(
                     restaurant=restaurant,
-                    similarity_score=similarity_score,
+                    similarity_score=boosted_score,
                     matching_features=matching_features,
                     explanation=self._generate_explanation(entities, restaurant, matching_features)
                 )
@@ -150,16 +188,24 @@ class ContentBasedRecommendationEngine:
             )
             query_vector = self.tfidf_vectorizer.transform([processed_query])
             similarities = cosine_similarity(query_vector, self.tfidf_matrix).flatten()
+            
+            # Extract entities for boosting
+            entities = self.entity_extractor.extract_entities(user_query)
+            
             top_indices = similarities.argsort()[-top_n:][::-1]
             recommendations = []
             for idx in top_indices:
                 if similarities[idx] >= self.model_config['similarity']['threshold']:
                     restaurant = self.restaurants_objects[idx]
+                    base_score = float(similarities[idx])
+                    # Apply boosting
+                    boosted_score = calculate_boosted_score(base_score, entities, restaurant)
+                    
                     recommendation = Recommendation(
                         restaurant=restaurant,
-                        similarity_score=float(similarities[idx]),
+                        similarity_score=boosted_score,
                         matching_features=[],
-                        explanation=f"Kecocokan berdasarkan analisis konten: {similarities[idx]:.2f}"
+                        explanation=f"Kecocokan berdasarkan analisis konten: {boosted_score:.2f}"
                     )
                     recommendations.append(recommendation)
             return recommendations

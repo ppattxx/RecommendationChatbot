@@ -18,13 +18,14 @@ MODEL_CONFIG = {
     },
     "similarity": {
         "metric": "cosine",
-        "threshold": 0.01
-    }
+        "threshold": 0.003  # Balanced threshold
+    },
+    "use_synonym_expansion": True  # Enable synonym expansion for better matching
 }
 RECOMMENDATION_CONFIG = {
     "default_top_n": 5,
     "max_recommendations": 10,
-    "min_similarity_score": 0.05,
+    "min_similarity_score": 0.01,  # Optimized for best balance between precision and recall
     "enable_learning": True
 }
 ENTITY_BONUS_WEIGHTS = {
@@ -33,6 +34,109 @@ ENTITY_BONUS_WEIGHTS = {
     "cuisine": 0.3,
     "preferences": 0.2,
     "features": 0.2
+}
+
+SYNONYM_MAP = {
+    # Food Types - Comprehensive Coverage
+    'pizza': ['pizza', 'italian', 'italia', 'pizzeria', 'margherita', 'pepperoni', 'neapolitan', 'wood fired'],
+    'sushi': ['sushi', 'japanese', 'jepang', 'japan', 'sashimi', 'maki', 'roll', 'nigiri', 'tempura', 'teriyaki'],
+    'burger': ['burger', 'hamburger', 'american', 'cheeseburger', 'beef burger', 'chicken burger', 'veggie burger'],
+    'pasta': ['pasta', 'italian', 'italia', 'spaghetti', 'fettuccine', 'linguine', 'penne', 'carbonara', 'bolognese', 'aglio olio', 'ravioli', 'lasagna'],
+    'nasi goreng': ['nasi goreng', 'indonesian', 'indonesia', 'fried rice', 'nasgor', 'nasi', 'rice', 'local food'],
+    'seafood': ['seafood', 'ikan', 'udang', 'cumi', 'kerang', 'fish', 'shrimp', 'prawn', 'lobster', 'crab', 'tuna', 'salmon', 'sea food', 'makanan laut', 'catch of the day', 'fresh fish'],
+    'chicken': ['chicken', 'ayam', 'poultry', 'wings', 'fried chicken', 'grilled chicken', 'roast chicken', 'chicken satay'],
+    'steak': ['steak', 'beef', 'daging', 'meat', 'tenderloin', 'sirloin', 'ribeye', 'wagyu', 'grilled meat', 'bbq meat'],
+    'coffee': ['coffee', 'kopi', 'cafe', 'kafe', 'espresso', 'cappuccino', 'latte', 'americano', 'coffeeshop', 'coffee shop', 'barista'],
+    'bakery': ['bakery', 'roti', 'bread', 'pastry', 'cake', 'croissant', 'bakehouse', 'patisserie', 'baked goods'],
+    
+    # Cuisines - Enhanced
+    'mexican': ['mexican', 'meksiko', 'taco', 'burrito', 'quesadilla', 'nachos', 'enchilada', 'fajita', 'salsa', 'guacamole', 'southwestern'],
+    'chinese': ['chinese', 'cina', 'china', 'dim sum', 'wonton', 'dumplings', 'noodles', 'chow mein', 'canton', 'mandarin'],
+    'thai': ['thai', 'thailand', 'pad thai', 'tom yum', 'green curry', 'red curry', 'massaman', 'thai basil'],
+    'mediterranean': ['mediterranean', 'mediterania', 'greek', 'yunani', 'turkish', 'turki', 'middle eastern', 'levantine'],
+    'indian': ['indian', 'india', 'curry', 'tandoori', 'biryani', 'naan', 'tikka masala', 'vindaloo', 'korma'],
+    'vietnamese': ['vietnamese', 'vietnam', 'pho', 'banh mi', 'spring rolls', 'bun', 'nem'],
+    'french': ['french', 'prancis', 'france', 'bistro', 'brasserie', 'croissant', 'french cuisine'],
+    'spanish': ['spanish', 'spanyol', 'spain', 'tapas', 'paella', 'catalan', 'iberian'],
+    'korean': ['korean', 'korea', 'kimchi', 'bulgogi', 'bibimbap', 'korean bbq'],
+    'indonesian': ['indonesian', 'indonesia', 'nasi goreng', 'satay', 'rendang', 'gado-gado', 'local', 'traditional'],
+    'italian': ['italian', 'italia', 'italy', 'pizza', 'pasta', 'risotto', 'romano', 'lazio', 'central-italian'],
+    'asian': ['asian', 'asia', 'oriental', 'pan-asian', 'southeast asian'],
+    'european': ['european', 'eropa', 'continental', 'western'],
+    'american': ['american', 'burger', 'fast food', 'bbq', 'diner', 'grill'],
+    'japanese': ['japanese', 'jepang', 'japan', 'sushi', 'ramen', 'tempura', 'teriyaki', 'izakaya'],
+    
+    # BBQ & Grilling
+    'bbq': ['bbq', 'barbecue', 'grill', 'grilled', 'panggang', 'smoke', 'smoked', 'barbeque', 'charcoal'],
+    'grill': ['grill', 'grilled', 'bbq', 'barbecue', 'charcoal', 'wood fire', 'grillhouse'],
+    
+    # Dietary Preferences
+    'vegetarian': ['vegetarian', 'vegetar', 'veggie', 'sayur', 'sayuran', 'vegetables', 'meat-free'],
+    'vegan': ['vegan', 'plant based', 'nabati', 'plant-based', 'dairy-free'],
+    'halal': ['halal', 'muslim-friendly', 'islamic', 'halal food', 'halal certified'],
+    'organic': ['organic', 'healthy', 'natural', 'fresh', 'farm-to-table', 'sustainable'],
+    'healthy': ['healthy', 'organic', 'fresh', 'clean eating', 'nutritious', 'wholesome'],
+    
+    # Meal Times
+    'breakfast': ['breakfast', 'sarapan', 'pagi', 'morning', 'brunch', 'early morning'],
+    'lunch': ['lunch', 'makan siang', 'siang', 'noon', 'afternoon', 'midday'],
+    'dinner': ['dinner', 'makan malam', 'malam', 'evening', 'supper', 'night'],
+    'brunch': ['brunch', 'breakfast', 'lunch', 'late breakfast', 'weekend brunch'],
+    
+    # Desserts
+    'dessert': ['dessert', 'ice cream', 'gelato', 'sweet', 'manis', 'cake', 'pudding', 'pastry'],
+    'ice cream': ['ice cream', 'gelato', 'frozen yogurt', 'sorbet', 'dessert', 'sweet'],
+    
+    # Drinks & Bar
+    'bar': ['bar', 'pub', 'tavern', 'lounge', 'cocktail', 'drink', 'beer', 'wine', 'cocktail bar', 'sports bar'],
+    'cocktail': ['cocktail', 'drink', 'bar', 'mixology', 'cocktail bar', 'signature drinks'],
+    'wine': ['wine', 'vino', 'wine bar', 'wine list', 'wine selection'],
+    'beer': ['beer', 'craft beer', 'brewery', 'ale', 'lager', 'pub'],
+    
+    # Price & Value
+    'murah': ['murah', 'cheap', 'affordable', 'budget', 'inexpensive', 'economical', 'terjangkau', 'value'],
+    'mahal': ['mahal', 'expensive', 'upscale', 'fine dining', 'luxury', 'premium', 'high-end'],
+    'fine dining': ['fine dining', 'upscale', 'elegant', 'gourmet', 'haute cuisine', 'luxury dining'],
+    
+    # Ambiance & Style
+    'romantis': ['romantis', 'romantic', 'intimate', 'cozy', 'date', 'couple', 'candlelit', 'date night'],
+    'santai': ['santai', 'casual', 'relaxed', 'laid back', 'chill', 'easy going', 'informal'],
+    'keluarga': ['keluarga', 'family', 'kids', 'children', 'family-friendly', 'kid-friendly', 'family style'],
+    'cozy': ['cozy', 'intimate', 'warm', 'comfortable', 'homey', 'welcoming'],
+    'elegant': ['elegant', 'sophisticated', 'classy', 'upscale', 'refined', 'chic'],
+    
+    # Views & Location Features
+    'view': ['view', 'pemandangan', 'scenery', 'vista', 'panorama', 'sea view', 'ocean view', 'sunset view', 'beach view', 'scenic'],
+    'sunset': ['sunset', 'matahari terbenam', 'sunset view', 'evening view', 'golden hour'],
+    'beach': ['beach', 'pantai', 'beachfront', 'beach front', 'seaside', 'oceanfront', 'waterfront'],
+    'beachfront': ['beachfront', 'beach front', 'beach', 'seaside', 'oceanfront', 'on the beach', 'beach side'],
+    
+    # Seating & Space
+    'outdoor': ['outdoor', 'open air', 'terrace', 'patio', 'garden', 'beachfront', 'beach front', 'open-air', 'al fresco', 'outside'],
+    'indoor': ['indoor', 'inside', 'air conditioned', 'ac', 'air-conditioned'],
+    'terrace': ['terrace', 'outdoor', 'patio', 'rooftop', 'deck', 'balcony'],
+    'rooftop': ['rooftop', 'roof', 'top floor', 'terrace', 'sky bar'],
+    
+    # Features & Amenities
+    'wifi': ['wifi', 'wi-fi', 'internet', 'free wifi', 'wireless', 'free wi-fi', 'internet access'],
+    'parking': ['parking', 'parkir', 'parking available', 'free parking', 'car park', 'parking space'],
+    'music': ['music', 'live music', 'band', 'entertainment', 'acoustic', 'live band', 'live entertainment'],
+    'takeaway': ['takeaway', 'take away', 'take-away', 'to go', 'takeout', 'take out'],
+    'delivery': ['delivery', 'deliver', 'delivery service', 'online order', 'food delivery'],
+    'reservation': ['reservation', 'booking', 'reserve', 'book', 'table booking'],
+    
+    # Group & Events
+    'group': ['group', 'party', 'gathering', 'large group', 'groups', 'group dining'],
+    'party': ['party', 'celebration', 'event', 'gathering', 'birthday', 'private dining'],
+    
+    # Quality & Freshness
+    'fresh': ['fresh', 'segar', 'fresh ingredients', 'daily catch', 'freshly made', 'fresh daily'],
+    'delicious': ['delicious', 'enak', 'tasty', 'yummy', 'great food', 'amazing food'],
+    'authentic': ['authentic', 'traditional', 'original', 'genuine', 'real', 'true'],
+    
+    # Service Style
+    'buffet': ['buffet', 'all you can eat', 'self service', 'unlimited'],
+    'fast food': ['fast food', 'quick service', 'quick bite', 'fast casual'],
 }
 ENTITY_FIELD_MAPPING = {
     "jenis_makanan": ["cuisines", "entitas_jenis_makanan", "name", "about"],

@@ -4,7 +4,8 @@ from typing import List, Set, Dict, Optional
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 from unidecode import unidecode
 
-from config.settings import ENTITY_KEYWORDS
+from config.settings import ENTITY_KEYWORDS, SYNONYM_MAP
+from difflib import SequenceMatcher
 
 class TextPreprocessor:
     def __init__(self):
@@ -75,12 +76,15 @@ class EntityExtractor:
     def __init__(self):
         self.entity_keywords = ENTITY_KEYWORDS
         self.preprocessor = TextPreprocessor()
+        self.synonym_map = SYNONYM_MAP
     
     def extract_entities(self, text: str) -> Dict[str, List[str]]:
         if not text:
             return {}
         clean_text = self.preprocessor.normalize_text(text.lower())
         entities = {}
+        
+        # Standard entity extraction
         for entity_type, keywords in self.entity_keywords.items():
             found_entities = []
             for keyword in keywords:
@@ -90,7 +94,33 @@ class EntityExtractor:
                     found_entities.append(keyword)
             if found_entities:
                 entities[entity_type] = list(set(found_entities))
+        
+        # Enhanced extraction with synonym mapping for jenis_makanan
+        if 'jenis_makanan' not in entities:
+            entities['jenis_makanan'] = []
+        
+        for main_term, synonyms in self.synonym_map.items():
+            for synonym in synonyms:
+                if synonym.lower() in clean_text:
+                    # Add the main term if found via synonym
+                    if main_term not in entities['jenis_makanan']:
+                        entities['jenis_makanan'].append(main_term)
+                    # Also add the matched synonym
+                    if synonym not in entities['jenis_makanan']:
+                        entities['jenis_makanan'].append(synonym)
+                    break
+        
+        # Remove empty lists
+        entities = {k: v for k, v in entities.items() if v}
+        
         return entities
+    
+    def fuzzy_match_location(self, query_location: str, restaurant_location: str, threshold: float = 0.75) -> bool:
+        """Match locations with typo tolerance"""
+        if not query_location or not restaurant_location:
+            return False
+        ratio = SequenceMatcher(None, query_location.lower(), restaurant_location.lower()).ratio()
+        return ratio >= threshold
     
     def extract_intent(self, text: str) -> Optional[str]:
         clean_text = self.preprocessor.clean_text(text)

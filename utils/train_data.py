@@ -17,5 +17,7 @@ def train_dataset():
     try:
         df.to_csv(FILE_OUTPUT, index=False)
     except Exception as e:
+        print(f"Error writing to file: {e}")
+
 if __name__ == '__main__':
     train_dataset()
