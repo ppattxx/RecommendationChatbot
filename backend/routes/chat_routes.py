@@ -17,7 +17,6 @@ logger = get_logger("chat_routes")
 
 chat_bp = Blueprint('chat', __name__)
 
-# Initialize chatbot service (singleton pattern)
 chatbot_service = None
 
 def get_chatbot_service():
@@ -63,31 +62,36 @@ def chat():
         session_id = request.json.get('session_id')
         device_token = request.json.get('device_token')
         
-        if not user_message:
-            return jsonify({
-                'success': False,
-                'error': 'Message tidak boleh kosong'
-            }), 400
-        
-        # Get chatbot service
-        chatbot = get_chatbot_service()
-        
-        # Jika tidak ada session_id, buat session baru
-        if not session_id:
+        # Handle initialization case (empty message or greeting)
+        if not user_message or user_message.lower() in ['halo', 'hai', 'hello', 'hi']:
+            # Get chatbot service
+            chatbot = get_chatbot_service()
+            
+            # Start new conversation
             session_id, greeting = chatbot.start_conversation(device_token=device_token)
             
-            # Simpan session ke database
-            new_session = UserSession(
-                session_id=session_id,
-                device_token=device_token,
-                created_at=datetime.utcnow(),
-                last_activity=datetime.utcnow(),
-                is_active=True
-            )
-            db.session.add(new_session)
-            db.session.commit()
+            # Check apakah session sudah ada di database
+            existing_session = UserSession.query.filter_by(session_id=session_id).first()
             
-            logger.info(f"New session created: {session_id}")
+            if not existing_session:
+                # Simpan session baru ke database
+                try:
+                    new_session = UserSession(
+                        session_id=session_id,
+                        device_token=device_token,
+                        created_at=datetime.utcnow(),
+                        last_activity=datetime.utcnow(),
+                        is_active=True
+                    )
+                    db.session.add(new_session)
+                    db.session.commit()
+                    logger.info(f"New session created: {session_id}")
+                except Exception as db_error:
+                    # Handle jika session sudah ada (race condition)
+                    db.session.rollback()
+                    logger.warning(f"Session {session_id} already exists in database: {db_error}")
+            else:
+                logger.info(f"Using existing session: {session_id}")
             
             return jsonify({
                 'success': True,
@@ -99,11 +103,33 @@ def chat():
                 }
             }), 200
         
+        # Get chatbot service for normal message processing
+        chatbot = get_chatbot_service()
         # Update last activity
         session = UserSession.query.filter_by(session_id=session_id).first()
         if session:
             session.last_activity = datetime.utcnow()
-            db.session.commit()
+            try:
+                db.session.commit()
+            except Exception as e:
+                db.session.rollback()
+                logger.warning(f"Failed to update session activity: {e}")
+        else:
+            # Jika session tidak ada di database, buat session baru
+            try:
+                new_session = UserSession(
+                    session_id=session_id,
+                    device_token=device_token,
+                    created_at=datetime.utcnow(),
+                    last_activity=datetime.utcnow(),
+                    is_active=True
+                )
+                db.session.add(new_session)
+                db.session.commit()
+                logger.info(f"Created missing session: {session_id}")
+            except Exception as e:
+                db.session.rollback()
+                logger.warning(f"Failed to create missing session: {e}")
         
         # Process message dengan chatbot
         bot_response = chatbot.process_message(user_message, session_id)
@@ -182,6 +208,123 @@ def get_chat_history(session_id):
         
     except Exception as e:
         logger.error(f"Error getting chat history: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@chat_bp.route('/chat/reset', methods=['DELETE'])
+def reset_chat_history():
+    """
+    Reset chat history untuk user tertentu
+    
+    Request Body:
+    {
+        "device_token": "optional",
+        "session_id": "optional"
+    }
+    
+    Response:
+    {
+        "success": true,
+        "data": {
+            "deleted_count": 21,
+            "message": "Chat history berhasil direset"
+        }
+    }
+    """
+    try:
+        data = request.get_json()
+        device_token = data.get('device_token')
+        session_id = data.get('session_id')
+        
+        if not device_token and not session_id:
+            return jsonify({
+                'success': False,
+                'error': 'device_token atau session_id harus disediakan'
+            }), 400
+        
+        # Build query untuk delete
+        query = ChatHistory.query
+        
+        if device_token:
+            query = query.filter_by(device_token=device_token)
+        elif session_id:
+            query = query.filter_by(session_id=session_id)
+        
+        # Count sebelum delete
+        count = query.count()
+        
+        # Delete chat history
+        query.delete()
+        
+        # Delete user session jika ada
+        if session_id:
+            UserSession.query.filter_by(session_id=session_id).delete()
+        
+        db.session.commit()
+        
+        logger.info(f"Reset chat history: deleted {count} records for device_token={device_token}, session_id={session_id}")
+        
+        return jsonify({
+            'success': True,
+            'data': {
+                'deleted_count': count,
+                'message': f'Berhasil menghapus {count} riwayat chat'
+            }
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"Error resetting chat history: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@chat_bp.route('/chat/reset-all', methods=['DELETE'])
+def reset_all_chat_history():
+    """
+    Reset SEMUA chat history dari database
+    HATI-HATI: Ini akan menghapus semua data!
+    
+    Response:
+    {
+        "success": true,
+        "data": {
+            "deleted_chats": 50,
+            "deleted_sessions": 10,
+            "message": "Semua history berhasil direset"
+        }
+    }
+    """
+    try:
+        # Count sebelum delete
+        chat_count = ChatHistory.query.count()
+        session_count = UserSession.query.count()
+        
+        # Delete SEMUA data
+        ChatHistory.query.delete()
+        UserSession.query.delete()
+        
+        db.session.commit()
+        
+        logger.warning(f"RESET ALL: Deleted {chat_count} chats and {session_count} sessions")
+        
+        return jsonify({
+            'success': True,
+            'data': {
+                'deleted_chats': chat_count,
+                'deleted_sessions': session_count,
+                'message': f'Berhasil menghapus semua {chat_count} riwayat chat dan {session_count} sesi'
+            }
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"Error resetting all chat history: {e}")
         return jsonify({
             'success': False,
             'error': str(e)

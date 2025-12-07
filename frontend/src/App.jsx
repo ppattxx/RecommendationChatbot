@@ -28,7 +28,7 @@ function App() {
       {/* Backend Status Indicator */}
       {backendStatus === 'disconnected' && (
         <div className="fixed top-0 left-0 right-0 bg-red-500 text-white text-center py-2 z-50">
-          ⚠️ Backend tidak terhubung. Pastikan Flask server berjalan di http://localhost:5000
+          ⚠️ Backend tidak terhubung. Pastikan Flask server berjalan di http://localhost:8000
         </div>
       )}
 

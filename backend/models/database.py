@@ -1,6 +1,3 @@
-"""
-Database models untuk Chatbot menggunakan SQLAlchemy
-"""
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 

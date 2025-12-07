@@ -29,10 +29,14 @@ def create_app():
     # Initialize extensions
     db.init_app(app)
     
-    # Setup CORS - izinkan frontend (port 3000) untuk akses backend
+    # Setup CORS - izinkan frontend untuk akses backend
     CORS(app, resources={
         r"/api/*": {
-            "origins": ["http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:5173", "http://127.0.0.1:5173"],
+            "origins": [
+                "http://localhost:3000", "http://127.0.0.1:3000",
+                "http://localhost:3001", "http://127.0.0.1:3001",
+                "http://localhost:5173", "http://127.0.0.1:5173"
+            ],
             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
             "allow_headers": ["Content-Type", "Authorization"],
             "supports_credentials": True
@@ -43,10 +47,14 @@ def create_app():
     app.register_blueprint(chat_bp, url_prefix='/api')
     app.register_blueprint(preferences_bp, url_prefix='/api')
     
+    # Import recommendations routes
+    from backend.routes.recommendations_routes import recommendations_bp
+    app.register_blueprint(recommendations_bp, url_prefix='/api')
+    
     # Buat database tables
     with app.app_context():
         db.create_all()
-        print("✅ Database tables created successfully")
+        print("[OK] Database tables created successfully")
     
     # Root endpoint
     @app.route('/')
@@ -57,6 +65,7 @@ def create_app():
             'endpoints': {
                 'chat': '/api/chat',
                 'preferences': '/api/user-preferences',
+                'recommendations': '/api/recommendations',
                 'health': '/api/health'
             }
         })

@@ -3,7 +3,7 @@
  * Komponen chat yang bisa dibuka-tutup di pojok kanan bawah
  */
 import { useState, useEffect, useRef } from 'react';
-import { FiMessageCircle, FiX, FiSend } from 'react-icons/fi';
+import { FiMessageCircle, FiX, FiSend, FiRefreshCw } from 'react-icons/fi';
 import { chatAPI } from '../services/api';
 
 const FloatingChatbot = () => {
@@ -44,24 +44,54 @@ const FloatingChatbot = () => {
     setIsLoading(true);
     try {
       const deviceToken = getDeviceToken();
-      const response = await chatAPI.sendMessage('', null, deviceToken);
       
-      if (response.success) {
-        setSessionId(response.data.session_id);
+      // Check if we already have a session
+      const existingSessionId = localStorage.getItem('session_id');
+      
+      if (existingSessionId) {
+        // Use existing session, just show welcome message
+        setSessionId(existingSessionId);
         setMessages([
           {
             type: 'bot',
-            text: response.data.bot_response,
-            timestamp: new Date(response.data.timestamp),
-          },
+            text: 'Halo! Saya siap membantu Anda mencari rekomendasi restoran di Lombok. Silakan ceritakan preferensi makanan Anda.',
+            timestamp: new Date(),
+          }
         ]);
+      } else {
+        // Create new session with initial greeting message
+        const response = await chatAPI.sendMessage('halo', null, deviceToken);
+        
+        if (response.success) {
+          setSessionId(response.data.session_id);
+          // Save session_id to localStorage for personalization
+          localStorage.setItem('session_id', response.data.session_id);
+          
+          setMessages([
+            {
+              type: 'bot',
+              text: response.data.bot_response,
+              timestamp: new Date(response.data.timestamp),
+            },
+          ]);
+        } else {
+          // Fallback welcome message if API fails
+          setMessages([
+            {
+              type: 'bot',
+              text: 'Halo! Saya siap membantu Anda mencari rekomendasi restoran di Lombok. Silakan ceritakan preferensi makanan Anda.',
+              timestamp: new Date(),
+            }
+          ]);
+        }
       }
     } catch (error) {
       console.error('Error initializing chat:', error);
+      // Show fallback welcome message
       setMessages([
         {
           type: 'bot',
-          text: 'Maaf, terjadi kesalahan. Silakan coba lagi.',
+          text: 'Halo! Saya siap membantu Anda mencari rekomendasi restoran di Lombok. Silakan ceritakan preferensi makanan Anda.',
           timestamp: new Date(),
         },
       ]);
@@ -98,6 +128,8 @@ const FloatingChatbot = () => {
         // Update session ID jika baru
         if (response.data.session_id) {
           setSessionId(response.data.session_id);
+          // Save session_id to localStorage for personalization
+          localStorage.setItem('session_id', response.data.session_id);
         }
 
         // Tambahkan response bot
@@ -122,6 +154,35 @@ const FloatingChatbot = () => {
     }
   };
 
+  const handleResetHistory = async () => {
+    if (confirm('Yakin ingin mereset SEMUA riwayat chat dan preferensi dari database? Ini akan menghapus semua data dan tidak bisa dikembalikan!')) {
+      try {
+        // Call API to delete ALL data from database
+        const response = await chatAPI.resetAllChatHistory();
+        console.log('Reset ALL response:', response);
+        
+        // Clear localStorage
+        localStorage.removeItem('session_id');
+        localStorage.removeItem('device_token');
+        localStorage.removeItem('session_timestamp');
+        localStorage.removeItem('chat_history');
+        
+        // Reset state
+        setSessionId(null);
+        setMessages([]);
+        
+        // Show success message
+        alert(`Berhasil menghapus ${response.data.deleted_chats} riwayat chat!`);
+        
+        // Reload page to refresh recommendations
+        window.location.reload();
+      } catch (error) {
+        console.error('Error resetting history:', error);
+        alert('Gagal mereset history. Silakan coba lagi.');
+      }
+    }
+  };
+
   const formatTime = (date) => {
     return new Intl.DateTimeFormat('id-ID', {
       hour: '2-digit',
@@ -140,12 +201,21 @@ const FloatingChatbot = () => {
               <h3 className="font-bold text-lg">Chatbot Rekomendasi</h3>
               <p className="text-xs text-primary-100">Cari restoran favoritmu!</p>
             </div>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="hover:bg-primary-500 p-2 rounded-full transition-colors"
-            >
-              <FiX size={24} />
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={handleResetHistory}
+                className="hover:bg-primary-500 p-2 rounded-full transition-colors"
+                title="Reset History"
+              >
+                <FiRefreshCw size={20} />
+              </button>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="hover:bg-primary-500 p-2 rounded-full transition-colors"
+              >
+                <FiX size={24} />
+              </button>
+            </div>
           </div>
 
           {/* Messages Area */}
@@ -206,7 +276,7 @@ const FloatingChatbot = () => {
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 placeholder="Ketik pesan Anda..."
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-gray-800"
+                className="flex-1 px-4 py-3 border border-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-white"
                 disabled={isLoading}
               />
               <button
