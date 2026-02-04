@@ -26,6 +26,10 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
     
+    # Konfigurasi JSON output untuk format yang lebih rapi
+    app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
+    app.json.sort_keys = False  # Maintain order of keys
+    
     # Initialize extensions
     db.init_app(app)
     
@@ -86,7 +90,7 @@ if __name__ == '__main__':
     print("=" * 60)
     print("Starting Chatbot Recommendation Backend")
     print("=" * 60)
-    print("Backend URL: http://localhost:8000")
+    print("Backend URL: http://localhost:5500")
     print("API Endpoints:")
     print("   - POST /api/chat")
     print("   - GET  /api/user-preferences")
@@ -95,17 +99,20 @@ if __name__ == '__main__':
     
     try:
         app.run(
-            host='127.0.0.1',
-            port=8000,
-            debug=True
+            host='0.0.0.0',
+            port=5500,
+            debug=False,
+            use_reloader=False,
+            threaded=True
         )
     except OSError as e:
         if "Address already in use" in str(e) or "access permissions" in str(e):
-            print("Port 8000 is busy, trying port 8001...")
+            print("Port 5500 is busy, trying port 5501...")
             app.run(
-                host='127.0.0.1',
-                port=8001,
-                debug=True
+                host='0.0.0.0',
+                port=5501,
+                debug=True,
+                use_reloader=False
             )
         else:
             raise e

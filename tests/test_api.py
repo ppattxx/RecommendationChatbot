@@ -1,6 +1,6 @@
 import requests
 import json
-BASE_URL = "http://127.0.0.1:8000"
+BASE_URL = "http://127.0.0.1:5500"
 def test_server_running():
     print("=== Testing Server Status ===")
     try:

@@ -3,7 +3,9 @@
  */
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+// Use relative URL to leverage Vite proxy in development
+// In production, set VITE_API_URL environment variable
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 // Create axios instance dengan default config
 const apiClient = axios.create({
@@ -62,13 +64,29 @@ export const chatAPI = {
   },
 
   /**
-   * Get chat history
+   * Get chat history for a session
    * @param {string} sessionId - Session ID
-   * @returns {Promise} Chat history
+   * @param {Object} params - Optional pagination params
+   * @returns {Promise} Chat history with pagination
    */
-  getChatHistory: async (sessionId) => {
+  getChatHistory: async (sessionId, params = {}) => {
     try {
-      const response = await apiClient.get(`/chat/history/${sessionId}`);
+      const response = await apiClient.get(`/chat/history/${sessionId}`, { params });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { error: 'Network error' };
+    }
+  },
+
+  /**
+   * Get all chat history for a device (all sessions)
+   * @param {string} deviceToken - Device token
+   * @param {Object} params - Optional params (limit)
+   * @returns {Promise} All sessions with messages
+   */
+  getChatHistoryByDevice: async (deviceToken, params = {}) => {
+    try {
+      const response = await apiClient.get(`/chat/history/device/${deviceToken}`, { params });
       return response.data;
     } catch (error) {
       throw error.response?.data || { error: 'Network error' };
@@ -146,13 +164,93 @@ export const preferencesAPI = {
  */
 export const recommendationsAPI = {
   /**
-   * Get personalized recommendations
+   * Get personalized recommendations with pagination
    * @param {Object} params - Query parameters
-   * @returns {Promise} Recommendations data
+   * @param {number} params.page - Page number (default: 1)
+   * @param {number} params.per_page - Items per page (default: 20, max: 100)
+   * @param {string} params.session_id - Session ID for personalization
+   * @param {string} params.device_token - Device token for personalization
+   * @param {string} params.category - Filter by category
+   * @returns {Promise} Paginated recommendations data with metadata
+   * Response format:
+   * {
+   *   success: true,
+   *   data: {
+   *     restaurants: [...],
+   *     total: 1163,
+   *     page: 1,
+   *     per_page: 20,
+   *     total_pages: 59,
+   *     has_next: true,
+   *     has_prev: false,
+   *     personalized: false
+   *   }
+   * }
    */
   getRecommendations: async (params = {}) => {
     try {
       const response = await apiClient.get('/recommendations', { params });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { error: 'Network error' };
+    }
+  },
+
+  /**
+   * Get Top 5 recommendations using Cosine Similarity
+   * Sorted by similarity score with rating/review as tie-breaker
+   * @param {Object} params - Query parameters
+   * @param {string} params.session_id - Session ID for personalization
+   * @param {string} params.device_token - Device token for personalization
+   * @param {string} params.query - Optional search query
+   * @returns {Promise} Top 5 recommendations
+   * Response format:
+   * {
+   *   success: true,
+   *   data: {
+   *     restaurants: [...],
+   *     query: "...",
+   *     personalized: true/false,
+   *     algorithm: "cosine_similarity",
+   *     tie_breaker: "rating_and_review_count"
+   *   }
+   * }
+   */
+  getTop5Recommendations: async (params = {}) => {
+    try {
+      const response = await apiClient.get('/recommendations/top5', { params });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { error: 'Network error' };
+    }
+  },
+
+  /**
+   * Get ALL ranked recommendations using Cosine Similarity with pagination
+   * Sorted by similarity score with rating/review as tie-breaker
+   * Top 5 will have is_top5=true flag for UI labeling
+   * @param {Object} params - Query parameters
+   * @param {number} params.page - Page number (default: 1)
+   * @param {number} params.limit - Items per page (default: 20, max: 100)
+   * @param {string} params.session_id - Session ID for personalization
+   * @param {string} params.device_token - Device token for personalization
+   * @param {string} params.query - Optional search query
+   * @returns {Promise} All ranked recommendations with pagination
+   * Response format:
+   * {
+   *   success: true,
+   *   data: {
+   *     restaurants: [{ ...restaurantData, rank: 1, is_top5: true }, ...],
+   *     pagination: { current_page, total_pages, total_items, ... },
+   *     query: "...",
+   *     personalized: true/false,
+   *     algorithm: "cosine_similarity"
+   *   }
+   * }
+   */
+  getAllRankedRecommendations: async (params = {}) => {
+    try {
+      const response = await apiClient.get('/recommendations/all-ranked', { params });
       return response.data;
     } catch (error) {
       throw error.response?.data || { error: 'Network error' };

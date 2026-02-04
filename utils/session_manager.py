@@ -52,7 +52,13 @@ class SessionManager:
             'history_data': history_data
         }
         
-        greeting = "Halo! Saya siap membantu Anda mencari restoran yang pas!\\n\\nCeritakan apa yang Anda inginkan, misalnya:\\n- 'Cari pizza enak di Kuta'\\n- 'Restoran seafood murah'\\n- 'Tempat romantis untuk dinner'"
+        greeting = (
+            "Halo! Saya siap membantu Anda mencari restoran yang pas!\n\n"
+            "Ceritakan apa yang Anda inginkan, misalnya:\n"
+            "• Cari pizza enak di Kuta\n"
+            "• Restoran seafood murah\n"
+            "• Tempat romantis untuk dinner"
+        )
         
         return session_id, greeting
     

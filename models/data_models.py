@@ -9,17 +9,14 @@ class Restaurant:
     rating: float
     about: Optional[str] = None
     address: Optional[str] = None
+    location: Optional[str] = None  # Extracted location for entity matching
     price_range: Optional[str] = None
     cuisines: List[str] = field(default_factory=list)
     features: List[str] = field(default_factory=list)
     preferences: List[str] = field(default_factory=list)
     hours: Dict[str, str] = field(default_factory=dict)
     images: List[str] = field(default_factory=list)
-    entitas_lokasi: Optional[str] = None
-    entitas_jenis_makanan: List[str] = field(default_factory=list)
-    entitas_menu: List[str] = field(default_factory=list)
-    entitas_preferensi: List[str] = field(default_factory=list)
-    entitas_features: List[str] = field(default_factory=list)
+    
     def to_dict(self) -> Dict[str, Any]:
         return {
             'id': self.id,
@@ -27,17 +24,13 @@ class Restaurant:
             'rating': self.rating,
             'about': self.about,
             'address': self.address,
+            'location': self.location,
             'price_range': self.price_range,
             'cuisines': self.cuisines,
             'features': self.features,
             'preferences': self.preferences,
             'hours': self.hours,
-            'images': self.images,
-            'entitas_lokasi': self.entitas_lokasi,
-            'entitas_jenis_makanan': self.entitas_jenis_makanan,
-            'entitas_menu': self.entitas_menu,
-            'entitas_preferensi': self.entitas_preferensi,
-            'entitas_features': self.entitas_features
+            'images': self.images
         }
 @dataclass
 class UserQuery:

@@ -5,7 +5,7 @@ Jalankan script ini untuk testing cepat response time
 import requests
 import time
 
-BASE_URL = "http://127.0.0.1:8000"
+BASE_URL = "http://127.0.0.1:5500"
 
 def quick_test():
     print("\n" + "="*50)
@@ -71,6 +71,6 @@ if __name__ == "__main__":
         quick_test()
     except requests.exceptions.ConnectionError:
         print("\n❌ ERROR: Cannot connect to backend server")
-        print("Make sure the backend is running at http://127.0.0.1:8000")
+        print("Make sure the backend is running at http://127.0.0.1:5500")
     except Exception as e:
         print(f"\n❌ ERROR: {e}")

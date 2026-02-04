@@ -28,13 +28,18 @@ def get_recommendation_engine():
     if recommendation_engine is None:
         try:
             # Try to use real ContentBasedRecommendationEngine with TF-IDF
-            csv_path = str(project_root / 'data' / 'restaurants_entitas_fixed.csv')
+            csv_path = str(project_root / 'data' / 'restaurants_entitas.csv')
+            logger.info(f"Loading recommendation engine from {csv_path}")
             recommendation_engine = ContentBasedRecommendationEngine(data_path=csv_path)
             logger.info("ContentBasedRecommendationEngine initialized with TF-IDF")
         except Exception as e:
-            logger.warning(f"Failed to initialize ContentBasedRecommendationEngine: {e}")
+            logger.error(f"Failed to initialize ContentBasedRecommendationEngine: {e}", exc_info=True)
             logger.info("Falling back to MockRecommendationEngine")
-            recommendation_engine = get_mock_engine()
+            try:
+                recommendation_engine = get_mock_engine()
+            except Exception as mock_error:
+                logger.error(f"Failed to initialize MockRecommendationEngine: {mock_error}", exc_info=True)
+                recommendation_engine = None
     return recommendation_engine
 
 def get_mock_engine():
@@ -57,8 +62,8 @@ class MockRecommendationEngine:
     def _load_restaurants_from_csv(self):
         """Load restaurant data from CSV file with preprocessed content"""
         try:
-            # Use preprocessed CSV with konten_stemmed for content-based filtering
-            csv_path = project_root / 'data' / 'restaurants_processed.csv'
+            # Use main CSV with 4 entities
+            csv_path = project_root / 'data' / 'restaurants_entitas.csv'
             df = pd.read_csv(csv_path)
             
             restaurants = []
@@ -89,20 +94,20 @@ class MockRecommendationEngine:
                     
                     restaurant = {
                         'id': int(row['id']),
-                        'name': row['name'],
+                        'name': str(row['name']) if pd.notna(row['name']) else 'Unknown',
                         'location': location,
                         'rating': float(row['rating']) if pd.notna(row['rating']) else 4.0,
-                        'price_range': row['price_range'] if pd.notna(row['price_range']) else '$$',
+                        'price_range': str(row['price_range']) if pd.notna(row['price_range']) else '$$',
                         'cuisine': cuisine_str,
-                        'image_url': row['img1_url'] if pd.notna(row['img1_url']) else '',
-                        'description': row['about'][:200] + '...' if pd.notna(row['about']) and len(row['about']) > 200 else row['about'],
+                        'image_url': str(row['img1_url']) if pd.notna(row['img1_url']) else '',
+                        'description': (str(row['about'])[:200] + '...') if pd.notna(row['about']) and isinstance(row['about'], str) and len(row['about']) > 200 else (str(row['about']) if pd.notna(row['about']) and isinstance(row['about'], str) else ''),
                         'opening_hours': self._get_opening_hours(row),
                         'popular_dishes': popular_dishes,
                         'category': category,
                         'personalization_score': 0,
-                        'url': row['url'] if pd.notna(row['url']) else '',
-                        'address': row['address'] if pd.notna(row['address']) else '',
-                        'konten_stemmed': row['konten_stemmed'] if pd.notna(row['konten_stemmed']) else ''  # For content-based filtering
+                        'url': str(row['url']) if pd.notna(row.get('url')) else '',
+                        'address': str(row['address']) if pd.notna(row['address']) else '',
+                        'konten_stemmed': str(row['konten_stemmed']) if pd.notna(row.get('konten_stemmed')) else ''  # For content-based filtering
                     }
                     restaurants.append(restaurant)
                 except Exception as e:
@@ -238,28 +243,39 @@ class MockRecommendationEngine:
     
 
 
-def get_popular_recommendations_from_engine(engine, limit=10, category=None):
+def get_popular_recommendations_from_engine(engine, limit=9999, category=None):
     """Get popular recommendations from any engine type"""
     # Check if it's ContentBasedRecommendationEngine or MockRecommendationEngine
     if isinstance(engine, ContentBasedRecommendationEngine):
-        # Get all restaurants from ContentBasedRecommendationEngine
+        # Get all or limited restaurants from ContentBasedRecommendationEngine
+        max_items = min(limit, len(engine.restaurants_objects))
         restaurants = []
-        for rest_obj in engine.restaurants_objects[:limit]:
+        for rest_obj in engine.restaurants_objects[:max_items]:
+            # Safely handle about field
+            about_text = ''
+            if isinstance(rest_obj.about, str):
+                about_text = rest_obj.about[:200] + '...' if len(rest_obj.about) > 200 else rest_obj.about
+            
+            # Safely handle address field
+            location = 'Lombok'
+            if isinstance(rest_obj.address, str) and rest_obj.address:
+                location = rest_obj.address.split(',')[-1].strip()
+            
             restaurant = {
                 'id': rest_obj.id,
-                'name': rest_obj.name,
-                'location': rest_obj.entitas_lokasi or 'Lombok',
+                'name': str(rest_obj.name) if rest_obj.name else 'Unknown',
+                'location': location,
                 'rating': rest_obj.rating,
-                'price_range': rest_obj.price_range or '$$',
-                'cuisine': ', '.join(rest_obj.entitas_jenis_makanan[:3]) if rest_obj.entitas_jenis_makanan else 'Restaurant',
+                'price_range': str(rest_obj.price_range) if rest_obj.price_range else '$$',
+                'cuisine': ', '.join(rest_obj.cuisines[:3]) if rest_obj.cuisines else 'Restaurant',
                 'image_url': rest_obj.images[0] if rest_obj.images else '',
-                'description': rest_obj.about[:200] + '...' if rest_obj.about and len(rest_obj.about) > 200 else rest_obj.about or '',
+                'description': about_text,
                 'opening_hours': rest_obj.hours.get('monday', 'Contact for hours') if rest_obj.hours else 'Contact for hours',
-                'popular_dishes': rest_obj.entitas_menu[:5] if rest_obj.entitas_menu else [],
-                'category': _determine_category_from_cuisines(rest_obj.entitas_jenis_makanan or []),
+                'popular_dishes': [],
+                'category': _determine_category_from_cuisines(rest_obj.cuisines or []),
                 'personalization_score': 0,
                 'url': '',
-                'address': rest_obj.address or ''
+                'address': str(rest_obj.address) if isinstance(rest_obj.address, str) else ''
             }
             restaurants.append(restaurant)
         # Sort by rating
@@ -344,12 +360,13 @@ def apply_personalization_scoring(restaurants, user_preferences):
 @recommendations_bp.route('/recommendations', methods=['GET'])
 def get_recommendations():
     """
-    Get personalized restaurant recommendations
+    Get personalized restaurant recommendations with pagination
     
     Query Parameters:
     - session_id: optional, for personalized recommendations
     - device_token: optional, alternative to session_id
-    - limit: optional, number of recommendations (default: 10)
+    - page: optional, page number (default: 1)
+    - per_page: optional, items per page (default: 20, max: 100)
     - category: optional, filter by category
     
     Response:
@@ -357,7 +374,12 @@ def get_recommendations():
         "success": true,
         "data": {
             "restaurants": [...],
-            "total": 50,
+            "total": 1163,
+            "page": 1,
+            "per_page": 20,
+            "total_pages": 59,
+            "has_next": true,
+            "has_prev": false,
             "personalized": true/false
         }
     }
@@ -365,10 +387,25 @@ def get_recommendations():
     try:
         session_id = request.args.get('session_id')
         device_token = request.args.get('device_token')
-        limit = int(request.args.get('limit', 50))  # Show more restaurants from CSV
+        page = int(request.args.get('page', 1))
+        per_page = min(int(request.args.get('per_page', 20)), 100)  # Max 100 per page
         category = request.args.get('category')
         
+        # Validate pagination parameters
+        if page < 1:
+            page = 1
+        if per_page < 1:
+            per_page = 20
+        
         engine = get_recommendation_engine()
+        
+        # Check if engine loaded successfully
+        if engine is None:
+            logger.error("Recommendation engine failed to initialize")
+            return jsonify({
+                'success': False,
+                'error': 'Recommendation system is currently unavailable'
+            }), 503
         
         # Get user preferences if available
         user_preferences = None
@@ -376,44 +413,66 @@ def get_recommendations():
             user_preferences = get_user_preferences(session_id, device_token)
             logger.info(f"User preferences found: {user_preferences is not None}")
         
-        # Get recommendations with personalization
+        # Get ALL recommendations first (without limit)
         is_personalized = bool(user_preferences)
         
         if user_preferences and isinstance(engine, MockRecommendationEngine):
-            # Use mock engine's personalization
-            recommendations = engine.get_personalized_recommendations(
+            # Use mock engine's personalization - get all
+            all_recommendations = engine.get_personalized_recommendations(
                 user_preferences=user_preferences,
-                limit=limit,
+                limit=9999,  # Get all
                 category=category
             )
-            logger.info(f"Returning {len(recommendations)} personalized recommendations from MockEngine")
+            logger.info(f"Got {len(all_recommendations)} personalized recommendations from MockEngine")
         else:
-            # Get recommendations and apply personalization scoring
-            recommendations = get_popular_recommendations_from_engine(
+            # Get all recommendations and apply personalization scoring
+            all_recommendations = get_popular_recommendations_from_engine(
                 engine=engine,
-                limit=limit,
+                limit=9999,  # Get all
                 category=category
             )
             
             # Apply personalization scoring if user has preferences
             if user_preferences:
-                recommendations = apply_personalization_scoring(recommendations, user_preferences)
-                logger.info(f"Applied personalization scoring to {len(recommendations)} recommendations")
+                all_recommendations = apply_personalization_scoring(all_recommendations, user_preferences)
+                logger.info(f"Applied personalization scoring to {len(all_recommendations)} recommendations")
             else:
-                logger.info(f"Returning {len(recommendations)} popular recommendations (no preferences)")
+                logger.info(f"Got {len(all_recommendations)} popular recommendations (no preferences)")
+        
+        # Calculate pagination metadata
+        total_items = len(all_recommendations)
+        total_pages = (total_items + per_page - 1) // per_page  # Ceiling division
+        
+        # Validate page number
+        if page > total_pages and total_pages > 0:
+            page = total_pages
+        
+        # Calculate slice indices
+        start_idx = (page - 1) * per_page
+        end_idx = start_idx + per_page
+        
+        # Get paginated results
+        paginated_recommendations = all_recommendations[start_idx:end_idx]
         
         return jsonify({
             'success': True,
             'data': {
-                'restaurants': recommendations,
-                'total': len(recommendations),
+                'restaurants': paginated_recommendations,
+                'total': total_items,
+                'page': page,
+                'per_page': per_page,
+                'total_pages': total_pages,
+                'has_next': page < total_pages,
+                'has_prev': page > 1,
                 'personalized': is_personalized,
                 'category': category
             }
         }), 200
         
     except Exception as e:
+        import traceback
         logger.error(f"Error getting recommendations: {e}")
+        logger.error(f"Traceback: {traceback.format_exc()}")
         return jsonify({
             'success': False,
             'error': str(e)
@@ -495,6 +554,377 @@ def get_trending():
         
     except Exception as e:
         logger.error(f"Error getting trending: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@recommendations_bp.route('/recommendations/top5', methods=['GET'])
+def get_top5_recommendations():
+    """
+    Get Top 5 restaurant recommendations dengan Cosine Similarity
+    
+    Menggunakan:
+    1. Cosine Similarity untuk menghitung kemiripan
+    2. Sorting berdasarkan skor tertinggi
+    3. Tie-breaker: jika skor sama, urutkan berdasarkan rating dan jumlah review
+    
+    Query Parameters:
+    - session_id: optional, untuk personalized recommendations
+    - device_token: optional, alternative to session_id
+    - query: optional, user query untuk similarity matching
+    
+    Response:
+    {
+        "success": true,
+        "data": {
+            "restaurants": [...],
+            "query": "pizza di senggigi",
+            "personalized": true/false,
+            "algorithm": "cosine_similarity"
+        }
+    }
+    """
+    try:
+        session_id = request.args.get('session_id')
+        device_token = request.args.get('device_token')
+        user_query = request.args.get('query', '')
+        
+        engine = get_recommendation_engine()
+        
+        if engine is None:
+            return jsonify({
+                'success': False,
+                'error': 'Recommendation system unavailable'
+            }), 503
+        
+        # Get user preferences for personalization context
+        user_preferences = None
+        if session_id or device_token:
+            user_preferences = get_user_preferences(session_id, device_token)
+        
+        # Build query from user preferences if no explicit query
+        if not user_query and user_preferences:
+            query_parts = []
+            if user_preferences.get('preferred_cuisines'):
+                top_cuisines = list(user_preferences['preferred_cuisines'].keys())[:3]
+                query_parts.extend(top_cuisines)
+            if user_preferences.get('preferred_locations'):
+                top_locations = list(user_preferences['preferred_locations'].keys())[:2]
+                query_parts.extend(top_locations)
+            user_query = ' '.join(query_parts)
+        
+        top5_restaurants = []
+        
+        if isinstance(engine, ContentBasedRecommendationEngine):
+            # Use real Cosine Similarity from ContentBasedRecommendationEngine
+            if user_query:
+                # Get recommendations using TF-IDF cosine similarity
+                recommendations = engine.get_recommendations(user_query, top_n=20)
+                
+                # Convert to response format with similarity scores
+                for rec in recommendations:
+                    rest = rec.restaurant
+                    
+                    # Safe handling for about/address fields
+                    about_text = ''
+                    if isinstance(rest.about, str):
+                        about_text = rest.about[:200] + '...' if len(rest.about) > 200 else rest.about
+                    
+                    location = 'Lombok'
+                    if isinstance(rest.address, str) and rest.address:
+                        location = rest.address.split(',')[-1].strip()
+                    
+                    top5_restaurants.append({
+                        'id': rest.id,
+                        'name': str(rest.name) if rest.name else 'Unknown',
+                        'location': location,
+                        'rating': rest.rating,
+                        'review_count': rest.review_count if hasattr(rest, 'review_count') else 0,
+                        'price_range': str(rest.price_range) if rest.price_range else '$$',
+                        'cuisine': ', '.join(rest.cuisines[:3]) if rest.cuisines else 'Restaurant',
+                        'image_url': rest.images[0] if rest.images else '',
+                        'description': about_text,
+                        'similarity_score': round(rec.similarity_score, 4),
+                        'matching_features': rec.matching_features,
+                        'explanation': rec.explanation,
+                        'address': str(rest.address) if isinstance(rest.address, str) else ''
+                    })
+            else:
+                # No query, use popularity + rating
+                sorted_restaurants = sorted(
+                    engine.restaurants_objects,
+                    key=lambda x: (x.rating, getattr(x, 'review_count', 0)),
+                    reverse=True
+                )
+                for rest in sorted_restaurants[:20]:
+                    about_text = ''
+                    if isinstance(rest.about, str):
+                        about_text = rest.about[:200] + '...' if len(rest.about) > 200 else rest.about
+                    
+                    location = 'Lombok'
+                    if isinstance(rest.address, str) and rest.address:
+                        location = rest.address.split(',')[-1].strip()
+                    
+                    top5_restaurants.append({
+                        'id': rest.id,
+                        'name': str(rest.name) if rest.name else 'Unknown',
+                        'location': location,
+                        'rating': rest.rating,
+                        'review_count': getattr(rest, 'review_count', 0),
+                        'price_range': str(rest.price_range) if rest.price_range else '$$',
+                        'cuisine': ', '.join(rest.cuisines[:3]) if rest.cuisines else 'Restaurant',
+                        'image_url': rest.images[0] if rest.images else '',
+                        'description': about_text,
+                        'similarity_score': 0.5 + (rest.rating / 10.0),
+                        'matching_features': ['popular', 'highly rated'],
+                        'explanation': f'Restoran populer dengan rating {rest.rating}/5.0',
+                        'address': str(rest.address) if isinstance(rest.address, str) else ''
+                    })
+        else:
+            # MockEngine fallback
+            mock_recs = engine.get_popular_recommendations(limit=20)
+            for r in mock_recs:
+                r['similarity_score'] = 0.5 + (r.get('rating', 0) / 10.0)
+                r['review_count'] = r.get('review_count', 0)
+            top5_restaurants = mock_recs
+        
+        # CRITICAL: Sort by similarity score, then by rating, then by review_count (tie-breaker)
+        top5_restaurants.sort(
+            key=lambda x: (
+                x.get('similarity_score', 0),
+                x.get('rating', 0),
+                x.get('review_count', 0)
+            ),
+            reverse=True
+        )
+        
+        # Slice Top 5 only
+        top5_result = top5_restaurants[:5]
+        
+        logger.info(f"Top 5 recommendations - Query: '{user_query}', Results: {len(top5_result)}")
+        if top5_result:
+            logger.info(f"Top scores: {[r.get('similarity_score', 0) for r in top5_result]}")
+        
+        return jsonify({
+            'success': True,
+            'data': {
+                'restaurants': top5_result,
+                'query': user_query,
+                'personalized': bool(user_preferences),
+                'algorithm': 'cosine_similarity',
+                'tie_breaker': 'rating_and_review_count'
+            }
+        }), 200
+        
+    except Exception as e:
+        import traceback
+        logger.error(f"Error getting top 5 recommendations: {e}")
+        logger.error(f"Traceback: {traceback.format_exc()}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@recommendations_bp.route('/recommendations/all-ranked', methods=['GET'])
+def get_all_ranked_recommendations():
+    """
+    Get ALL restaurant recommendations sorted by Cosine Similarity dengan pagination
+    
+    Top 5 akan memiliki flag 'is_top5' = true untuk UI labeling.
+    Menggunakan:
+    1. Cosine Similarity untuk menghitung kemiripan
+    2. Sorting berdasarkan skor tertinggi
+    3. Tie-breaker: jika skor sama, urutkan berdasarkan rating dan jumlah review
+    
+    Query Parameters:
+    - session_id: optional, untuk personalized recommendations
+    - device_token: optional, alternative to session_id
+    - query: optional, user query untuk similarity matching
+    - page: pagination page (default 1)
+    - limit: items per page (default 20)
+    
+    Response:
+    {
+        "success": true,
+        "data": {
+            "restaurants": [...],
+            "pagination": {
+                "current_page": 1,
+                "total_pages": 10,
+                "total_items": 200,
+                "items_per_page": 20,
+                "has_next": true,
+                "has_prev": false
+            },
+            "query": "pizza di senggigi",
+            "personalized": true/false,
+            "algorithm": "cosine_similarity"
+        }
+    }
+    """
+    try:
+        session_id = request.args.get('session_id')
+        device_token = request.args.get('device_token')
+        user_query = request.args.get('query', '')
+        page = request.args.get('page', 1, type=int)
+        limit = request.args.get('limit', 20, type=int)
+        
+        # Validate pagination params
+        page = max(1, page)
+        limit = min(max(1, limit), 100)  # Max 100 per page
+        
+        engine = get_recommendation_engine()
+        
+        if engine is None:
+            return jsonify({
+                'success': False,
+                'error': 'Recommendation system unavailable'
+            }), 503
+        
+        # Get user preferences for personalization context
+        user_preferences = None
+        if session_id or device_token:
+            user_preferences = get_user_preferences(session_id, device_token)
+        
+        # Build query from user preferences if no explicit query
+        if not user_query and user_preferences:
+            query_parts = []
+            if user_preferences.get('preferred_cuisines'):
+                top_cuisines = list(user_preferences['preferred_cuisines'].keys())[:3]
+                query_parts.extend(top_cuisines)
+            if user_preferences.get('preferred_locations'):
+                top_locations = list(user_preferences['preferred_locations'].keys())[:2]
+                query_parts.extend(top_locations)
+            user_query = ' '.join(query_parts)
+        
+        all_restaurants = []
+        
+        if isinstance(engine, ContentBasedRecommendationEngine):
+            # Use real Cosine Similarity from ContentBasedRecommendationEngine
+            if user_query:
+                # Get ALL recommendations using TF-IDF cosine similarity
+                # Use a very large top_n to get all results
+                recommendations = engine.get_recommendations(user_query, top_n=2000)
+                
+                # Convert to response format with similarity scores
+                for rec in recommendations:
+                    rest = rec.restaurant
+                    
+                    # Safe handling for about/address fields
+                    about_text = ''
+                    if isinstance(rest.about, str):
+                        about_text = rest.about[:200] + '...' if len(rest.about) > 200 else rest.about
+                    
+                    location = 'Lombok'
+                    if isinstance(rest.address, str) and rest.address:
+                        location = rest.address.split(',')[-1].strip()
+                    
+                    all_restaurants.append({
+                        'id': rest.id,
+                        'name': str(rest.name) if rest.name else 'Unknown',
+                        'location': location,
+                        'rating': rest.rating,
+                        'review_count': rest.review_count if hasattr(rest, 'review_count') else 0,
+                        'price_range': str(rest.price_range) if rest.price_range else '$$',
+                        'cuisine': ', '.join(rest.cuisines[:3]) if rest.cuisines else 'Restaurant',
+                        'image_url': rest.images[0] if rest.images else '',
+                        'description': about_text,
+                        'similarity_score': round(rec.similarity_score, 4),
+                        'matching_features': rec.matching_features,
+                        'explanation': rec.explanation,
+                        'address': str(rest.address) if isinstance(rest.address, str) else ''
+                    })
+            else:
+                # No query, use popularity + rating for ALL restaurants
+                sorted_restaurants = sorted(
+                    engine.restaurants_objects,
+                    key=lambda x: (x.rating, getattr(x, 'review_count', 0)),
+                    reverse=True
+                )
+                for rest in sorted_restaurants:
+                    about_text = ''
+                    if isinstance(rest.about, str):
+                        about_text = rest.about[:200] + '...' if len(rest.about) > 200 else rest.about
+                    
+                    location = 'Lombok'
+                    if isinstance(rest.address, str) and rest.address:
+                        location = rest.address.split(',')[-1].strip()
+                    
+                    all_restaurants.append({
+                        'id': rest.id,
+                        'name': str(rest.name) if rest.name else 'Unknown',
+                        'location': location,
+                        'rating': rest.rating,
+                        'review_count': getattr(rest, 'review_count', 0),
+                        'price_range': str(rest.price_range) if rest.price_range else '$$',
+                        'cuisine': ', '.join(rest.cuisines[:3]) if rest.cuisines else 'Restaurant',
+                        'image_url': rest.images[0] if rest.images else '',
+                        'description': about_text,
+                        'similarity_score': 0.5 + (rest.rating / 10.0),
+                        'matching_features': ['popular', 'highly rated'],
+                        'explanation': f'Restoran populer dengan rating {rest.rating}/5.0',
+                        'address': str(rest.address) if isinstance(rest.address, str) else ''
+                    })
+        else:
+            # MockEngine fallback - get all
+            mock_recs = engine.get_popular_recommendations(limit=2000)
+            for r in mock_recs:
+                r['similarity_score'] = 0.5 + (r.get('rating', 0) / 10.0)
+                r['review_count'] = r.get('review_count', 0)
+            all_restaurants = mock_recs
+        
+        # CRITICAL: Sort ALL by similarity score, then by rating, then by review_count (tie-breaker)
+        all_restaurants.sort(
+            key=lambda x: (
+                x.get('similarity_score', 0),
+                x.get('rating', 0),
+                x.get('review_count', 0)
+            ),
+            reverse=True
+        )
+        
+        # Add rank and is_top5 flag to each restaurant
+        for idx, restaurant in enumerate(all_restaurants):
+            restaurant['rank'] = idx + 1
+            restaurant['is_top5'] = idx < 5
+        
+        # Calculate pagination
+        total_items = len(all_restaurants)
+        total_pages = (total_items + limit - 1) // limit  # Ceiling division
+        
+        # Slice for current page
+        start_idx = (page - 1) * limit
+        end_idx = start_idx + limit
+        paginated_restaurants = all_restaurants[start_idx:end_idx]
+        
+        logger.info(f"All-Ranked recommendations - Query: '{user_query}', Page: {page}, Total: {total_items}")
+        
+        return jsonify({
+            'success': True,
+            'data': {
+                'restaurants': paginated_restaurants,
+                'pagination': {
+                    'current_page': page,
+                    'total_pages': total_pages,
+                    'total_items': total_items,
+                    'items_per_page': limit,
+                    'has_next': page < total_pages,
+                    'has_prev': page > 1
+                },
+                'query': user_query,
+                'personalized': bool(user_preferences),
+                'algorithm': 'cosine_similarity',
+                'tie_breaker': 'rating_and_review_count'
+            }
+        }), 200
+        
+    except Exception as e:
+        import traceback
+        logger.error(f"Error getting all-ranked recommendations: {e}")
+        logger.error(f"Traceback: {traceback.format_exc()}")
         return jsonify({
             'success': False,
             'error': str(e)

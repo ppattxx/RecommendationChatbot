@@ -1,3 +1,23 @@
+"""
+Restaurant Recommendation Engine Module
+
+This module implements a Content-Based Filtering recommendation system using
+TF-IDF vectorization and Cosine Similarity for restaurant recommendations.
+
+Classes:
+    ContentBasedRecommendationEngine: Main recommendation engine class
+
+Algorithm:
+    1. TF-IDF Vectorization of restaurant text data (name, about, cuisines, etc.)
+    2. User query transformation using the same vectorizer
+    3. Cosine Similarity calculation between query and all restaurants
+    4. Multi-tier boosting based on location, cuisine, preferences matches
+    5. Tie-breaker sorting using rating and review_count
+
+Author: Chatbot Rekomendasi Team
+Version: 1.0.0
+"""
+
 import pandas as pd
 import numpy as np
 from typing import List, Dict, Any, Optional, Tuple
@@ -11,9 +31,43 @@ from utils.data_loader import DataLoader
 from utils.helpers import timing_decorator, ResponseGenerator, calculate_similarity_score, calculate_boosted_score
 from utils.logger import get_logger
 from config.settings import MODEL_CONFIG, RECOMMENDATION_CONFIG, RESTAURANTS_ENTITAS_CSV
+
 logger = get_logger("recommendation_engine")
+
+
 class ContentBasedRecommendationEngine:
+    """
+    Content-Based Recommendation Engine using TF-IDF and Cosine Similarity.
+    
+    This engine provides personalized restaurant recommendations based on
+    user queries by calculating text similarity between the query and
+    restaurant attributes.
+    
+    Attributes:
+        data_path (str): Path to the restaurant dataset CSV file
+        restaurants_df (pd.DataFrame): DataFrame containing restaurant data
+        restaurants_objects (List[Restaurant]): List of Restaurant objects
+        tfidf_vectorizer (TfidfVectorizer): Fitted TF-IDF vectorizer
+        tfidf_matrix (sparse matrix): TF-IDF matrix for all restaurants
+        text_preprocessor (TextPreprocessor): Text preprocessing utility
+        entity_extractor (EntityExtractor): Entity extraction utility
+        response_generator (ResponseGenerator): Response generation utility
+        
+    Example:
+        >>> engine = ContentBasedRecommendationEngine()
+        >>> recommendations = engine.get_recommendations("pizza di kuta", top_n=5)
+        >>> for rec in recommendations:
+        ...     print(f"{rec.restaurant.name}: {rec.similarity_score:.2f}")
+    """
+    
     def __init__(self, data_path: str = None):
+        """
+        Initialize the recommendation engine.
+        
+        Args:
+            data_path (str, optional): Path to restaurant dataset CSV.
+                                       Defaults to RESTAURANTS_ENTITAS_CSV from config.
+        """
         self.data_path = data_path or str(RESTAURANTS_ENTITAS_CSV)
         self.restaurants_df = None
         self.restaurants_objects = None
@@ -25,46 +79,81 @@ class ContentBasedRecommendationEngine:
         self.model_config = MODEL_CONFIG
         self.recommendation_config = RECOMMENDATION_CONFIG
         self._initialize_engine()
+
     @timing_decorator
     def _initialize_engine(self):
+        """
+        Initialize the engine by loading data and building TF-IDF model.
+        
+        Raises:
+            Exception: If initialization fails due to data loading or model building errors.
+        """
         try:
             self._load_data()
             self._build_tfidf_model()
         except Exception as e:
             logger.error(f"Failed to initialize recommendation engine: {e}")
             raise
+
     def _load_data(self):
+        """
+        Load restaurant data from CSV file into DataFrame and Restaurant objects.
+        
+        Raises:
+            Exception: If data loading fails.
+        """
         try:
             self.restaurants_df = DataLoader.load_processed_restaurants(self.data_path)
             self.restaurants_objects = DataLoader.restaurants_df_to_objects(self.restaurants_df)
         except Exception as e:
             logger.error(f"Error loading restaurant data: {e}")
             raise
+
     def _build_tfidf_model(self):
+        """
+        Build TF-IDF model from restaurant text data.
+        
+        Creates a TF-IDF vectorizer and transforms all restaurant text data
+        into a sparse matrix for efficient similarity calculations.
+        
+        The text data includes:
+        - Restaurant name
+        - About/description
+        - Address/location
+        - Cuisines
+        - Preferences/keywords
+        - Features
+        
+        Raises:
+            Exception: If model building fails.
+        """
         try:
             content_texts = []
             for idx, row in self.restaurants_df.iterrows():
                 content_parts = []
                 
-                if pd.notna(row.get('name')):
-                    content_parts.append(str(row['name']).lower())
-                
+                # About field - main description
                 if pd.notna(row.get('about')):
                     content_parts.append(str(row['about']).lower())
                 
-                if pd.notna(row.get('entitas_lokasi')):
-                    content_parts.append(str(row['entitas_lokasi']))
-                    
-                cuisines = self._parse_list_field(row.get('entitas_jenis_makanan', []))
+                # Name field
+                if pd.notna(row.get('name')):
+                    content_parts.append(str(row['name']).lower())
+                
+                # Location from address
+                if pd.notna(row.get('address')):
+                    content_parts.append(str(row['address']).lower())
+                
+                # Cuisines field
+                cuisines = self._parse_list_field(row.get('cuisines', []))
                 content_parts.extend(cuisines)
                 
-                menu_items = self._parse_list_field(row.get('entitas_menu', []))
-                content_parts.extend(menu_items)
-                
-                preferences = self._parse_list_field(row.get('entitas_preferensi', []))
+                # Preferences field
+                preferences = self._parse_list_field(row.get('preferences', []))
                 content_parts.extend(preferences)
                 
-                features = self._parse_list_field(row.get('entitas_features', []))
+                # Features field
+                features = self._parse_list_field(row.get('features', []))
                 content_parts.extend(features)
                 
                 combined_content = ' '.join(content_parts).lower()
@@ -81,7 +170,18 @@ class ContentBasedRecommendationEngine:
         except Exception as e:
             logger.error(f"Error building TF-IDF model: {e}")
             raise
+
     def _parse_list_field(self, field_value) -> List[str]:
+        """
+        Parse a field that may contain a list stored as string.
+        
+        Args:
+            field_value: Value that may be a string representation of a list,
+                        an actual list, or None/NaN.
+                        
+        Returns:
+            List[str]: Parsed list of strings, or empty list if parsing fails.
+        """
         if pd.isna(field_value) or not field_value:
             return []
         try:
@@ -93,6 +193,7 @@ class ContentBasedRecommendationEngine:
                 return []
         except (ValueError, SyntaxError):
             return []
+
     @timing_decorator
     def get_recommendations(self, user_query: str, top_n: int = None) -> List[Recommendation]:
         if top_n is None:
@@ -236,25 +337,42 @@ class ContentBasedRecommendationEngine:
     def _find_matching_features(self, entities: Dict[str, List[str]],
         restaurant: Restaurant) -> List[str]:
         matching_features = []
-        if 'lokasi' in entities and restaurant.entitas_lokasi:
-            for location in entities['lokasi']:
-                if location.lower() in restaurant.entitas_lokasi.lower():
-                    matching_features.append(f"Lokasi: {location}")
-        if 'jenis_makanan' in entities:
-            restaurant_cuisines = [c.lower() for c in restaurant.entitas_jenis_makanan]
-            for cuisine in entities['jenis_makanan']:
+        
+        # Check location field (HIGHEST PRIORITY)
+        if 'location' in entities and hasattr(restaurant, 'location') and restaurant.location:
+            for loc in entities['location']:
+                if loc.lower() in restaurant.location.lower():
+                    matching_features.append(f"Lokasi: {loc}")
+                elif hasattr(restaurant, 'address') and restaurant.address and loc.lower() in restaurant.address.lower():
+                    matching_features.append(f"Lokasi: {loc}")
+        
+        # Check about field
+        if 'about' in entities and hasattr(restaurant, 'about') and restaurant.about:
+            for term in entities['about']:
+                if term.lower() in restaurant.about.lower():
+                    matching_features.append(f"Deskripsi: {term}")
+        
+        # Check cuisines field
+        if 'cuisine' in entities and hasattr(restaurant, 'cuisines') and restaurant.cuisines:
+            restaurant_cuisines = [c.lower() for c in restaurant.cuisines]
+            for cuisine in entities['cuisine']:
                 if cuisine.lower() in restaurant_cuisines:
                     matching_features.append(f"Jenis masakan: {cuisine}")
-        if 'menu' in entities:
-            restaurant_menus = [m.lower() for m in restaurant.entitas_menu]
-            for menu in entities['menu']:
-                if menu.lower() in restaurant_menus:
-                    matching_features.append(f"Menu: {menu}")
-        if 'preferensi' in entities:
-            restaurant_prefs = [p.lower() for p in restaurant.entitas_preferensi]
-            for pref in entities['preferensi']:
+        
+        # Check preferences field
+        if 'preferences' in entities and hasattr(restaurant, 'preferences') and restaurant.preferences:
+            restaurant_prefs = [p.lower() for p in restaurant.preferences]
+            for pref in entities['preferences']:
                 if pref.lower() in restaurant_prefs:
                     matching_features.append(f"Suasana: {pref}")
+        
+        # Check features field
+        if 'features' in entities and hasattr(restaurant, 'features') and restaurant.features:
+            restaurant_features = [f.lower() for f in restaurant.features]
+            for feature in entities['features']:
+                if feature.lower() in restaurant_features:
+                    matching_features.append(f"Fasilitas: {feature}")
+        
         return matching_features
     def _generate_explanation(self, entities: Dict[str, List[str]], 
                             restaurant: Restaurant, 
@@ -307,17 +425,41 @@ class ContentBasedRecommendationEngine:
             for restaurant in self.restaurants_objects:
                 score = 0.0
                 matching_features = []
-                restaurant_cuisines = [c.lower() for c in restaurant.entitas_jenis_makanan]
-                if any(category_lower in cuisine for cuisine in restaurant_cuisines):
-                    score += 0.8
-                    matching_features.append(f"Jenis masakan: {category}")
-                if restaurant.entitas_lokasi and category_lower in restaurant.entitas_lokasi.lower():
-                    score += 0.6
+                
+                # Check location (HIGHEST PRIORITY)
+                if hasattr(restaurant, 'location') and restaurant.location and category_lower in restaurant.location.lower():
+                    score += 1.0
                     matching_features.append(f"Lokasi: {category}")
-                restaurant_prefs = [p.lower() for p in restaurant.entitas_preferensi]
-                if any(category_lower in pref for pref in restaurant_prefs):
-                    score += 0.4
-                    matching_features.append(f"Suasana: {category}")
+                elif hasattr(restaurant, 'address') and restaurant.address and category_lower in restaurant.address.lower():
+                    score += 0.9
+                    matching_features.append(f"Lokasi: {category}")
+                
+                # Check cuisines
+                if hasattr(restaurant, 'cuisines') and restaurant.cuisines:
+                    restaurant_cuisines = [c.lower() for c in restaurant.cuisines]
+                    if any(category_lower in cuisine for cuisine in restaurant_cuisines):
+                        score += 0.8
+                        matching_features.append(f"Jenis masakan: {category}")
+                
+                # Check about field
+                if hasattr(restaurant, 'about') and restaurant.about and category_lower in restaurant.about.lower():
+                    score += 0.6
+                    matching_features.append(f"Deskripsi: {category}")
+                
+                # Check preferences
+                if hasattr(restaurant, 'preferences') and restaurant.preferences:
+                    restaurant_prefs = [p.lower() for p in restaurant.preferences]
+                    if any(category_lower in pref for pref in restaurant_prefs):
+                        score += 0.4
+                        matching_features.append(f"Suasana: {category}")
+                
+                # Check features
+                if hasattr(restaurant, 'features') and restaurant.features:
+                    restaurant_features = [f.lower() for f in restaurant.features]
+                    if any(category_lower in feat for feat in restaurant_features):
+                        score += 0.3
+                        matching_features.append(f"Fasilitas: {category}")
+                
                 if score > 0:
                     recommendation = Recommendation(
                         restaurant=restaurant,
@@ -343,18 +485,23 @@ class ContentBasedRecommendationEngine:
             return {}
         total_restaurants = len(self.restaurants_objects)
         avg_rating = sum(r.rating for r in self.restaurants_objects) / total_restaurants
+        
         all_cuisines = []
         for restaurant in self.restaurants_objects:
-            all_cuisines.extend(restaurant.entitas_jenis_makanan)
+            if hasattr(restaurant, 'cuisines') and restaurant.cuisines:
+                all_cuisines.extend(restaurant.cuisines)
         unique_cuisines = len(set(all_cuisines))
-        locations = set()
+        
+        all_features = []
         for restaurant in self.restaurants_objects:
-            if restaurant.entitas_lokasi:
-                locations.add(restaurant.entitas_lokasi)
+            if hasattr(restaurant, 'features') and restaurant.features:
+                all_features.extend(restaurant.features)
+        unique_features = len(set(all_features))
+        
         return {
             'total_restaurants': total_restaurants,
             'average_rating': round(avg_rating, 2),
             'unique_cuisines': unique_cuisines,
-            'unique_locations': len(locations),
+            'unique_features': unique_features,
             'tfidf_features': self.tfidf_matrix.shape[1] if self.tfidf_matrix is not None else 0
         }

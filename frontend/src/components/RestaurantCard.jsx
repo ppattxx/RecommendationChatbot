@@ -1,10 +1,11 @@
 /**
  * Restaurant Card Component
  * Card untuk menampilkan informasi restoran dengan rating dan foto
+ * Mendukung tampilan rank untuk Top 5
  */
 import { FiMapPin, FiStar, FiDollarSign, FiClock } from 'react-icons/fi';
 
-const RestaurantCard = ({ restaurant, onCardClick, isPersonalized }) => {
+const RestaurantCard = ({ restaurant, onCardClick, isPersonalized, showRank = false }) => {
   const {
     name,
     location,
@@ -15,13 +16,10 @@ const RestaurantCard = ({ restaurant, onCardClick, isPersonalized }) => {
     description,
     opening_hours,
     popular_dishes,
-    personalization_score
+    personalization_score,
+    similarity_score,
+    rank
   } = restaurant;
-  
-  // Debug personalization
-  if (personalization_score > 0) {
-    console.log(`${name}: isPersonalized=${isPersonalized}, score=${personalization_score}`);
-  }
 
   // Generate rating stars
   const renderStars = (rating) => {
@@ -74,13 +72,29 @@ const RestaurantCard = ({ restaurant, onCardClick, isPersonalized }) => {
 
   return (
     <div 
-      className={`bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer group ${
-        isPersonalized && personalization_score > 0 
-          ? 'ring-2 ring-green-400 ring-opacity-50 hover:ring-green-500 hover:ring-opacity-75' 
-          : ''
+      className={`bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer group relative ${
+        showRank ? 'ring-2 ring-purple-400 ring-opacity-60 hover:ring-purple-500 hover:ring-opacity-80' : ''
       }`}
       onClick={() => onCardClick && onCardClick(restaurant)}
     >
+      {/* Rank Badge - Top 5 "Pilihan Terbaik" */}
+      {showRank && rank && (
+        <div className="absolute top-3 left-3 z-10 flex flex-col items-start gap-1">
+          {/* Rank Number */}
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white text-lg shadow-lg
+            ${rank === 1 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600' : 
+              rank === 2 ? 'bg-gradient-to-br from-gray-300 to-gray-500' : 
+              rank === 3 ? 'bg-gradient-to-br from-amber-500 to-amber-700' : 
+              'bg-gradient-to-br from-primary-500 to-primary-700'}`}>
+            #{rank}
+          </div>
+          {/* "Pilihan Terbaik" Label */}
+          <span className="px-2 py-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold rounded-full shadow-lg">
+            ⭐ Pilihan Terbaik
+          </span>
+        </div>
+      )}
+      
       {/* Image */}
       <div className="relative h-48 overflow-hidden">
         <img
@@ -91,24 +105,6 @@ const RestaurantCard = ({ restaurant, onCardClick, isPersonalized }) => {
             e.target.src = `https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&h=200&fit=crop&crop=center`;
           }}
         />
-        
-        {/* Personalization Badge */}
-        {isPersonalized && personalization_score > 0 && (
-          <div className="absolute top-3 left-3">
-            <span className="px-3 py-1.5 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs font-bold rounded-full flex items-center gap-1 shadow-lg animate-pulse">
-              {personalization_score >= 5 ? 'Sangat Cocok!' : 'Cocok untuk Anda'}
-            </span>
-          </div>
-        )}
-        
-        {/* Score Badge for high matches */}
-        {isPersonalized && personalization_score >= 5 && (
-          <div className="absolute top-14 left-3">
-            <span className="px-2 py-1 bg-yellow-400 text-yellow-900 text-xs font-bold rounded-full flex items-center gap-1 shadow-md">
-              {Math.round(personalization_score * 10)}% Match
-            </span>
-          </div>
-        )}
         
         {/* Save to favorites button */}
         <button className="absolute top-3 right-3 p-2 bg-white/80 hover:bg-white rounded-full transition-colors">

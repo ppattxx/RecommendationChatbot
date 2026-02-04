@@ -186,8 +186,22 @@ class ChatbotService:
     
     def _get_greeting_response(self):
         responses = [
-            "Halo! Saya siap membantu Anda mencari restoran yang pas!\n\nCoba ceritakan apa yang Anda inginkan, misalnya:\n- 'Pizza yang romantis di Kuta'\n- 'Seafood murah di Gili Trawangan'\n- 'Tempat makan keluarga yang santai'",
-            "Hai! Senang bisa membantu Anda!\n\nSilakan beri tahu saya kriteria restoran yang Anda cari. Saya bisa membantu berdasarkan:\n- Jenis masakan\n- Lokasi\n- Suasana\n- Budget"
+            (
+                "Halo! Saya siap membantu Anda mencari restoran yang pas!\n\n"
+                "Coba ceritakan apa yang Anda inginkan, misalnya:\n"
+                "• Pizza yang romantis di Kuta\n"
+                "• Seafood murah di Gili Trawangan\n"
+                "• Tempat makan keluarga yang santai"
+            ),
+            (
+                "Hai! Senang bisa membantu Anda!\n\n"
+                "Silakan beri tahu saya kriteria restoran yang Anda cari. "
+                "Saya bisa membantu berdasarkan:\n"
+                "• Jenis masakan\n"
+                "• Lokasi\n"
+                "• Suasana\n"
+                "• Budget"
+            )
         ]
         return random.choice(responses)
     def _get_help_response(self):

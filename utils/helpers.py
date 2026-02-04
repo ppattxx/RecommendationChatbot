@@ -164,68 +164,83 @@ def calculate_boosted_score(base_score: float, query_entities: Dict[str, List[st
     preference_matched = False
     menu_matched = False
     
-    # Tier 1: Location matching (highest priority)
-    if 'lokasi' in query_entities and query_entities['lokasi']:
-        if restaurant.entitas_lokasi:
-            for location in query_entities['lokasi']:
-                if _fuzzy_location_match(location.lower(), restaurant.entitas_lokasi.lower()):
-                    boost_factor *= 2.0  # Strong boost for location
-                    location_matched = True
-                    break
-    
-    # Tier 2: Cuisine/Food Type matching with advanced synonym expansion
-    cuisine_fields = ['jenis_makanan', 'cuisine']
-    for field in cuisine_fields:
-        if field in query_entities and query_entities[field]:
-            restaurant_cuisines = [c.lower() for c in (restaurant.cuisines + restaurant.entitas_jenis_makanan)]
-            restaurant_menu = [m.lower() for m in restaurant.entitas_menu]
-            restaurant_text = ' '.join(restaurant_cuisines + restaurant_menu + 
-                                      [restaurant.name.lower(), restaurant.about.lower() if restaurant.about else ''])
-            
-            for cuisine in query_entities[field]:
-                cuisine_lower = cuisine.lower()
-                
-                # Direct match in name or cuisines (strongest)
-                if cuisine_lower in restaurant.name.lower():
-                    boost_factor *= 1.9
-                    cuisine_matched = True
-                    break
-                elif any(cuisine_lower in rest_cuisine for rest_cuisine in restaurant_cuisines):
-                    boost_factor *= 1.7
-                    cuisine_matched = True
-                    break
-                
-                # Check comprehensive SYNONYM_MAP
-                if cuisine_lower in SYNONYM_MAP:
-                    synonyms = SYNONYM_MAP[cuisine_lower]
-                    best_syn_boost = 1.0
-                    for syn in synonyms:
-                        if syn in restaurant.name.lower():
-                            best_syn_boost = max(best_syn_boost, 1.6)
-                            cuisine_matched = True
-                        elif syn in ' '.join(restaurant_cuisines):
-                            best_syn_boost = max(best_syn_boost, 1.5)
-                            cuisine_matched = True
-                        elif syn in restaurant_text:
-                            best_syn_boost = max(best_syn_boost, 1.3)
-                            cuisine_matched = True
-                    if cuisine_matched:
-                        boost_factor *= best_syn_boost
-                        break
-    
-    # Tier 3: Menu-specific items
-    if 'menu' in query_entities and query_entities['menu']:
-        restaurant_menu = [m.lower() for m in restaurant.entitas_menu]
-        for menu_item in query_entities['menu']:
-            if any(menu_item.lower() in m for m in restaurant_menu):
-                boost_factor *= 1.4
-                menu_matched = True
+    # Tier 0: Location matching (HIGHEST PRIORITY)
+    if 'location' in query_entities and query_entities['location']:
+        for loc in query_entities['location']:
+            loc_lower = loc.lower()
+            # Check extracted location field first
+            if isinstance(restaurant.location, str) and _fuzzy_location_match(loc_lower, restaurant.location.lower()):
+                boost_factor *= 2.0  # Highest boost for location match
+                location_matched = True
+                break
+            # Fallback to address field
+            elif isinstance(restaurant.address, str) and _fuzzy_location_match(loc_lower, restaurant.address.lower()):
+                boost_factor *= 1.8
+                location_matched = True
                 break
     
-    # Tier 4: Preferences matching
+    # Tier 1: About field matching (general search)
+    if 'about' in query_entities and query_entities['about']:
+        if isinstance(restaurant.about, str):
+            restaurant_about_lower = restaurant.about.lower()
+            for term in query_entities['about']:
+                if term.lower() in restaurant_about_lower:
+                    boost_factor *= 1.5
+                    break
+    
+    # Tier 2: Cuisine matching with advanced synonym expansion
+    if 'cuisine' in query_entities and query_entities['cuisine']:
+        # Safely handle cuisines - ensure it's a list
+        if isinstance(restaurant.cuisines, list):
+            restaurant_cuisines = [c.lower() for c in restaurant.cuisines]
+        else:
+            restaurant_cuisines = []
+        # Safely handle name and about fields
+        rest_name = restaurant.name.lower() if isinstance(restaurant.name, str) else ''
+        rest_about = restaurant.about.lower() if isinstance(restaurant.about, str) else ''
+        restaurant_text = ' '.join(restaurant_cuisines + [rest_name, rest_about])
+            
+        for cuisine in query_entities['cuisine']:
+            cuisine_lower = cuisine.lower()
+            
+            # Direct match in name or cuisines (strongest)
+            if isinstance(restaurant.name, str) and cuisine_lower in restaurant.name.lower():
+                boost_factor *= 1.9
+                cuisine_matched = True
+                break
+            elif any(cuisine_lower in rest_cuisine for rest_cuisine in restaurant_cuisines):
+                boost_factor *= 1.7
+                cuisine_matched = True
+                break
+                
+            # Check comprehensive SYNONYM_MAP
+            if cuisine_lower in SYNONYM_MAP:
+                synonyms = SYNONYM_MAP[cuisine_lower]
+                best_syn_boost = 1.0
+                rest_name_lower = restaurant.name.lower() if isinstance(restaurant.name, str) else ''
+                for syn in synonyms:
+                    if syn in rest_name_lower:
+                        best_syn_boost = max(best_syn_boost, 1.6)
+                        cuisine_matched = True
+                    elif syn in ' '.join(restaurant_cuisines):
+                        best_syn_boost = max(best_syn_boost, 1.5)
+                        cuisine_matched = True
+                    elif syn in restaurant_text:
+                        best_syn_boost = max(best_syn_boost, 1.3)
+                        cuisine_matched = True
+                if cuisine_matched:
+                    boost_factor *= best_syn_boost
+                    break
+    
+    # Tier 3: Preferences matching
     if 'preferences' in query_entities and query_entities['preferences']:
-        restaurant_prefs = [p.lower() for p in restaurant.entitas_preferensi]
-        restaurant_text = ' '.join(restaurant_prefs + [restaurant.about.lower() if restaurant.about else ''])
+        # Safely handle preferences - ensure it's a list
+        if isinstance(restaurant.preferences, list):
+            restaurant_prefs = [p.lower() for p in restaurant.preferences]
+        else:
+            restaurant_prefs = []
+        rest_about = restaurant.about.lower() if isinstance(restaurant.about, str) else ''
+        restaurant_text = ' '.join(restaurant_prefs + [rest_about])
         for pref in query_entities['preferences']:
             pref_lower = pref.lower()
             if pref_lower in restaurant_text:
@@ -242,13 +257,23 @@ def calculate_boosted_score(base_score: float, query_entities: Dict[str, List[st
                 if preference_matched:
                     break
     
+    # Tier 4: Features matching
+    if 'features' in query_entities and query_entities['features']:
+        # Safely handle features - ensure it's a list
+        if isinstance(restaurant.features, list):
+            restaurant_features = [f.lower() for f in restaurant.features]
+        else:
+            restaurant_features = []
+        for feat in query_entities['features']:
+            if any(feat.lower() in f for f in restaurant_features):
+                boost_factor *= 1.2
+                break
+    
     # Combination bonuses (multiplicative for strong signals)
     if location_matched and cuisine_matched:
         boost_factor *= 1.4  # Strong combo bonus
-    if cuisine_matched and menu_matched:
-        boost_factor *= 1.25  # Food match bonus
-    if location_matched and preference_matched:
-        boost_factor *= 1.2  # Location + ambiance bonus
+    if cuisine_matched and preference_matched:
+        boost_factor *= 1.25  # Cuisine + ambiance bonus
     
     # Rating boost (quality signal)
     if restaurant.rating >= 4.8:
@@ -265,90 +290,108 @@ def calculate_similarity_score(query_entities: Dict[str, List[str]],
     total_score = 0.0
     total_weight = 0.0
     
-    # Optimized weights for best precision-recall balance
+    # Optimized weights for 5 entities
     weights = {
-        'lokasi': 0.40,  # Highest weight - location is crucial
-        'jenis_makanan': 0.45,  # Very high - cuisine is primary search factor
-        'cuisine': 0.45,  # Same as jenis_makanan
-        'menu': 0.25,  # Increased - specific dishes are important
-        'preferensi': 0.18,
-        'preferences': 0.18,
-        'fitur': 0.12
+        'location': 0.50,  # Location is highest priority for restaurant search
+        'cuisine': 0.40,  # Cuisine is second most important
+        'about': 0.30,  # General description matching
+        'preferences': 0.20,  # Preferences and ambiance
+        'features': 0.20  # Facilities
     }
     
-    if 'lokasi' in query_entities and query_entities['lokasi']:
+    # Location matching (HIGHEST PRIORITY)
+    if 'location' in query_entities and query_entities['location']:
         location_score = 0.0
-        if restaurant.entitas_lokasi:
-            for location in query_entities['lokasi']:
-                if location.lower() in restaurant.entitas_lokasi.lower():
-                    location_score = 1.0
+        query_locations = [l.lower() for l in query_entities['location']]
+        
+        for query_loc in query_locations:
+            # Check extracted location field
+            if isinstance(restaurant.location, str) and _fuzzy_location_match(query_loc, restaurant.location.lower()):
+                location_score = 1.0
+                break
+            # Check full address
+            elif isinstance(restaurant.address, str) and _fuzzy_location_match(query_loc, restaurant.address.lower()):
+                location_score = 0.9
+                break
+        
+        total_score += location_score * weights['location']
+        total_weight += weights['location']
+    
+    # About field matching
+    if 'about' in query_entities and query_entities['about']:
+        about_score = 0.0
+        if isinstance(restaurant.about, str):
+            restaurant_about_lower = restaurant.about.lower()
+            matches = sum(1 for term in query_entities['about'] if term.lower() in restaurant_about_lower)
+            if query_entities['about']:
+                about_score = min(matches / len(query_entities['about']), 1.0)
+        total_score += about_score * weights['about']
+        total_weight += weights['about']
+    
+    # Cuisine matching
+    if 'cuisine' in query_entities and query_entities['cuisine']:
+        cuisine_score = 0.0
+        # Safely handle cuisines - ensure it's a list
+        if isinstance(restaurant.cuisines, list):
+            restaurant_cuisines = [c.lower() for c in restaurant.cuisines]
+        else:
+            restaurant_cuisines = []
+        query_cuisines = [c.lower() for c in query_entities['cuisine']]
+        
+        matches = 0
+        from config.settings import SYNONYM_MAP
+        for query_cuisine in query_cuisines:
+            # Check direct match
+            for restaurant_cuisine in restaurant_cuisines:
+                if query_cuisine == restaurant_cuisine or \
+                   query_cuisine in restaurant_cuisine or \
+                   restaurant_cuisine in query_cuisine:
+                    matches += 1
                     break
-        total_score += location_score * weights['lokasi']
-        total_weight += weights['lokasi']
+            else:
+                # Check synonym match if no direct match
+                if query_cuisine in SYNONYM_MAP:
+                    synonyms = SYNONYM_MAP[query_cuisine]
+                    for synonym in synonyms:
+                        if any(synonym in restaurant_cuisine for restaurant_cuisine in restaurant_cuisines):
+                            matches += 0.8  # Slightly lower score for synonym match
+                            break
+        
+        if query_cuisines:
+            cuisine_score = min(matches / len(query_cuisines), 1.0)
+        
+        total_score += cuisine_score * weights['cuisine']
+        total_weight += weights['cuisine']
     
-    cuisine_keys = ['jenis_makanan', 'cuisine']
-    for key in cuisine_keys:
-        if key in query_entities and query_entities[key]:
-            cuisine_score = 0.0
-            restaurant_cuisines = [c.lower() for c in restaurant.entitas_jenis_makanan]
-            query_cuisines = [c.lower() for c in query_entities[key]]
-            
-            matches = 0
-            from config.settings import SYNONYM_MAP
-            for query_cuisine in query_cuisines:
-                # Check direct match
-                for restaurant_cuisine in restaurant_cuisines:
-                    if query_cuisine == restaurant_cuisine or \
-                       query_cuisine in restaurant_cuisine or \
-                       restaurant_cuisine in query_cuisine:
-                        matches += 1
-                        break
-                else:
-                    # Check synonym match if no direct match
-                    if query_cuisine in SYNONYM_MAP:
-                        synonyms = SYNONYM_MAP[query_cuisine]
-                        for synonym in synonyms:
-                            if any(synonym in restaurant_cuisine for restaurant_cuisine in restaurant_cuisines):
-                                matches += 0.8  # Slightly lower score for synonym match
-                                break
-            
-            if query_cuisines:
-                cuisine_score = min(matches / len(query_cuisines), 1.0)
-            
-            total_score += cuisine_score * weights[key]
-            total_weight += weights[key]
+    # Preferences matching
+    if 'preferences' in query_entities and query_entities['preferences']:
+        pref_score = 0.0
+        # Safely handle preferences - ensure it's a list
+        if isinstance(restaurant.preferences, list):
+            restaurant_prefs = [p.lower() for p in restaurant.preferences]
+        else:
+            restaurant_prefs = []
+        query_prefs = [p.lower() for p in query_entities['preferences']]
+        matches = sum(1 for pref in query_prefs if any(pref in rest_pref or rest_pref in pref for rest_pref in restaurant_prefs))
+        if query_prefs:
+            pref_score = min(matches / len(query_prefs), 1.0)
+        total_score += pref_score * weights['preferences']
+        total_weight += weights['preferences']
     
-    if 'menu' in query_entities and query_entities['menu']:
-        menu_score = 0.0
-        restaurant_menus = [m.lower() for m in restaurant.entitas_menu]
-        query_menus = [m.lower() for m in query_entities['menu']]
-        matches = sum(1 for menu in query_menus if any(menu in rest_menu or rest_menu in menu for rest_menu in restaurant_menus))
-        if query_menus:
-            menu_score = min(matches / len(query_menus), 1.0)
-        total_score += menu_score * weights['menu']
-        total_weight += weights['menu']
-    
-    pref_keys = ['preferensi', 'preferences']
-    for key in pref_keys:
-        if key in query_entities and query_entities[key]:
-            pref_score = 0.0
-            restaurant_prefs = [p.lower() for p in restaurant.entitas_preferensi]
-            query_prefs = [p.lower() for p in query_entities[key]]
-            matches = sum(1 for pref in query_prefs if any(pref in rest_pref or rest_pref in pref for rest_pref in restaurant_prefs))
-            if query_prefs:
-                pref_score = min(matches / len(query_prefs), 1.0)
-            total_score += pref_score * weights[key]
-            total_weight += weights[key]
-    
-    if 'fitur' in query_entities and query_entities['fitur']:
+    # Features matching
+    if 'features' in query_entities and query_entities['features']:
         feature_score = 0.0
-        restaurant_features = [f.lower() for f in restaurant.entitas_features]
-        query_features = [f.lower() for f in query_entities['fitur']]
+        # Safely handle features - ensure it's a list
+        if isinstance(restaurant.features, list):
+            restaurant_features = [f.lower() for f in restaurant.features]
+        else:
+            restaurant_features = []
+        query_features = [f.lower() for f in query_entities['features']]
         matches = sum(1 for feature in query_features if any(feature in rest_feat or rest_feat in feature for rest_feat in restaurant_features))
         if query_features:
             feature_score = min(matches / len(query_features), 1.0)
-        total_score += feature_score * weights['fitur']
-        total_weight += weights['fitur']
+        total_score += feature_score * weights['features']
+        total_weight += weights['features']
     
     if total_weight > 0:
         final_score = total_score / total_weight

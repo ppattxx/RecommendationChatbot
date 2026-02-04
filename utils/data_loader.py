@@ -34,7 +34,11 @@ class DataLoader:
             raise
     @staticmethod
     def parse_list_column(value: Any) -> List[str]:
+        # Handle NaN, None, empty values
         if pd.isna(value) or not value:
+            return []
+        # Handle float values (like NaN that wasn't caught above)
+        if isinstance(value, (int, float)):
             return []
         try:
             if isinstance(value, str):
@@ -52,29 +56,21 @@ class DataLoader:
         restaurants = []
         for _, row in df.iterrows():
             try:
+                # Get location from entitas_lokasi column
+                location_list = DataLoader.parse_list_column(row.get('entitas_lokasi', []))
+                location = ', '.join(location_list) if location_list else None
+                
                 restaurant = Restaurant(
                     id=int(row.get('id', 0)),
                     name=str(row.get('name', '')),
                     rating=float(row.get('rating', 0.0)),
                     about=row.get('about'),
-                    address=row.get('address'),
+                    address=row.get('address') if 'address' in row else location,  # Use location as address if no address column
+                    location=location,
                     price_range=row.get('price_range'),
                     cuisines=DataLoader.parse_list_column(row.get('cuisines', [])),
                     features=DataLoader.parse_list_column(row.get('features', [])),
-                    preferences=DataLoader.parse_list_column(row.get('preferences', [])),
-                    entitas_lokasi=row.get('entitas_lokasi'),
-                    entitas_jenis_makanan=DataLoader.parse_list_column(
-                        row.get('entitas_jenis_makanan', [])
-                    ),
-                    entitas_menu=DataLoader.parse_list_column(
-                        row.get('entitas_menu', [])
-                    ),
-                    entitas_preferensi=DataLoader.parse_list_column(
-                        row.get('entitas_preferensi', [])
-                    ),
-                    entitas_features=DataLoader.parse_list_column(
-                        row.get('entitas_features', [])
-                    )
+                    preferences=DataLoader.parse_list_column(row.get('preferences', []))
                 )
                 restaurants.append(restaurant)
             except Exception as e:

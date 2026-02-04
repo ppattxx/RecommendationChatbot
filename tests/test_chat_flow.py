@@ -1,7 +1,7 @@
 import time
 import requests
 def test_chat_flow():
-    base_url = "http://127.0.0.1:8000"
+    base_url = "http://127.0.0.1:5500"
     print("=== TESTING COMPLETE CHAT FLOW ===")
     print("1. Starting conversation...")
     response = requests.post(f"{base_url}/api/start_conversation", json={})

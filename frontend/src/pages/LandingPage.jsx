@@ -1,41 +1,38 @@
 /**
  * Landing Page Component
  * Halaman utama dengan rekomendasi restoran berdasarkan preferensi user
+ * Terintegrasi dengan PersonalizationContext untuk seamless updates
  */
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { FiMapPin, FiStar, FiUsers, FiRefreshCw } from 'react-icons/fi';
-import { preferencesAPI, chatAPI } from '../services/api';
+import { usePersonalization } from '../contexts/PersonalizationContext';
 import RestaurantRecommendations from '../components/RestaurantRecommendations';
 
 const LandingPage = () => {
-  const [preferences, setPreferences] = useState(null);
-  const [summary, setSummary] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // Get context values for seamless updates
+  const { 
+    preferences: contextPreferences,
+    isLoadingPreferences,
+    fetchPreferences,
+    resetAllData
+  } = usePersonalization();
 
+  // Fetch preferences on mount
   useEffect(() => {
     fetchPreferences();
-    fetchSummary();
   }, []);
 
   const handleResetHistory = async () => {
     if (confirm('Yakin ingin mereset SEMUA riwayat chat dan preferensi dari database? Ini akan menghapus semua data dan tidak bisa dikembalikan!')) {
       try {
-        // Call API to delete ALL data from database
-        const response = await chatAPI.resetAllChatHistory();
-        console.log('Reset ALL response:', response);
+        const success = await resetAllData();
         
-        // Clear localStorage
-        localStorage.removeItem('session_id');
-        localStorage.removeItem('device_token');
-        localStorage.removeItem('session_timestamp');
-        localStorage.removeItem('chat_history');
-        
-        // Show success message
-        alert(`Berhasil menghapus ${response.data.deleted_chats} riwayat chat!`);
-        
-        // Reload page to refresh
-        window.location.reload();
+        if (success) {
+          alert('Berhasil menghapus semua riwayat!');
+          window.location.reload();
+        } else {
+          alert('Gagal mereset history. Silakan coba lagi.');
+        }
       } catch (error) {
         console.error('Error resetting history:', error);
         alert('Gagal mereset history. Silakan coba lagi.');
@@ -43,39 +40,8 @@ const LandingPage = () => {
     }
   };
 
-  const fetchPreferences = async () => {
-    try {
-      setIsLoading(true);
-      const sessionId = localStorage.getItem('session_id');
-      const deviceToken = localStorage.getItem('device_token');
-
-      const response = await preferencesAPI.getUserPreferences({
-        session_id: sessionId || undefined,
-        device_token: deviceToken || undefined
-      });
-      if (response.success) {
-        setPreferences(response.data);
-      }
-    } catch (err) {
-      console.error('Error fetching preferences:', err);
-      setError('Gagal memuat data preferensi');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const fetchSummary = async () => {
-    try {
-      const response = await preferencesAPI.getPreferencesSummary();
-      if (response.success) {
-        setSummary(response.data);
-      }
-    } catch (err) {
-      console.error('Error fetching summary:', err);
-    }
-  };
-
-  if (isLoading) {
+  // Show loading skeleton
+  if (isLoadingPreferences && !contextPreferences) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-primary-50 to-white flex items-center justify-center">
         <div className="text-center">
@@ -120,12 +86,6 @@ const LandingPage = () => {
 
             {/* Action Buttons */}
             <div className="text-center flex justify-center gap-4">
-              <button 
-                onClick={() => document.querySelector('.floating-chatbot-trigger')?.click()}
-                className="bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-8 rounded-full transition-colors shadow-lg"
-              >
-                💬 Chat untuk Rekomendasi Personal
-              </button>
               <button
                 onClick={handleResetHistory}
                 className="flex items-center gap-2 px-6 py-3 text-sm font-semibold text-red-600 hover:text-white hover:bg-red-600 border-2 border-red-600 rounded-full transition-colors"
@@ -139,11 +99,10 @@ const LandingPage = () => {
         </div>
       </div>
 
-      {/* Main Content */}
+      {/* Main Content - Top 5 Recommendations Only */}
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
-          {/* Restaurant Recommendations */}
-          <RestaurantRecommendations userPreferences={preferences} />
+          <RestaurantRecommendations userPreferences={contextPreferences} />
         </div>
       </div>
 
@@ -154,7 +113,7 @@ const LandingPage = () => {
             © 2025 Chatbot Rekomendasi Restoran - Tugas Akhir
           </p>
           <p className="text-gray-500 text-sm mt-2">
-            Powered by Content-Based Filtering & Flask + React
+            Powered by Content-Based Filtering dengan Cosine Similarity
           </p>
         </div>
       </footer>

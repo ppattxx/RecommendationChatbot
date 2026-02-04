@@ -29,9 +29,9 @@ RECOMMENDATION_CONFIG = {
     "enable_learning": True
 }
 ENTITY_BONUS_WEIGHTS = {
-    "jenis_makanan": 0.4,
-    "lokasi": 0.5,
-    "cuisine": 0.3,
+    "location": 0.5,  # Highest weight - location is crucial
+    "cuisine": 0.4,
+    "about": 0.3,
     "preferences": 0.2,
     "features": 0.2
 }
@@ -139,11 +139,11 @@ SYNONYM_MAP = {
     'fast food': ['fast food', 'quick service', 'quick bite', 'fast casual'],
 }
 ENTITY_FIELD_MAPPING = {
-    "jenis_makanan": ["cuisines", "entitas_jenis_makanan", "name", "about"],
-    "lokasi": ["entitas_lokasi", "address", "name"],
-    "cuisine": ["cuisines", "entitas_jenis_makanan"],
-    "preferences": ["preferences", "entitas_preferensi", "about"],
-    "features": ["features", "entitas_features"]
+    "about": ["about", "name"],
+    "location": ["entitas_lokasi"], 
+    "cuisine": ["cuisines"],
+    "preferences": ["preferences"],
+    "features": ["features"]
 }
 CHATBOT_CONFIG = {
     "greeting_messages": [
@@ -160,7 +160,17 @@ CHATBOT_CONFIG = {
     "max_conversation_length": 50
 }
 ENTITY_KEYWORDS = {
-    "jenis_makanan": [
+    # Location keywords - highest priority (weight 0.5)
+    "location": [
+        "kuta", "senggigi", "gili trawangan", "gili t", "gili", "mataram", 
+        "lombok", "pemenang", "gili indah", "gili air", "gili meno", "sunset boulevard",
+        "kelapa road", "jalan bambu", "jl. bintang laut", "jl. raya kuta", 
+        "jalan raya kuta", "jl. mawun sikara", "gili islands", "west nusa tenggara",
+        "north lombok regency", "kardia resort", "kuta lombok", "di", "dekat", "sekitar"
+    ],
+    
+    # Cuisine keywords - second priority (weight 0.4)
+    "cuisine": [
         "western", "asian", "italian", "italy", "italia", "japanese", "jepang", 
         "indonesian", "indonesia", "korean", "korea", "european", "eropa", 
         "chinese", "cina", "thai", "mexican", "meksiko", "indian", "mediterranean",
@@ -168,41 +178,46 @@ ENTITY_KEYWORDS = {
         "iga", "coffee", "kopi", "pasta", "burger", "salad", "curry", "noodles",
         "soup", "ramen", "tacos", "sandwich", "bar", "cafe", "fast food", 
         "international", "fusion", "healthy", "pub", "contemporary", "caucasian",
-        "polynesian", "hawaiian", "southwestern", "mediterranean", "spanish", 
-        "catalan", "central asian", "romana", "lazio", "central-italian", "dining bars"
+        "polynesian", "hawaiian", "southwestern", "spanish", 
+        "catalan", "central asian", "romana", "lazio", "central-italian", "dining bars",
+        "makanan", "makan", "restoran", "restaurant", "tempat makan"
     ],
-    "lokasi": [
-        "kuta", "senggigi", "gili trawangan", "gili t", "gili", "mataram", 
-        "lombok", "pemenang", "gili indah", "gili air", "gili meno", "sunset boulevard",
-        "kelapa road", "jalan bambu", "jl. bintang laut", "jl. raya kuta", 
-        "jalan raya kuta", "jl. mawun sikara", "gili islands", "west nusa tenggara",
-        "north lombok regency", "kardia resort", "kuta lombok"
+    
+    # About keywords - general descriptors (weight 0.3)
+    "about": [
+        "enak", "lezat", "nikmat", "sedap", "mantap", "terbaik", "best", "top",
+        "recommended", "rekomendasi", "populer", "terkenal", "famous", "hits",
+        "baru", "new", "modern", "tradisional", "traditional", "authentic",
+        "murah", "terjangkau", "affordable", "mahal", "mewah", "luxury", "premium",
+        "bagus", "good", "great", "excellent", "amazing", "wonderful"
     ],
-    "cuisine": [
-        "bar", "barbecue", "asian", "contemporary", "healthy", "indonesian", 
-        "caucasian", "mexican", "southwestern", "polynesian", "hawaiian", "italian", 
-        "pizza", "mediterranean", "european", "romana", "lazio", "central-italian",
-        "cafe", "international", "fusion", "street food", "dining bars", "spanish",
-        "catalan", "central asian", "pub", "fast food"
-    ],
+    
+    # Preferences keywords - ambiance and atmosphere (weight 0.2)
     "preferences": [
-        "santai", "pesta", "keluarga", "romantis", "pemandangan", "matahari terbenam", 
-        "murah", "mewah", "populer", "live music", "tepi pantai", "instagramable", 
-        "free wifi", "outdoor", "indoor", "rooftop", "beachfront", "vegetarian", "vegan",
+        "santai", "casual", "relaxed", "pesta", "party", "keluarga", "family", 
+        "romantis", "romantic", "intimate", "pemandangan", "view", "matahari terbenam", "sunset",
+        "live music", "musik", "tepi pantai", "beachfront", "beach", "pantai",
+        "instagramable", "aesthetic", "outdoor", "indoor", "rooftop", "terrace",
+        "vegetarian", "vegan", "halal", "organic", "healthy",
         "delicious food", "great atmosphere", "amazing food", "beautiful restaurant",
         "dinner spot", "lunch and dinner", "great stay", "perfect spot", "amazing place",
         "cool vibe", "good vibes", "great drinks", "fresh ingredients", "signature cocktails",
         "fresh food", "super friendly staff", "quick service", "beautiful sunset",
-        "sea view", "fire show", "every night", "during our stay"
+        "sea view", "fire show", "cozy", "nyaman", "tenang", "ramai", "crowded"
     ],
+    
+    # Features keywords - amenities and facilities (weight 0.2)
     "features": [
-        "wifi", "reservasi", "delivery", "takeaway", "parking", "credit card",
-        "outdoor seating", "live music", "happy hour", "buffet", "halal",
-        "accepts credit cards", "free wifi", "full bar", "reservations", "seating",
-        "serves alcohol", "table service", "digital payments", "mastercard", 
-        "parking available", "street parking", "visa", "wheelchair accessible",
-        "wine and beer", "takeout", "cash only", "family style", "free off-street parking",
-        "gift cards available", "highchairs available", "sports bars"
+        "wifi", "wi-fi", "internet", "reservasi", "booking", "delivery", "antar",
+        "takeaway", "takeout", "bungkus", "parking", "parkir", "credit card", "kartu kredit",
+        "outdoor seating", "tempat duduk luar", "live music", "musik langsung",
+        "happy hour", "buffet", "prasmanan", "halal", "accepts credit cards", 
+        "free wifi", "full bar", "reservations", "seating", "serves alcohol",
+        "table service", "digital payments", "mastercard", "visa", 
+        "parking available", "street parking", "wheelchair accessible",
+        "wine and beer", "takeout", "cash only", "family style", 
+        "free off-street parking", "gift cards available", "highchairs available", 
+        "sports bars", "ac", "air conditioner", "smoking area", "non smoking"
     ]
 }
 LOGGING_CONFIG = {
@@ -242,7 +257,7 @@ LOGGING_CONFIG = {
 }
 API_CONFIG = {
     "host": "0.0.0.0",
-    "port": 8000,
+    "port": 5500,
     "debug": True,
     "api_version": "v1"
 }

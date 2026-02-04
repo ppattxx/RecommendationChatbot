@@ -7,7 +7,7 @@ import statistics
 from typing import List, Dict
 import json
 
-BASE_URL = "http://127.0.0.1:8000"
+BASE_URL = "http://127.0.0.1:5500"
 
 def measure_response_time(func, *args, **kwargs) -> float:
     """Mengukur waktu eksekusi sebuah fungsi"""
@@ -277,7 +277,7 @@ def main():
     print("="*60)
     print("CHATBOT RECOMMENDATION SYSTEM - RESPONSE TIME TESTING")
     print("="*60)
-    print("\nMake sure the backend server is running at http://127.0.0.1:8000")
+    print("\nMake sure the backend server is running at http://127.0.0.1:5500")
     input("Press Enter to continue...")
     
     results = []
