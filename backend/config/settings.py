@@ -5,10 +5,10 @@ from typing import Dict, List, Any
 # ─── Load .env at module level ────────────────────────────────
 try:
     from dotenv import load_dotenv
-    load_dotenv(Path(__file__).parent.parent / '.env')
+    load_dotenv(Path(__file__).parent.parent.parent / '.env')
 except ImportError:
     pass  # python-dotenv not installed; rely on OS env vars
-BASE_DIR = Path(__file__).parent.parent
+BASE_DIR = Path(__file__).parent.parent.parent  # backend/config -> backend -> project root
 DATA_DIR = BASE_DIR / "data"
 MODELS_DIR = BASE_DIR / "models"
 LOGS_DIR = BASE_DIR / "logs"

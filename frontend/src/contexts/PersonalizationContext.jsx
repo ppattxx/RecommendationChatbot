@@ -1,8 +1,3 @@
-/**
- * Personalization Context
- * State management untuk seamless personalization tanpa page refresh
- * Menangani preferences, recommendations, dan chat history
- */
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { preferencesAPI, recommendationsAPI, chatAPI } from '../services/api';
 
@@ -18,12 +13,7 @@ const STORAGE_KEYS = {
   LAST_SYNC: 'last_sync_timestamp',
 };
 
-/**
- * Provider Component
- * Wrap aplikasi dengan provider ini untuk akses global ke personalization state
- */
 export const PersonalizationProvider = ({ children }) => {
-  // User identification
   const [sessionId, setSessionId] = useState(() => localStorage.getItem(STORAGE_KEYS.SESSION_ID));
   const [deviceToken, setDeviceToken] = useState(() => {
     let token = localStorage.getItem(STORAGE_KEYS.DEVICE_TOKEN);
@@ -34,7 +24,6 @@ export const PersonalizationProvider = ({ children }) => {
     return token;
   });
 
-  // Data states
   const [preferences, setPreferences] = useState(null);
   const [topRecommendations, setTopRecommendations] = useState([]);
   const [chatHistory, setChatHistory] = useState(() => {
@@ -46,12 +35,9 @@ export const PersonalizationProvider = ({ children }) => {
     }
   });
 
-  // Loading states
   const [isLoadingPreferences, setIsLoadingPreferences] = useState(false);
   const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
-
-  // Error states
   const [error, setError] = useState(null);
 
   // Sync chat history to localStorage whenever it changes
@@ -68,10 +54,6 @@ export const PersonalizationProvider = ({ children }) => {
     }
   }, [sessionId]);
 
-  /**
-   * Fetch user preferences dari backend
-   * @returns {Promise<Object|null>} preferences data atau null jika error
-   */
   const fetchPreferences = useCallback(async () => {
     setIsLoadingPreferences(true);
     setError(null);
@@ -94,11 +76,7 @@ export const PersonalizationProvider = ({ children }) => {
     }
   }, [sessionId, deviceToken]);
 
-  /**
-   * Fetch Top 5 recommendations berdasarkan personalisasi
-   * Backend akan menghitung cosine similarity dan mengembalikan 5 terbaik
-   * @returns {Promise<Array>} array of top recommendations
-   */
+
   const fetchTopRecommendations = useCallback(async () => {
     setIsLoadingRecommendations(true);
     setError(null);
@@ -123,24 +101,17 @@ export const PersonalizationProvider = ({ children }) => {
     }
   }, [deviceToken, sessionId]);
 
-  /**
-   * Fetch chat history dari backend (untuk persistence)
-   * Merge dengan local storage dan update state
-   * @returns {Promise<Array>} chat history messages
-   */
   const fetchChatHistory = useCallback(async () => {
     if (!sessionId) {
       return chatHistory;
     }
-    
+
     setIsLoadingHistory(true);
     try {
       const response = await chatAPI.getChatHistory(sessionId);
       if (response.success && response.data?.messages) {
-        // Convert backend format to frontend format
         const backendMessages = [];
         response.data.messages.forEach((msg) => {
-          // Add user message
           if (msg.user_message) {
             backendMessages.push({
               type: 'user',
@@ -149,7 +120,6 @@ export const PersonalizationProvider = ({ children }) => {
               synced: true,
             });
           }
-          // Add bot response
           if (msg.bot_response) {
             backendMessages.push({
               type: 'bot',
@@ -160,7 +130,6 @@ export const PersonalizationProvider = ({ children }) => {
           }
         });
 
-        // Update state with backend data
         if (backendMessages.length > 0) {
           setChatHistory(backendMessages);
           localStorage.setItem(STORAGE_KEYS.CHAT_HISTORY, JSON.stringify(backendMessages));
@@ -177,10 +146,6 @@ export const PersonalizationProvider = ({ children }) => {
     }
   }, [sessionId, chatHistory]);
 
-  /**
-   * Add message to chat history (local state + localStorage)
-   * @param {Object} message - { type: 'user'|'bot', text: string, timestamp: Date }
-   */
   const addChatMessage = useCallback((message) => {
     const newMessage = {
       ...message,
@@ -190,20 +155,15 @@ export const PersonalizationProvider = ({ children }) => {
     setChatHistory((prev) => [...prev, newMessage]);
   }, []);
 
-  /**
-   * Clear all chat history (local + backend)
-   */
   const clearChatHistory = useCallback(async () => {
     try {
-      // Clear backend
       if (deviceToken || sessionId) {
         await chatAPI.resetChatHistory(deviceToken, sessionId);
       }
-      
-      // Clear local
+
       setChatHistory([]);
       localStorage.removeItem(STORAGE_KEYS.CHAT_HISTORY);
-      
+
       return true;
     } catch (err) {
       console.error('Error clearing chat history:', err);
@@ -211,26 +171,16 @@ export const PersonalizationProvider = ({ children }) => {
     }
   }, [deviceToken, sessionId]);
 
-  /**
-   * Update session ID (called after new chat session created)
-   * Triggers async refresh of preferences and recommendations
-   * @param {string} newSessionId 
-   */
   const updateSession = useCallback((newSessionId) => {
     setSessionId(newSessionId);
     localStorage.setItem(STORAGE_KEYS.SESSION_ID, newSessionId);
-    
-    // Async refresh - no page reload needed
+
     setTimeout(() => {
       fetchPreferences();
       fetchTopRecommendations();
     }, 500);
   }, [fetchPreferences, fetchTopRecommendations]);
 
-  /**
-   * Trigger refresh of all personalization data
-   * Called after chat interaction that might change preferences
-   */
   const refreshPersonalization = useCallback(async () => {
     const results = await Promise.all([
       fetchPreferences(),
@@ -239,30 +189,26 @@ export const PersonalizationProvider = ({ children }) => {
     return results;
   }, [fetchPreferences, fetchTopRecommendations]);
 
-  /**
-   * Reset all personalization data
-   */
   const resetAllData = useCallback(async () => {
     try {
-      // Clear backend data
       await chatAPI.resetAllChatHistory();
-      
+
       // Clear all local storage
       Object.values(STORAGE_KEYS).forEach((key) => {
         localStorage.removeItem(key);
       });
-      
+
       // Reset states
       setSessionId(null);
       setPreferences(null);
       setTopRecommendations([]);
       setChatHistory([]);
-      
+
       // Generate new device token
       const newToken = `web_${Math.random().toString(36).substring(2, 11)}`;
       setDeviceToken(newToken);
       localStorage.setItem(STORAGE_KEYS.DEVICE_TOKEN, newToken);
-      
+
       return true;
     } catch (err) {
       console.error('Error resetting all data:', err);
@@ -276,28 +222,28 @@ export const PersonalizationProvider = ({ children }) => {
     sessionId,
     deviceToken,
     updateSession,
-    
+
     // Preferences
     preferences,
     isLoadingPreferences,
     fetchPreferences,
-    
+
     // Recommendations
     topRecommendations,
     isLoadingRecommendations,
     fetchTopRecommendations,
-    
+
     // Chat History
     chatHistory,
     isLoadingHistory,
     fetchChatHistory,
     addChatMessage,
     clearChatHistory,
-    
+
     // Global actions
     refreshPersonalization,
     resetAllData,
-    
+
     // Error state
     error,
     clearError: () => setError(null),
@@ -310,11 +256,6 @@ export const PersonalizationProvider = ({ children }) => {
   );
 };
 
-/**
- * Custom hook untuk menggunakan PersonalizationContext
- * @returns {Object} context value
- * @throws {Error} jika digunakan di luar provider
- */
 export const usePersonalization = () => {
   const context = useContext(PersonalizationContext);
   if (!context) {

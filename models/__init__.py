@@ -6,6 +6,5 @@ __all__ = [
     'ConversationTurn',
     'UserSession',
     'UserProfile',
-    'EntityExtractionResult',
-    'ModelMetrics'
+    'EntityExtractionResult'
 ]

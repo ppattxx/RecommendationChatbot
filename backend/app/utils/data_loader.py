@@ -3,9 +3,9 @@ import ast
 from pathlib import Path
 from typing import List, Dict, Any, Optional, Tuple
 import json
-from models.data_models import Restaurant
-from config.settings import RESTAURANTS_CSV, RESTAURANTS_ENTITAS_CSV
-from utils.logger import get_logger
+from backend.app.models.schemas import Restaurant
+from backend.config.settings import RESTAURANTS_CSV, RESTAURANTS_ENTITAS_CSV
+from backend.app.utils.logger import get_logger
 logger = get_logger("data_loader")
 class DataLoader:
     @staticmethod
