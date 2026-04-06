@@ -1,15 +1,9 @@
-/**
- * Landing Page Component
- * Halaman utama dengan rekomendasi restoran berdasarkan preferensi user
- * Terintegrasi dengan PersonalizationContext untuk seamless updates
- */
 import { useEffect } from 'react';
 import { FiMapPin, FiStar, FiUsers, FiRefreshCw } from 'react-icons/fi';
 import { usePersonalization } from '../contexts/PersonalizationContext';
 import RestaurantRecommendations from '../components/RestaurantRecommendations';
 
 const LandingPage = () => {
-  // Get context values for seamless updates
   const { 
     preferences: contextPreferences,
     isLoadingPreferences,
@@ -17,7 +11,6 @@ const LandingPage = () => {
     resetAllData
   } = usePersonalization();
 
-  // Fetch preferences on mount
   useEffect(() => {
     fetchPreferences();
   }, []);
@@ -40,7 +33,6 @@ const LandingPage = () => {
     }
   };
 
-  // Show loading skeleton
   if (isLoadingPreferences && !contextPreferences) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-primary-50 to-white flex items-center justify-center">
@@ -54,11 +46,9 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
       <div className="bg-white border-b border-gray-200">
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-6xl mx-auto">
-            {/* Header */}
             <div className="text-center mb-8">
               <h1 className="text-4xl font-bold text-gray-800 mb-2">
                 Temukan Tempat Terbaik di Lombok
@@ -67,7 +57,6 @@ const LandingPage = () => {
                 Rekomendasi personal berdasarkan preferensi dan riwayat Anda
               </p>
               
-              {/* Quick Stats */}
               <div className="flex justify-center items-center gap-8 text-sm text-gray-600">
                 <div className="flex items-center gap-2">
                   <FiMapPin className="w-4 h-4" />
@@ -99,14 +88,12 @@ const LandingPage = () => {
         </div>
       </div>
 
-      {/* Main Content - Top 5 Recommendations Only */}
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
           <RestaurantRecommendations userPreferences={contextPreferences} />
         </div>
       </div>
 
-      {/* Footer */}
       <footer className="bg-gray-800 text-white py-8 mt-12">
         <div className="container mx-auto px-4 text-center">
           <p className="text-gray-400">

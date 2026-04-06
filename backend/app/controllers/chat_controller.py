@@ -3,6 +3,7 @@ Chat Controller – handles request validation, calls services, and formats resp
 Uses: DTO validation, @handle_errors decorator, DI via container.
 """
 from datetime import datetime
+from pathlib import Path
 from flask import request, jsonify, current_app
 
 from backend.app.extensions import db
@@ -202,6 +203,41 @@ def handle_reset_all():
     UserSession.query.delete()
     db.session.commit()
 
+    # Clear in-memory state held by chatbot/session manager.
+    try:
+        chatbot = current_app.container.chatbot_service
+        if hasattr(chatbot, 'sessions') and isinstance(chatbot.sessions, dict):
+            chatbot.sessions.clear()
+        if hasattr(chatbot, 'session_manager') and hasattr(chatbot.session_manager, 'memory_sessions'):
+            chatbot.session_manager.memory_sessions.clear()
+    except Exception:
+        # Reset should still succeed even if runtime state is not available.
+        pass
+
+    # Clear file-based stores so personalization is truly fresh-start.
+    deleted_history_files = 0
+    deleted_token_files = 0
+    candidate_roots = {
+        Path.cwd(),
+        Path(current_app.root_path).parent,            # backend/
+        Path(current_app.root_path).parent.parent,     # project root
+    }
+
+    for root in candidate_roots:
+        for rel_dir, counter_name in [('user_histories', 'history'), ('device_tokens', 'token')]:
+            target_dir = root / rel_dir
+            if not target_dir.exists() or not target_dir.is_dir():
+                continue
+            for file_path in target_dir.glob('*.json'):
+                try:
+                    file_path.unlink()
+                    if counter_name == 'history':
+                        deleted_history_files += 1
+                    else:
+                        deleted_token_files += 1
+                except Exception:
+                    continue
+
     logger.warning(f"RESET ALL: Deleted {chat_count} chats and {session_count} sessions")
 
     return jsonify({
@@ -209,7 +245,12 @@ def handle_reset_all():
         'data': {
             'deleted_chats': chat_count,
             'deleted_sessions': session_count,
-            'message': f'Berhasil menghapus semua {chat_count} riwayat chat dan {session_count} sesi'
+            'deleted_history_files': deleted_history_files,
+            'deleted_token_files': deleted_token_files,
+            'message': (
+                f'Berhasil reset total: {chat_count} chat, {session_count} sesi, '
+                f'{deleted_history_files} file history, {deleted_token_files} file token'
+            )
         }
     }), 200
 

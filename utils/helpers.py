@@ -184,9 +184,14 @@ def calculate_boosted_score(base_score: float, query_entities: Dict[str, List[st
         if isinstance(restaurant.about, str):
             restaurant_about_lower = restaurant.about.lower()
             for term in query_entities['about']:
-                if term.lower() in restaurant_about_lower:
+                term_lower = term.lower()
+                if term_lower in restaurant_about_lower:
                     boost_factor *= 1.5
                     break
+                if term_lower in SYNONYM_MAP:
+                    if any(s in restaurant_about_lower for s in SYNONYM_MAP[term_lower]):
+                        boost_factor *= 1.35
+                        break
     
     # Tier 2: Cuisine matching with advanced synonym expansion
     if 'cuisine' in query_entities and query_entities['cuisine']:
@@ -251,7 +256,7 @@ def calculate_boosted_score(base_score: float, query_entities: Dict[str, List[st
             if pref_lower in SYNONYM_MAP:
                 for syn in SYNONYM_MAP[pref_lower]:
                     if syn in restaurant_text:
-                        boost_factor *= 1.2
+                        boost_factor *= 1.22
                         preference_matched = True
                         break
                 if preference_matched:
@@ -265,9 +270,15 @@ def calculate_boosted_score(base_score: float, query_entities: Dict[str, List[st
         else:
             restaurant_features = []
         for feat in query_entities['features']:
-            if any(feat.lower() in f for f in restaurant_features):
+            feat_lower = feat.lower()
+            if any(feat_lower in f for f in restaurant_features):
                 boost_factor *= 1.2
                 break
+            if feat_lower in SYNONYM_MAP:
+                synonyms = SYNONYM_MAP[feat_lower]
+                if any(any(s in f for s in synonyms) for f in restaurant_features):
+                    boost_factor *= 1.15
+                    break
     
     # Combination bonuses (multiplicative for strong signals)
     if location_matched and cuisine_matched:
@@ -322,7 +333,14 @@ def calculate_similarity_score(query_entities: Dict[str, List[str]],
         about_score = 0.0
         if isinstance(restaurant.about, str):
             restaurant_about_lower = restaurant.about.lower()
-            matches = sum(1 for term in query_entities['about'] if term.lower() in restaurant_about_lower)
+            from config.settings import SYNONYM_MAP
+            matches = 0.0
+            for term in query_entities['about']:
+                t = term.lower()
+                if t in restaurant_about_lower:
+                    matches += 1.0
+                elif t in SYNONYM_MAP and any(s in restaurant_about_lower for s in SYNONYM_MAP[t]):
+                    matches += 0.8
             if query_entities['about']:
                 about_score = min(matches / len(query_entities['about']), 1.0)
         total_score += about_score * weights['about']
@@ -372,7 +390,15 @@ def calculate_similarity_score(query_entities: Dict[str, List[str]],
         else:
             restaurant_prefs = []
         query_prefs = [p.lower() for p in query_entities['preferences']]
-        matches = sum(1 for pref in query_prefs if any(pref in rest_pref or rest_pref in pref for rest_pref in restaurant_prefs))
+        from config.settings import SYNONYM_MAP
+        matches = 0.0
+        for pref in query_prefs:
+            if any(pref in rest_pref or rest_pref in pref for rest_pref in restaurant_prefs):
+                matches += 1.0
+                continue
+            synonyms = SYNONYM_MAP.get(pref, [])
+            if synonyms and any(any(s in rest_pref for s in synonyms) for rest_pref in restaurant_prefs):
+                matches += 0.75
         if query_prefs:
             pref_score = min(matches / len(query_prefs), 1.0)
         total_score += pref_score * weights['preferences']
@@ -387,7 +413,15 @@ def calculate_similarity_score(query_entities: Dict[str, List[str]],
         else:
             restaurant_features = []
         query_features = [f.lower() for f in query_entities['features']]
-        matches = sum(1 for feature in query_features if any(feature in rest_feat or rest_feat in feature for rest_feat in restaurant_features))
+        from config.settings import SYNONYM_MAP
+        matches = 0.0
+        for feature in query_features:
+            if any(feature in rest_feat or rest_feat in feature for rest_feat in restaurant_features):
+                matches += 1.0
+                continue
+            synonyms = SYNONYM_MAP.get(feature, [])
+            if synonyms and any(any(s in rest_feat for s in synonyms) for rest_feat in restaurant_features):
+                matches += 0.75
         if query_features:
             feature_score = min(matches / len(query_features), 1.0)
         total_score += feature_score * weights['features']

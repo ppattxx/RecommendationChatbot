@@ -90,7 +90,7 @@ const RestaurantCard = ({ restaurant, onCardClick, isPersonalized, showRank = fa
           </div>
           {/* "Pilihan Terbaik" Label */}
           <span className="px-2 py-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold rounded-full shadow-lg">
-            ⭐ Pilihan Terbaik
+            Pilihan Terbaik
           </span>
         </div>
       )}

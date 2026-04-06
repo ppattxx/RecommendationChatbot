@@ -82,16 +82,27 @@ class EntityExtractor:
         if not text:
             return {}
         clean_text = self.preprocessor.normalize_text(text.lower())
+        tokens = set(re.findall(r"\b\w+\b", clean_text))
+        low_signal_keywords = {
+            'di', 'dekat', 'sekitar', 'makan', 'makanan', 'restoran', 'restaurant', 'tempat makan'
+        }
         entities = {}
         
         # Standard entity extraction
         for entity_type, keywords in self.entity_keywords.items():
             found_entities = []
             for keyword in keywords:
-                if keyword in clean_text:
-                    found_entities.append(keyword)
-                elif any(part in clean_text for part in keyword.split()):
-                    found_entities.append(keyword)
+                keyword_norm = keyword.strip().lower()
+                if not keyword_norm or keyword_norm in low_signal_keywords:
+                    continue
+
+                parts = keyword_norm.split()
+                if len(parts) == 1:
+                    if keyword_norm in tokens:
+                        found_entities.append(keyword_norm)
+                else:
+                    if keyword_norm in clean_text or all(part in tokens for part in parts):
+                        found_entities.append(keyword_norm)
             if found_entities:
                 entities[entity_type] = list(set(found_entities))
         

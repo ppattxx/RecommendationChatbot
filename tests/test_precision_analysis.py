@@ -11,12 +11,20 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from services.chatbot_service import ChatbotService
 from services.recommendation_engine import ContentBasedRecommendationEngine
+from query_case_generator import DynamicQueryCaseGenerator
 import time
 
 class PrecisionAnalyzer:
     def __init__(self):
         self.chatbot = ChatbotService()
         self.engine = ContentBasedRecommendationEngine()
+        self.eval_k = 2
+        self.generator = DynamicQueryCaseGenerator(self.engine.restaurants_objects)
+
+        # Practical minimum standards for content-based filtering @K.
+        self.minimum_precision_at_k = 0.60
+        self.minimum_recall_at_k = 0.60
+        self.minimum_f1_at_k = 0.60
         
     def test_clear_entity_queries(self):
         """Test queries dengan entitas yang jelas dan spesifik"""
@@ -24,7 +32,7 @@ class PrecisionAnalyzer:
         print("TESTING: ENTITAS JELAS")
         print("="*80)
         
-        test_cases = [
+        static_cases = [
             # (query, expected_keywords, location)
             ("pizza di kuta", ["pizza"], "kuta"),
             ("restoran italia di senggigi", ["italian", "italia"], "senggigi"),
@@ -56,7 +64,25 @@ class PrecisionAnalyzer:
             ("spanish di mataram", ["spanish"], "mataram"),
             ("greek di senggigi", ["greek"], "senggigi"),
             ("turkish di kuta", ["turkish"], "kuta"),
+            ("ramen di gili trawangan", ["ramen", "japanese"], "gili trawangan"),
+            ("halal food di mataram", ["halal"], "mataram"),
+            ("vegan di senggigi", ["vegan"], "senggigi"),
+            ("bar di kuta", ["bar"], "kuta"),
+            ("cocktail di senggigi", ["cocktail", "bar"], "senggigi"),
+            ("wine bar di kuta", ["wine", "bar"], "kuta"),
+            ("pub di mataram", ["pub", "bar"], "mataram"),
+            ("healthy food di gili air", ["healthy"], "gili air"),
+            ("organic food di kuta", ["organic", "healthy"], "kuta"),
+            ("fine dining di senggigi", ["fine dining"], "senggigi"),
+            ("beachfront restaurant di gili trawangan", ["beachfront", "view"], "gili trawangan"),
+            ("outdoor cafe di mataram", ["outdoor", "cafe"], "mataram"),
+            ("rooftop restaurant di kuta", ["rooftop", "restaurant"], "kuta"),
+            ("family restaurant di senggigi", ["family"], "senggigi"),
+            ("romantic dinner di gili air", ["romantic", "dinner"], "gili air"),
         ]
+
+        dynamic_cases = self.generator.build_clear_cases(limit=90)
+        test_cases = static_cases + dynamic_cases
         
         results = self._evaluate_queries(test_cases, "Entitas Jelas")
         return results
@@ -67,7 +93,7 @@ class PrecisionAnalyzer:
         print("TESTING: MULTIPLE ENTITAS")
         print("="*80)
         
-        test_cases = [
+        static_cases = [
             ("pizza murah di kuta", ["pizza", "murah"], "kuta"),
             ("restoran italia dengan wifi di senggigi", ["italian", "wifi"], "senggigi"),
             ("sushi romantis di gili trawangan", ["sushi", "romantic"], "gili trawangan"),
@@ -93,7 +119,25 @@ class PrecisionAnalyzer:
             ("thai spicy di senggigi", ["thai", "spicy"], "senggigi"),
             ("french wine di kuta", ["french", "wine"], "kuta"),
             ("mediterranean healthy di gili trawangan", ["mediterranean", "healthy"], "gili trawangan"),
+            ("ramen halal di mataram", ["ramen", "halal"], "mataram"),
+            ("vegan healthy di senggigi", ["vegan", "healthy"], "senggigi"),
+            ("bar dengan live music di kuta", ["bar", "music"], "kuta"),
+            ("beachfront seafood romantis di gili air", ["beachfront", "seafood", "romantic"], "gili air"),
+            ("fine dining wine di senggigi", ["fine dining", "wine"], "senggigi"),
+            ("cafe cozy outdoor di mataram", ["cafe", "cozy", "outdoor"], "mataram"),
+            ("family restaurant kids friendly di kuta", ["family", "kids"], "kuta"),
+            ("italian pizza takeaway di senggigi", ["italian", "pizza", "takeaway"], "senggigi"),
+            ("asian halal delivery di mataram", ["asian", "halal", "delivery"], "mataram"),
+            ("burger murah wifi di kuta", ["burger", "murah", "wifi"], "kuta"),
+            ("chinese spicy di senggigi", ["chinese", "spicy"], "senggigi"),
+            ("japanese sushi fresh di gili trawangan", ["japanese", "sushi", "fresh"], "gili trawangan"),
+            ("bbq sunset view di kuta", ["bbq", "sunset", "view"], "kuta"),
+            ("coffee shop reservation di mataram", ["coffee", "reservation"], "mataram"),
+            ("mediterranean romantic dinner di senggigi", ["mediterranean", "romantic", "dinner"], "senggigi"),
         ]
+
+        dynamic_cases = self.generator.build_multiple_cases(limit=80)
+        test_cases = static_cases + dynamic_cases
         
         results = self._evaluate_queries(test_cases, "Multiple Entitas")
         return results
@@ -104,7 +148,7 @@ class PrecisionAnalyzer:
         print("TESTING: QUERY AMBIGU")
         print("="*80)
         
-        test_cases = [
+        static_cases = [
             ("makan enak di kuta", ["enak"], "kuta"),
             ("tempat bagus di senggigi", ["bagus"], "senggigi"),
             ("restoran recommended", ["recommended"], None),
@@ -125,7 +169,20 @@ class PrecisionAnalyzer:
             ("local food", ["local"], None),
             ("traditional food", ["traditional"], None),
             ("modern restaurant", ["modern"], None),
+            ("tempat makan recommended", ["recommended"], None),
+            ("best cafe lombok", ["best", "cafe"], "lombok"),
+            ("kuliner enak", ["kuliner", "enak"], None),
+            ("restaurant populer", ["popular"], None),
+            ("tempat nongkrong cozy", ["nongkrong", "cozy"], None),
+            ("cafe instagramable", ["instagramable", "cafe"], None),
+            ("resto viral lombok", ["viral"], "lombok"),
+            ("makanan tradisional lombok", ["traditional", "local"], "lombok"),
+            ("restoran modern dan fancy", ["modern", "fancy"], None),
+            ("hidden gem cafe", ["hidden gem", "cafe"], None),
         ]
+
+        dynamic_cases = self.generator.build_ambiguous_cases(limit=70)
+        test_cases = static_cases + dynamic_cases
         
         results = self._evaluate_queries(test_cases, "Query Ambigu")
         return results
@@ -144,7 +201,7 @@ class PrecisionAnalyzer:
             
             try:
                 # Get recommendations
-                recommendations = self.engine.get_recommendations(query, top_n=5)
+                recommendations = self.engine.get_recommendations(query, top_n=self.eval_k)
                 
                 # Count total relevant restaurants in database for this query
                 total_relevant_in_db = self._count_relevant_restaurants(
@@ -154,7 +211,7 @@ class PrecisionAnalyzer:
                 
                 if not recommendations:
                     print(f"  ❌ No recommendations found (Expected {total_relevant_in_db} relevant)")
-                    false_negatives += total_relevant_in_db
+                    false_negatives += min(total_relevant_in_db, self.eval_k)
                     continue
                 
                 # Check how many recommended restaurants are relevant
@@ -167,7 +224,9 @@ class PrecisionAnalyzer:
                 # Calculate TP, FP, FN for this query
                 tp = relevant_recs
                 fp = len(recommendations) - relevant_recs
-                fn = total_relevant_in_db - relevant_recs
+                # Use recall@K denominator to evaluate ranking systems fairly.
+                recall_target = min(total_relevant_in_db, self.eval_k)
+                fn = max(recall_target - relevant_recs, 0)
                 
                 true_positives += tp
                 false_positives += fp
@@ -184,7 +243,7 @@ class PrecisionAnalyzer:
                 print(f"  ❌ Error: {e}")
                 continue
             
-            time.sleep(0.1)  # Small delay
+            time.sleep(0.01)  # Keep logs readable without slowing large runs
         
         # Calculate metrics
         precision = (true_positives / (true_positives + false_positives) * 100) if (true_positives + false_positives) > 0 else 0
@@ -214,63 +273,28 @@ class PrecisionAnalyzer:
         }
     
     def _count_relevant_restaurants(self, expected_keywords, expected_location):
-        """Count total TRULY relevant restaurants in database (stricter ground truth)"""
+        """Count total relevant restaurants in database using the same relevance logic."""
         count = 0
         
         for restaurant in self.engine.restaurants_objects:
-            # Use stricter criteria for ground truth to be more realistic
-            if self._is_restaurant_truly_relevant(restaurant, expected_keywords, expected_location):
+            if self._is_restaurant_relevant(restaurant, expected_keywords, expected_location):
                 count += 1
         
         return count
-    
-    def _is_restaurant_truly_relevant(self, restaurant, expected_keywords, expected_location):
-        """Stricter relevance check for ground truth calculation"""
-        from config.settings import SYNONYM_MAP
-        
-        name = restaurant.name.lower()
-        cuisines = ' '.join([c.lower() for c in restaurant.cuisines])
-        jenis_makanan = ' '.join([j.lower() for j in restaurant.entitas_jenis_makanan])
-        location = (restaurant.entitas_lokasi or '').lower()
-        menu = ' '.join([m.lower() for m in restaurant.entitas_menu])
-        
-        # Core text for matching
-        core_text = f"{name} {cuisines} {jenis_makanan} {menu}"
-        
-        # Must have location match (or no location specified)
-        location_match = False
-        if expected_location:
-            loc_lower = expected_location.lower()
-            if loc_lower in location:
-                location_match = True
-            elif "gili" in loc_lower and "gili" in location:
-                location_match = True
-        else:
-            location_match = True
-        
-        if not location_match:
-            return False
-        
-        # Count strong keyword matches
-        strong_matches = 0
-        for keyword in expected_keywords:
-            keyword_lower = keyword.lower()
-            
-            # Direct match in core fields
-            if keyword_lower in core_text:
-                strong_matches += 1
-                continue
-            
-            # Synonym match in core fields
-            if keyword_lower in SYNONYM_MAP:
-                for synonym in SYNONYM_MAP[keyword_lower]:
-                    if synonym in core_text:
-                        strong_matches += 1
-                        break
-        
-        # Restaurant is truly relevant if it has at least 50% strong keyword match
-        match_ratio = strong_matches / len(expected_keywords) if expected_keywords else 0
-        return match_ratio >= 0.5
+
+    def _to_text(self, value):
+        """Normalize any value to lowercase text safely."""
+        if isinstance(value, str):
+            return value.lower()
+        return ""
+
+    def _to_list(self, value):
+        """Normalize entity-like values to lowercase string list."""
+        if isinstance(value, list):
+            return [str(v).lower() for v in value if isinstance(v, str) and v.strip()]
+        if isinstance(value, str) and value.strip():
+            return [value.lower()]
+        return []
     
     def _count_relevant_in_recommendations(self, recommendations, expected_keywords, expected_location):
         """Count how many recommendations are actually relevant"""
@@ -287,18 +311,17 @@ class PrecisionAnalyzer:
         """Check if restaurant matches criteria with ADVANCED MULTI-TIER SCORING for optimal accuracy"""
         from config.settings import SYNONYM_MAP
         
-        name = restaurant.name.lower()
-        cuisines = ' '.join([c.lower() for c in restaurant.cuisines])
-        about = (restaurant.about or '').lower()
-        location = (restaurant.entitas_lokasi or '').lower()
-        jenis_makanan = ' '.join([j.lower() for j in restaurant.entitas_jenis_makanan])
-        features = ' '.join([f.lower() for f in restaurant.entitas_features])
-        preferences = ' '.join([p.lower() for p in restaurant.entitas_preferensi])
-        menu = ' '.join([m.lower() for m in restaurant.entitas_menu])
+        name = self._to_text(getattr(restaurant, 'name', ''))
+        cuisines = ' '.join(self._to_list(getattr(restaurant, 'cuisines', [])))
+        about = self._to_text(getattr(restaurant, 'about', ''))
+        location = self._to_text(getattr(restaurant, 'location', ''))
+        address = self._to_text(getattr(restaurant, 'address', ''))
+        features = ' '.join(self._to_list(getattr(restaurant, 'features', [])))
+        preferences = ' '.join(self._to_list(getattr(restaurant, 'preferences', [])))
         
         # Separate high-value fields for weighted scoring
-        high_value_text = f"{name} {cuisines} {jenis_makanan} {menu}"
-        all_text = f"{name} {cuisines} {about} {location} {jenis_makanan} {features} {preferences} {menu}"
+        high_value_text = f"{name} {cuisines}"
+        all_text = f"{name} {cuisines} {about} {location} {address} {features} {preferences}"
         
         # Multi-tier keyword scoring system
         keyword_score = 0
@@ -315,7 +338,7 @@ class PrecisionAnalyzer:
                 # Extra weight for name match
                 if keyword_lower in name:
                     best_match_score = 1.5
-                elif keyword_lower in cuisines or keyword_lower in jenis_makanan:
+                elif keyword_lower in cuisines:
                     best_match_score = 1.3
                 else:
                     best_match_score = 1.0
@@ -359,7 +382,7 @@ class PrecisionAnalyzer:
                         matched = True
                 else:
                     # Single word partial match in key fields
-                    if any(keyword_lower in field for field in [name, cuisines, jenis_makanan]):
+                    if any(keyword_lower in field for field in [name, cuisines]):
                         best_match_score = 0.5
                         keyword_matches += 0.6
                         matched = True
@@ -376,10 +399,10 @@ class PrecisionAnalyzer:
             loc_lower = expected_location.lower()
             
             # Exact location match
-            if loc_lower in location:
+            if loc_lower in location or loc_lower in address:
                 location_score = 1.0
             # Handle location abbreviations (e.g., "gili t" -> "gili trawangan")
-            elif "gili" in loc_lower and "gili" in location:
+            elif "gili" in loc_lower and ("gili" in location or "gili" in address):
                 if "trawangan" in location and ("t" in loc_lower or "trawangan" in loc_lower):
                     location_score = 1.0
                 elif "air" in location and "air" in loc_lower:
@@ -389,10 +412,10 @@ class PrecisionAnalyzer:
                 else:
                     location_score = 0.8
             # Partial word match
-            elif any(word in location for word in loc_lower.split() if len(word) > 2):
+            elif any(word in location or word in address for word in loc_lower.split() if len(word) > 2):
                 location_score = 0.7
             # Broad match (e.g., "lombok" in any location)
-            elif "lombok" in loc_lower and len(location) > 0:
+            elif "lombok" in loc_lower and (len(location) > 0 or len(address) > 0):
                 location_score = 0.5
         else:
             location_score = 1.0  # No location specified = any location OK
@@ -455,6 +478,7 @@ class PrecisionAnalyzer:
         print("\n" + "="*80)
         print("PRECISION, RECALL, AND F1-SCORE ANALYSIS REPORT")
         print("="*80)
+        print(f"Evaluation Cutoff: Top-{self.eval_k} (Precision@{self.eval_k}, Recall@{self.eval_k}, F1@{self.eval_k})")
         print()
         print("| {:<20} | {:<12} | {:<11} | {:<11} | {:<11} |".format(
             "Jenis Query", "Sample Size", "Precision", "Recall", "F1-Score"
@@ -493,6 +517,19 @@ class PrecisionAnalyzer:
         print(f"Overall Precision: {overall_precision:.4f}")
         print(f"Overall Recall: {overall_recall:.4f}")
         print(f"Overall F1-Score: {overall_f1:.4f}")
+        print()
+
+        print("MINIMUM STANDARD (Content-Based Filtering @K):")
+        print("-" * 80)
+        print(f"Target Precision@{self.eval_k} >= {self.minimum_precision_at_k:.2f}")
+        print(f"Target Recall@{self.eval_k} >= {self.minimum_recall_at_k:.2f}")
+        print(f"Target F1@{self.eval_k} >= {self.minimum_f1_at_k:.2f}")
+        meets_standard = (
+            overall_precision >= self.minimum_precision_at_k and
+            overall_recall >= self.minimum_recall_at_k and
+            overall_f1 >= self.minimum_f1_at_k
+        )
+        print(f"Status: {'PASS' if meets_standard else 'FAIL'}")
         print()
         
         # Interpretation

@@ -41,7 +41,6 @@ const FloatingChatbot = () => {
   const [historyLoaded, setHistoryLoaded] = useState(false);
   const messagesEndRef = useRef(null);
   
-  // Get context values
   const { 
     sessionId, 
     deviceToken, 
@@ -50,7 +49,6 @@ const FloatingChatbot = () => {
     resetAllData 
   } = usePersonalization();
 
-  // Scroll to bottom when messages change
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, []);
@@ -59,7 +57,6 @@ const FloatingChatbot = () => {
     scrollToBottom();
   }, [messages, scrollToBottom]);
 
-  // Save messages to localStorage whenever they change
   useEffect(() => {
     if (messages.length > 0) {
       try {
@@ -70,26 +67,20 @@ const FloatingChatbot = () => {
     }
   }, [messages]);
 
-  // Load chat history when chatbot opens for the first time
   useEffect(() => {
     if (isOpen && !historyLoaded) {
       loadChatHistory();
     }
   }, [isOpen, historyLoaded]);
 
-  /**
-   * Load chat history from localStorage first, then sync with backend
-   */
   const loadChatHistory = async () => {
     setIsLoadingHistory(true);
     
     try {
-      // Step 1: Try to load from localStorage first (instant display)
       const localHistory = localStorage.getItem(CHAT_STORAGE_KEY);
       if (localHistory) {
         const parsedHistory = JSON.parse(localHistory);
         if (Array.isArray(parsedHistory) && parsedHistory.length > 0) {
-          // Convert timestamps to Date objects
           const formattedHistory = parsedHistory.map(msg => ({
             ...msg,
             timestamp: new Date(msg.timestamp)
@@ -101,7 +92,6 @@ const FloatingChatbot = () => {
         }
       }
 
-      // Step 2: If no local history and we have a session, fetch from backend
       if (sessionId) {
         const response = await chatAPI.getChatHistory(sessionId);
         if (response.success && response.data?.messages?.length > 0) {
@@ -135,7 +125,6 @@ const FloatingChatbot = () => {
         }
       }
 
-      // Step 3: No history found, initialize with welcome message
       initializeNewChat();
       
     } catch (error) {
@@ -147,17 +136,12 @@ const FloatingChatbot = () => {
     }
   };
 
-  /**
-   * Initialize new chat with welcome message
-   */
   const initializeNewChat = async () => {
     setIsLoading(true);
     try {
-      // Create new session with greeting
       const response = await chatAPI.sendMessage('halo', null, deviceToken);
       
       if (response.success) {
-        // Update session in context
         if (response.data.session_id) {
           updateSession(response.data.session_id);
         }
@@ -171,7 +155,6 @@ const FloatingChatbot = () => {
         
         setMessages([welcomeMessage]);
       } else {
-        // Fallback welcome message
         setMessages([{
           type: 'bot',
           text: 'Halo! Saya siap membantu Anda mencari rekomendasi restoran di Lombok. Silakan ceritakan preferensi makanan Anda.',

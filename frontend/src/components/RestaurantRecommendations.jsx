@@ -261,7 +261,7 @@ const RestaurantRecommendations = ({ userPreferences }) => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <FiTrendingUp className="w-6 h-6 text-primary-600" />
+            {/* <FiTrendingUp className="w-6 h-6 text-primary-600" /> */}
             <h2 className="text-2xl font-bold text-gray-800">
               {isPersonalized ? 'Rekomendasi untuk Anda' : 'Restoran di Lombok'}
             </h2>
@@ -280,7 +280,7 @@ const RestaurantRecommendations = ({ userPreferences }) => {
               ? 'bg-gradient-to-r from-green-50 to-emerald-50 text-green-800 border border-green-200' 
               : 'bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-800 border border-blue-200'
           }`}>
-            <span>{isPersonalized ? '🎯 Personal' : '⭐ Semua Restoran'}</span>
+            <span>{isPersonalized ? 'Personal' : 'Semua Restoran'}</span>
           </div>
           
           <button
@@ -308,8 +308,8 @@ const RestaurantRecommendations = ({ userPreferences }) => {
                 }}
                 onCardClick={handleCardClick}
                 isPersonalized={isPersonalized}
-                // ONLY show rank for Top 5 (is_top5 flag from backend)
-                showRank={restaurant.is_top5}
+                // ONLY show rank for Top 5 AND only when personalized
+                showRank={isPersonalized && restaurant.is_top5}
               />
             ))}
           </div>

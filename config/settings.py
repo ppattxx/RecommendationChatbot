@@ -143,6 +143,26 @@ SYNONYM_MAP = {
     # Service Style
     'buffet': ['buffet', 'all you can eat', 'self service', 'unlimited'],
     'fast food': ['fast food', 'quick service', 'quick bite', 'fast casual'],
+
+    # Ambiguous/colloquial query terms
+    'recommended': ['recommended', 'rekomendasi', 'best', 'top', 'top rated', 'popular', 'favorite'],
+    'enak': ['enak', 'lezat', 'delicious', 'tasty', 'great food', 'amazing food'],
+    'kuliner': ['kuliner', 'food', 'local food', 'traditional food', 'restaurant', 'resto'],
+    'nongkrong': ['nongkrong', 'hangout', 'casual', 'chill', 'cozy', 'cafe', 'coffee shop'],
+    'instagramable': ['instagramable', 'instagrammable', 'aesthetic', 'beautiful', 'cozy', 'trendy'],
+    'viral': ['viral', 'trending', 'popular', 'hits', 'famous', 'hot spot'],
+    'unik': ['unik', 'unique', 'special', 'signature', 'creative', 'distinctive'],
+    'fancy': ['fancy', 'elegant', 'upscale', 'luxury', 'fine dining', 'premium'],
+    'food': ['food', 'makanan', 'kuliner', 'dining', 'restaurant', 'resto', 'eatery', 'meal'],
+    'kuliner': ['kuliner', 'food', 'makanan', 'restaurant', 'resto', 'dining', 'local food'],
+    'popular': ['popular', 'recommended', 'best', 'top rated', 'hits', 'viral', 'favorite'],
+    'hits': ['hits', 'popular', 'viral', 'trending', 'recommended', 'top'],
+    'bagus': ['bagus', 'good', 'great', 'excellent', 'recommended', 'best'],
+    'special': ['special', 'signature', 'highlight', 'recommended', 'favorite'],
+    'modern': ['modern', 'contemporary', 'trendy', 'stylish', 'up-to-date', 'new'],
+    'best': ['best', 'top', 'recommended', 'popular', 'favorite', 'highly rated'],
+    'local': ['local', 'traditional', 'authentic', 'indonesian', 'regional'],
+    'traditional': ['traditional', 'authentic', 'local', 'heritage', 'classic'],
 }
 ENTITY_FIELD_MAPPING = {
     "about": ["about", "name"],

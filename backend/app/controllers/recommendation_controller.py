@@ -27,7 +27,11 @@ def _get_engine():
 
 
 def _extract_user_preferences(session_id=None, device_token=None):
-    """Extract aggregated user preferences from ALL chat history."""
+    """Extract weighted user preferences from chat history.
+
+    Uses both frequency and recency so card recommendations represent
+    accumulated user behavior while still adapting to recent intent.
+    """
     query = ChatHistory.query
     if session_id:
         query = query.filter_by(session_id=session_id)
@@ -40,34 +44,120 @@ def _extract_user_preferences(session_id=None, device_token=None):
     if not chat_history:
         return None
 
-    cuisines, locations, moods, prices = [], [], [], []
-    for chat in chat_history:
-        if chat.extracted_cuisine:
-            cuisines.extend([c.strip() for c in chat.extracted_cuisine.split(',')])
-        if chat.extracted_location:
-            locations.extend([l.strip() for l in chat.extracted_location.split(',')])
-        if chat.extracted_mood:
-            moods.extend([m.strip() for m in chat.extracted_mood.split(',')])
-        if chat.extracted_price:
-            prices.extend([p.strip() for p in chat.extracted_price.split(',')])
+    def _split_values(raw):
+        if not raw:
+            return []
+        return [v.strip().lower() for v in str(raw).split(',') if v and v.strip()]
+
+    cuisine_scores = Counter()
+    location_scores = Counter()
+    mood_scores = Counter()
+    price_scores = Counter()
+
+    now = datetime.utcnow()
+    for idx, chat in enumerate(chat_history):
+        # Recency weight: newer interactions contribute more.
+        base_weight = max(0.35, 1.0 - (idx * 0.015))
+
+        # Light time decay to avoid overfitting old history.
+        chat_ts = chat.timestamp or now
+        age_days = max((now - chat_ts).total_seconds() / 86400.0, 0.0)
+        time_weight = max(0.5, 1.0 / (1.0 + (age_days * 0.05)))
+
+        w = base_weight * time_weight
+
+        for c in _split_values(chat.extracted_cuisine):
+            cuisine_scores[c] += w
+        for l in _split_values(chat.extracted_location):
+            location_scores[l] += w
+        for m in _split_values(chat.extracted_mood):
+            mood_scores[m] += w
+        for p in _split_values(chat.extracted_price):
+            price_scores[p] += w
+
+    def _top_items(counter_obj, limit):
+        return {k: round(v, 3) for k, v in counter_obj.most_common(limit)}
 
     return {
-        'preferred_cuisines': dict(Counter(cuisines).most_common(10)),
-        'preferred_locations': dict(Counter(locations).most_common(10)),
-        'preferred_moods': dict(Counter(moods).most_common(5)),
-        'price_preferences': dict(Counter(prices).most_common(3)),
+        'preferred_cuisines': _top_items(cuisine_scores, 10),
+        'preferred_locations': _top_items(location_scores, 10),
+        'preferred_moods': _top_items(mood_scores, 5),
+        'price_preferences': _top_items(price_scores, 3),
         'total_conversations': len(chat_history),
     }
 
 
+def _extract_recent_query_context(session_id=None, device_token=None, limit=8):
+    """Extract recent query context so card ranking follows latest chat intent."""
+    query = ChatHistory.query
+    if session_id:
+        query = query.filter_by(session_id=session_id)
+    elif device_token:
+        query = query.filter_by(device_token=device_token)
+    else:
+        return None
+
+    rows = query.order_by(ChatHistory.timestamp.desc()).limit(limit).all()
+    if not rows:
+        return None
+
+    def _split_values(raw):
+        if not raw:
+            return []
+        return [v.strip().lower() for v in str(raw).split(',') if v and v.strip()]
+
+    cuisine_scores = Counter()
+    location_scores = Counter()
+    mood_scores = Counter()
+
+    latest_message = ''
+    for idx, row in enumerate(rows):
+        if not latest_message and isinstance(row.user_message, str) and row.user_message.strip():
+            latest_message = row.user_message.strip()
+
+        w = max(0.45, 1.0 - (idx * 0.12))
+        for c in _split_values(row.extracted_cuisine):
+            cuisine_scores[c] += w
+        for l in _split_values(row.extracted_location):
+            location_scores[l] += w
+        for m in _split_values(row.extracted_mood):
+            mood_scores[m] += w
+
+    return {
+        'latest_message': latest_message,
+        'recent_cuisines': [k for k, _ in cuisine_scores.most_common(4)],
+        'recent_locations': [k for k, _ in location_scores.most_common(4)],
+        'recent_moods': [k for k, _ in mood_scores.most_common(3)],
+    }
+
+
 def _build_query_from_preferences(user_preferences):
-    """Build a search query string from user preferences."""
+    """Build a search query string from accumulated preferences."""
     parts = []
     if user_preferences.get('preferred_cuisines'):
-        parts.extend(list(user_preferences['preferred_cuisines'].keys())[:3])
+        parts.extend(list(user_preferences['preferred_cuisines'].keys())[:2])
     if user_preferences.get('preferred_locations'):
         parts.extend(list(user_preferences['preferred_locations'].keys())[:2])
+    if user_preferences.get('preferred_moods'):
+        parts.extend(list(user_preferences['preferred_moods'].keys())[:1])
+    if user_preferences.get('price_preferences'):
+        parts.extend(list(user_preferences['price_preferences'].keys())[:1])
     return ' '.join(parts)
+
+
+def _build_hybrid_query(explicit_query=None, user_preferences=None, recent_context=None):
+    """Build hybrid query: explicit > latest chat context + profile > profile only."""
+    if explicit_query and explicit_query.strip():
+        return explicit_query.strip()
+
+    profile_query = _build_query_from_preferences(user_preferences) if user_preferences else ''
+    latest_message = (recent_context or {}).get('latest_message', '').strip() if recent_context else ''
+
+    if latest_message and profile_query:
+        return f"{latest_message} {profile_query}".strip()
+    if latest_message:
+        return latest_message
+    return profile_query
 
 
 def _serialize_recommendation(rec):
@@ -123,36 +213,91 @@ def _serialize_restaurant_obj(rest_obj, default_score=None):
     }
 
 
-def _apply_personalization_scoring(restaurants, user_preferences):
+def _apply_personalization_scoring(restaurants, user_preferences, recent_context=None):
     """Apply personalization scoring to restaurant dicts."""
     scored = []
+
+    recent_cuisines = set((recent_context or {}).get('recent_cuisines', []))
+    recent_locations = set((recent_context or {}).get('recent_locations', []))
+    recent_moods = set((recent_context or {}).get('recent_moods', []))
+
     for restaurant in restaurants:
         score = 0
         matching = []
+        matched_any_signal = False
+        matched_recent_intent = False
+
+        cuisine_text = restaurant.get('cuisine', '').lower()
+        location_text = f"{restaurant.get('location', '')} {restaurant.get('address', '')}".lower()
+        text_blob = f"{restaurant.get('description', '')} {restaurant.get('cuisine', '')} {restaurant.get('address', '')}".lower()
 
         if user_preferences.get('preferred_cuisines'):
             for cuisine, count in user_preferences['preferred_cuisines'].items():
-                if cuisine.lower() in restaurant.get('cuisine', '').lower():
+                if cuisine.lower() in cuisine_text:
                     score += count * 3
                     matching.append(f"Cuisine: {cuisine} ({count}x)")
+                    matched_any_signal = True
         if user_preferences.get('preferred_locations'):
             for loc, count in user_preferences['preferred_locations'].items():
-                if loc.lower() in restaurant.get('location', '').lower():
+                if loc.lower() in location_text:
                     score += count * 2
                     matching.append(f"Location: {loc} ({count}x)")
+                    matched_any_signal = True
+        if user_preferences.get('preferred_moods'):
+            for mood, count in user_preferences['preferred_moods'].items():
+                if mood.lower() in text_blob:
+                    score += count * 1.5
+                    matching.append(f"Mood: {mood} ({count}x)")
+                    matched_any_signal = True
         if user_preferences.get('price_preferences'):
             for price, count in user_preferences['price_preferences'].items():
                 if price.lower() in restaurant.get('price_range', '').lower():
                     score += count * 1.5
-        score += restaurant.get('rating', 0) * 0.5
+                    matching.append(f"Price: {price} ({count}x)")
+                    matched_any_signal = True
+
+        # Quality bonus should not dominate personalization intent.
+        if matched_any_signal:
+            score += restaurant.get('rating', 0) * 0.15
+        else:
+            score += restaurant.get('rating', 0) * 0.02
+
         if len(matching) > 1:
             score += len(matching) * 0.5
 
+        # Keep cards aligned with the latest chat intent while preserving accumulated profile.
+        for cuisine in recent_cuisines:
+            if cuisine and cuisine in cuisine_text:
+                score += 2.4
+                matched_recent_intent = True
+                break
+        for loc in recent_locations:
+            if loc and loc in location_text:
+                score += 2.0
+                matched_recent_intent = True
+                break
+        for mood in recent_moods:
+            if mood and mood in text_blob:
+                score += 1.2
+                matched_recent_intent = True
+                break
+
         restaurant['personalization_score'] = round(score, 2)
+        restaurant['has_preference_match'] = matched_any_signal
+        restaurant['has_recent_intent_match'] = matched_recent_intent
         restaurant['matching_features'] = matching[:3]
         scored.append(restaurant)
 
-    scored.sort(key=lambda x: (x.get('personalization_score', 0), x.get('rating', 0)), reverse=True)
+    scored.sort(
+        key=lambda x: (
+            x.get('has_recent_intent_match', False),
+            x.get('has_preference_match', False),
+            x.get('personalization_score', 0),
+            x.get('similarity_score', 0),
+            x.get('rating', 0)
+        ),
+        reverse=True
+    )
     return scored
 
 
@@ -247,10 +392,13 @@ def handle_get_top5():
     user_prefs = None
     if dto.session_id or dto.device_token:
         user_prefs = _extract_user_preferences(dto.session_id, dto.device_token)
+    recent_context = _extract_recent_query_context(dto.session_id, dto.device_token)
 
-    user_query = dto.query
-    if not user_query and user_prefs:
-        user_query = _build_query_from_preferences(user_prefs)
+    user_query = _build_hybrid_query(
+        explicit_query=dto.query,
+        user_preferences=user_prefs,
+        recent_context=recent_context,
+    )
 
     top5 = []
     if user_query:
@@ -289,10 +437,13 @@ def handle_get_all_ranked():
     user_prefs = None
     if dto.session_id or dto.device_token:
         user_prefs = _extract_user_preferences(dto.session_id, dto.device_token)
+    recent_context = _extract_recent_query_context(dto.session_id, dto.device_token)
 
-    user_query = dto.query
-    if not user_query and user_prefs:
-        user_query = _build_query_from_preferences(user_prefs)
+    user_query = _build_hybrid_query(
+        explicit_query=dto.query,
+        user_preferences=user_prefs,
+        recent_context=recent_context,
+    )
 
     all_recs = []
     if user_query:
@@ -303,8 +454,22 @@ def handle_get_all_ranked():
                              key=lambda x: (x.rating, getattr(x, 'review_count', 0)), reverse=True)
         all_recs = [_serialize_restaurant_obj(r) for r in sorted_objs]
 
+    # Re-rank by accumulated preference profile when available.
+    if user_prefs:
+        all_recs = _apply_personalization_scoring(all_recs, user_prefs, recent_context=recent_context)
+
     # Sort by similarity
-    all_recs.sort(key=lambda x: (x.get('similarity_score', 0), x.get('rating', 0), x.get('review_count', 0)), reverse=True)
+    all_recs.sort(
+        key=lambda x: (
+            x.get('has_recent_intent_match', False),
+            x.get('has_preference_match', False),
+            x.get('personalization_score', 0),
+            x.get('similarity_score', 0),
+            x.get('rating', 0),
+            x.get('review_count', 0)
+        ),
+        reverse=True
+    )
 
     # Add rank & top5 flag
     for idx, r in enumerate(all_recs):
@@ -333,5 +498,78 @@ def handle_get_all_ranked():
             'personalized': bool(user_prefs),
             'algorithm': 'cosine_similarity',
             'tie_breaker': 'rating_and_review_count'
+        }
+    }), 200
+
+
+@handle_errors
+def handle_get_profile_debug():
+    """Return personalization profile used for card recommendation ranking."""
+    dto = RecommendationQueryDTO.from_request(request)
+
+    # Requires at least one user identifier to inspect profile.
+    if not dto.session_id and not dto.device_token:
+        return jsonify({
+            'success': False,
+            'error': {
+                'message': 'session_id atau device_token diperlukan untuk profile debug'
+            }
+        }), 400
+
+    user_prefs = _extract_user_preferences(dto.session_id, dto.device_token)
+    recent_context = _extract_recent_query_context(dto.session_id, dto.device_token)
+    synthesized_query = _build_hybrid_query(
+        explicit_query='',
+        user_preferences=user_prefs,
+        recent_context=recent_context,
+    ) if user_prefs or recent_context else ''
+
+    query = ChatHistory.query
+    if dto.session_id:
+        query = query.filter_by(session_id=dto.session_id)
+    elif dto.device_token:
+        query = query.filter_by(device_token=dto.device_token)
+
+    recent_rows = query.order_by(ChatHistory.timestamp.desc()).limit(10).all()
+
+    recent_entities = []
+    for row in recent_rows:
+        recent_entities.append({
+            'timestamp': row.timestamp.isoformat() if row.timestamp else None,
+            'user_message': row.user_message,
+            'extracted': {
+                'cuisine': row.extracted_cuisine,
+                'location': row.extracted_location,
+                'mood': row.extracted_mood,
+                'price': row.extracted_price,
+            }
+        })
+
+    return jsonify({
+        'success': True,
+        'data': {
+            'identity': {
+                'session_id': dto.session_id,
+                'device_token': dto.device_token,
+            },
+            'profile': user_prefs or {
+                'preferred_cuisines': {},
+                'preferred_locations': {},
+                'preferred_moods': {},
+                'price_preferences': {},
+                'total_conversations': 0,
+            },
+            'synthesized_query': synthesized_query,
+            'recent_context': recent_context or {
+                'latest_message': '',
+                'recent_cuisines': [],
+                'recent_locations': [],
+                'recent_moods': [],
+            },
+            'recent_entities': recent_entities,
+            'notes': {
+                'weighting': 'frequency + recency decay + latest-intent boost',
+                'used_by': '/recommendations/top5 and /recommendations/all-ranked when query is empty'
+            }
         }
     }), 200

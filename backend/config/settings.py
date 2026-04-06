@@ -2,7 +2,6 @@ import os
 from pathlib import Path
 from typing import Dict, List, Any
 
-# ─── Load .env at module level ────────────────────────────────
 try:
     from dotenv import load_dotenv
     load_dotenv(Path(__file__).parent.parent.parent / '.env')

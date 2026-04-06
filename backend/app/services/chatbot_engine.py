@@ -8,7 +8,7 @@ import re
 from backend.app.services.device_token_service import DeviceTokenService
 from backend.app.services.recommendation_engine import ContentBasedRecommendationEngine
 from backend.app.utils.session_manager import SessionManager
-from backend.config.settings import RESTAURANTS_ENTITAS_CSV
+from backend.config.settings import RESTAURANTS_ENTITAS_CSV, RESTAURANTS_CSV
 from backend.app.utils.logger import get_logger
 from backend.app.utils.entity_builder import EntityBuilder
 
@@ -29,16 +29,21 @@ class ChatbotService:
         self._load_restaurant_data()
     def _load_restaurant_data(self):
         try:
-            data_dir = Path(__file__).parent.parent / "data"
-            csv_file = data_dir / "restaurants_entitas.csv"
-            if csv_file.exists():
-                self.restaurants_data = pd.read_csv(csv_file)
-            else:
-                for filename in ["restaurants_processed.csv", "restaurants.csv"]:
-                    fallback_file = data_dir / filename
-                    if fallback_file.exists():
-                        self.restaurants_data = pd.read_csv(fallback_file)
-                        break
+            primary_file = Path(self.data_path)
+            fallback_files = [
+                RESTAURANTS_ENTITAS_CSV,
+                RESTAURANTS_CSV,
+            ]
+
+            for file_path in [primary_file, *fallback_files]:
+                if file_path and Path(file_path).exists():
+                    self.restaurants_data = pd.read_csv(file_path)
+                    logger.info(f"Loaded restaurant dataset from {file_path}")
+                    return
+
+            logger.error("No restaurant dataset found in configured paths")
+            self.restaurants_data = None
+
         except Exception as e:
             logger.error(f"Error loading restaurant data: {e}")
             self.restaurants_data = None
@@ -324,7 +329,10 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
             
             if not recommendations_objects:
                 logger.warning(f"No recommendations found for query: '{query}'")
-                return self._get_smart_fallback_response(query, entities)
+                device_token = None
+                if session_id and session_id in self.sessions:
+                    device_token = self.sessions[session_id].get('device_token')
+                return self._get_smart_fallback_response(query, entities, session_id, device_token)
             
             recommendations = []
             device_token = None
@@ -370,7 +378,7 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
             
             if not recommendations:
                 logger.warning("No matching restaurants found in DataFrame")
-                return self._get_smart_fallback_response(query, entities)
+                return self._get_smart_fallback_response(query, entities, session_id, device_token)
             if entities.get('location'):
                 initial_count = len(recommendations)
                 recommendations = [rec for rec in recommendations if rec['total_score'] > 0]
@@ -378,7 +386,7 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
             
             if not recommendations:
                 logger.warning("No recommendations after filtering negative scores")
-                return self._get_smart_fallback_response(query, entities)
+                return self._get_smart_fallback_response(query, entities, session_id, device_token)
             
             if device_token:
                 self.device_token_service.update_user_preferences_from_interaction(device_token, query)
@@ -406,7 +414,10 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
             logger.error(f"Error getting recommendations: {e}")
             import traceback
             traceback.print_exc()
-            return self._get_smart_fallback_response(query, entities)
+            device_token = None
+            if session_id and session_id in self.sessions:
+                device_token = self.sessions[session_id].get('device_token')
+            return self._get_smart_fallback_response(query, entities, session_id, device_token)
     def _calculate_entity_bonus(self, restaurant, entities):
         bonus = 0.0
         match_count = 0
@@ -605,65 +616,212 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
             response += "Butuh info lebih detail?\nAtau mau cari dengan kriteria lain?"
         
         return response
-    def _get_smart_fallback_response(self, query, entities):
+    def _get_smart_fallback_response(self, query, entities, session_id: str = None, device_token: str = None):
         try:
-            response = f"Hmm, saya tidak menemukan restoran yang persis cocok dengan '{query}'.\n\n"
+            # Mulai dengan empati
+            response = f"🤔 Hmm, pencarian '{query}' tidak menemukan hasil yang persis cocok.\n"
+            response += "Tapi jangan khawatir! Mari saya bantu menemukan alternatif terbaik.\n\n"
+            response += "─" * 50 + "\n\n"
             
-            if self.restaurants_data is not None and len(self.restaurants_data) > 0:
+            if self.restaurants_data is None or len(self.restaurants_data) == 0:
+                return "Maaf, data restoran tidak tersedia. Silakan coba lagi nanti."
+            
+            # Tentukan device_token dari session jika tidak diberikan
+            if device_token is None and session_id and session_id in self.sessions:
+                device_token = self.sessions[session_id].get('device_token')
+            
+            recommendations_to_show = []
+            
+            # 1. Coba filter berdasarkan entities yang diekstrak
+            filtered_restaurants = self.restaurants_data.copy()
+            has_entity_filter = False
+            
+            # Filter by location jika ada
+            if entities.get('location'):
+                location_filter = filtered_restaurants['entitas_lokasi'].astype(str).str.contains(
+                    '|'.join(entities['location']), case=False, na=False
+                )
+                if location_filter.any():
+                    filtered_restaurants = filtered_restaurants[location_filter]
+                    has_entity_filter = True
+            
+            # Filter by cuisine jika ada dan belum ada hasil
+            if entities.get('cuisine') and (not has_entity_filter or len(filtered_restaurants) < 3):
+                cuisine_filter = filtered_restaurants['cuisines'].astype(str).str.contains(
+                    '|'.join(entities['cuisine']), case=False, na=False
+                )
+                if cuisine_filter.any():
+                    filtered_restaurants = filtered_restaurants[cuisine_filter]
+                    has_entity_filter = True
+            
+            # Filter by price jika ada
+            if entities.get('price'):
+                price_keywords = []
+                for price in entities['price']:
+                    if price == 'cheap':
+                        price_keywords.extend(['$', 'budget', 'terjangkau'])
+                    elif price == 'expensive':
+                        price_keywords.extend(['$$$', 'premium', 'mewah'])
+                
+                if price_keywords:
+                    price_filter = filtered_restaurants['price_range'].astype(str).str.contains(
+                        '|'.join(price_keywords), case=False, na=False
+                    )
+                    if price_filter.any():
+                        filtered_restaurants = filtered_restaurants[price_filter]
+            
+            # 2. Jika ada hasil dari filter entities, gunakan itu
+            if has_entity_filter and len(filtered_restaurants) > 0:
+                # Prioritaskan berdasarkan rating
+                filtered_restaurants = filtered_restaurants.nlargest(5, 'rating', keep='first')
+                
+                # Konversi ke list rekomendasi
+                for idx, restaurant in filtered_restaurants.iterrows():
+                    recommendations_to_show.append({
+                        'restaurant': restaurant,
+                        'reason': 'Sesuai kriteria pencarian Anda'
+                    })
+            
+            # 3. Jika tidak ada hasil filter entities atau kurang dari 3, ambil restoran populer & relevan
+            if len(recommendations_to_show) < 3:
+                # Dapatkan restoran dengan rating tertinggi
+                popular = self.restaurants_data.nlargest(5, 'rating', keep='first')
+                
+                existing_names = {r['restaurant'].get('name') for r in recommendations_to_show}
+                for idx, restaurant in popular.iterrows():
+                    if restaurant.get('name') not in existing_names and len(recommendations_to_show) < 5:
+                        reason = f"⭐ Restoran populer dengan rating {restaurant.get('rating', 'N/A')}/5.0"
+                        recommendations_to_show.append({
+                            'restaurant': restaurant,
+                            'reason': reason
+                        })
+            
+            # 4. Personalisasi dengan preferensi user jika ada device token
+            if device_token:
                 try:
-                    top_restaurants = self.restaurants_data.nlargest(3, 'rating', keep='first')
+                    history = self.device_token_service.get_or_create_user_history(device_token)
+                    preferences = history.get('preferences', {})
                     
-                    if not top_restaurants.empty:
-                        response += "Bagaimana dengan beberapa restoran populer ini?\n\n"
-                        for idx, restaurant in top_restaurants.iterrows():
-                            name = restaurant.get('name', 'Unknown')
-                            rating = restaurant.get('rating', 'N/A')
-                            
-                            cuisines_raw = restaurant.get('cuisines', 'Various')
-                            if isinstance(cuisines_raw, str) and cuisines_raw.startswith('['):
-                                try:
-                                    import ast
-                                    cuisines_list = ast.literal_eval(cuisines_raw)
-                                    cuisines = ', '.join(cuisines_list) if isinstance(cuisines_list, list) else cuisines_raw
-                                except:
-                                    cuisines = cuisines_raw.replace('[','').replace(']','').replace("'",'')
-                            else:
-                                cuisines = str(cuisines_raw)
-                            
-                            response += f"{name} ({rating}/5.0)\n"
-                            response += f"Masakan: {cuisines}\n\n"
+                    # Reorder berdasarkan preferensi user
+                    def score_by_preference(rec):
+                        score = 0
+                        restaurant = rec['restaurant']
                         
-                        response += "Atau coba pencarian yang lebih spesifik:\n"
+                        # Cek preferred cuisines
+                        if preferences.get('preferred_cuisines'):
+                            cuisines_str = str(restaurant.get('cuisines', '')).lower()
+                            for pref_cuisine in preferences['preferred_cuisines'][:3]:
+                                if pref_cuisine.lower() in cuisines_str:
+                                    score += 3
+                        
+                        # Cek preferred locations
+                        if preferences.get('preferred_locations'):
+                            location_str = str(restaurant.get('entitas_lokasi', '')).lower()
+                            for pref_location in preferences['preferred_locations'][:2]:
+                                if pref_location.lower() in location_str:
+                                    score += 2
+                        
+                        # Cek mood preferences
+                        if preferences.get('mood_preferences'):
+                            about_str = str(restaurant.get('about', '')).lower()
+                            for mood in preferences['mood_preferences'][:2]:
+                                if mood.lower() in about_str:
+                                    score += 1
+                        
+                        return score
+                    
+                    recommendations_to_show.sort(key=score_by_preference, reverse=True)
                 except Exception as e:
-                    logger.error(f"Error getting popular restaurants: {e}")
+                    logger.debug(f"Could not personalize fallback: {e}")
+            
+            # 5. Format respons dengan rekomendasi
+            if recommendations_to_show:
+                response += "✨ Saya punya beberapa pilihan menarik untuk Anda:\n\n"
+                
+                for i, rec in enumerate(recommendations_to_show[:5], 1):
+                    restaurant = rec['restaurant']
+                    name = restaurant.get('name', 'Unknown')
+                    rating = restaurant.get('rating', 'N/A')
+                    reason = rec.get('reason', '')
+                    
+                    # Emoji ranking
+                    rank_emoji = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣'][min(i-1, 4)]
+                    response += f"{rank_emoji} {name}\n"
+                    response += f"   ⭐ Rating: {rating}/5.0"
+                    
+                    if reason:
+                        response += f" • {reason}"
+                    response += "\n"
+                    
+                    # Cuisines
+                    cuisines_raw = restaurant.get('cuisines', '')
+                    if pd.notna(cuisines_raw):
+                        if isinstance(cuisines_raw, str) and cuisines_raw.startswith('['):
+                            try:
+                                import ast
+                                cuisines_list = ast.literal_eval(cuisines_raw)
+                                cuisines = ', '.join(cuisines_list) if isinstance(cuisines_list, list) else cuisines_raw
+                            except:
+                                cuisines = cuisines_raw.replace('[','').replace(']','').replace("'",'')
+                        else:
+                            cuisines = str(cuisines_raw)
+                        response += f"   🍽️ Masakan: {cuisines}\n"
+                    
+                    # Location
+                    if pd.notna(restaurant.get('entitas_lokasi')):
+                        location = str(restaurant.get('entitas_lokasi', ''))
+                        response += f"   📍 Lokasi: {location}\n"
+                    
+                    # Price range
+                    if pd.notna(restaurant.get('price_range')):
+                        price = str(restaurant.get('price_range', ''))
+                        response += f"   💰 Harga: {price}\n"
+                    
+                    response += "\n"
+                
+                response += "─" * 50 + "\n\n"
+            
+            # 6. Berikan saran pencarian yang lebih baik
+            response += "💡 Saran untuk pencarian lebih baik:\n\n"
             
             suggestions = []
+            
             if not entities.get('cuisine') and not entities.get('location'):
-                suggestions.extend([
-                    "Coba: 'pizza enak di Kuta'",
-                    "Atau: 'seafood murah di Senggigi'",
-                    "Contoh: 'italian food romantic'"
-                ])
+                suggestions = [
+                    "🍕 Coba: 'pizza enak di Kuta' untuk hasil lebih spesifik",
+                    "🦞 Atau: 'seafood murah di Senggigi'",
+                    "🍝 Contoh: 'italian romantic' untuk suasana tertentu"
+                ]
             elif not entities.get('cuisine'):
-                suggestions.extend([
-                    "Tambahkan jenis makanan: 'pizza', 'seafood', 'sushi'",
-                    "Atau masakan: 'italian', 'japanese', 'chinese'"
-                ])
+                location_text = entities['location'][0] if entities['location'] else 'lokasi pilihan'
+                suggestions = [
+                    f"🍽️ Tambahkan jenis makanan, misalnya: 'pizza di {location_text}'",
+                    f"🌍 Atau coba: 'seafood murah di {location_text}'",
+                    f"🍜 Alternatives: 'nasi goreng di {location_text}'"
+                ]
             elif not entities.get('location'):
-                suggestions.extend([
-                    "Sebutkan lokasi: 'Kuta', 'Senggigi', 'Gili Trawangan'",
-                    "Atau area: 'dekat pantai', 'pusat kota'"
-                ])
+                cuisine_text = entities['cuisine'][0] if entities['cuisine'] else 'jenis masakan'
+                suggestions = [
+                    f"📍 Tambahkan lokasi, misalnya: '{cuisine_text} di Kuta'",
+                    f"🏝️ Atau coba: '{cuisine_text} di Senggigi'",
+                    f"🌊 Atau di: '{cuisine_text} Gili Trawangan'"
+                ]
+            else:
+                suggestions = [
+                    "💰 Tambahkan budget: 'murah', 'sedang', atau 'premium'",
+                    "🎭 Atau sebutkan suasana: 'romantis', 'keluarga', 'santai'",
+                    "📞 Ketik 'detail [nama restoran]' untuk informasi lebih lengkap"
+                ]
             
-            if suggestions:
-                for suggestion in suggestions:
-                    response += f"{suggestion}\n"
-                response += "\n"
+            for suggestion in suggestions[:2]:
+                response += f"• {suggestion}\n"
             
-            response += "Butuh bantuan lain? Ketik 'help' untuk panduan lengkap!"
+            response += f"\n💬 Atau ketik 'help' untuk panduan lengkap cara mencari restoran!"
+            
             return response
             
         except Exception as e:
+            logger.error(f"Error in smart fallback response: {e}")
             return "Maaf, saya tidak dapat memproses permintaan Anda saat ini. Silakan coba dengan kata kunci yang lebih sederhana seperti 'pizza Kuta' atau 'seafood murah'."
     def get_conversation_history(self, session_id: str):
         return []

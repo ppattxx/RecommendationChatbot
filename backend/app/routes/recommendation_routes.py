@@ -6,6 +6,7 @@ from backend.app.controllers.recommendation_controller import (
     handle_get_trending,
     handle_get_top5,
     handle_get_all_ranked,
+    handle_get_profile_debug,
 )
 
 recommendations_bp = Blueprint('recommendations', __name__)
@@ -34,3 +35,8 @@ def get_top5_recommendations():
 @recommendations_bp.route('/recommendations/all-ranked', methods=['GET'])
 def get_all_ranked_recommendations():
     return handle_get_all_ranked()
+
+
+@recommendations_bp.route('/recommendations/profile-debug', methods=['GET'])
+def get_recommendation_profile_debug():
+    return handle_get_profile_debug()

@@ -210,7 +210,7 @@ class ContentBasedRecommendationEngine:
             )
             recommendations.extend(tfidf_recommendations)
             final_recommendations = self._combine_and_rank_recommendations(
-                recommendations, top_n
+                recommendations, top_n, query_result.entities
             )
             
             # Fallback for ambiguous queries with no results
@@ -265,12 +265,33 @@ class ContentBasedRecommendationEngine:
     def _get_entity_based_recommendations(self, entities: Dict[str, List[str]], 
                                         top_n: int) -> List[Recommendation]:
         recommendations = []
+        entity_count = sum(len(v) for v in entities.values())
+        min_score = self.recommendation_config['min_similarity_score']
+        has_location = bool(entities.get('location'))
+        has_cuisine = bool(entities.get('cuisine'))
+
+        # Ambiguous low-signal queries need stricter threshold to avoid noisy matches.
+        if not has_location and not has_cuisine:
+            min_score = max(min_score, 0.24)
+        elif has_location and not has_cuisine:
+            min_score = max(min_score, 0.12)
+
+        if entity_count >= 3:
+            min_score = max(min_score, 0.20)
+        elif entity_count == 2:
+            min_score = max(min_score, 0.14)
+        elif entity_count == 1:
+            min_score = max(min_score, 0.08)
+
         for restaurant in self.restaurants_objects:
+            if not self._passes_hard_filters(entities, restaurant):
+                continue
+
             base_score = calculate_similarity_score(entities, restaurant)
             # Apply boosting for exact matches
             boosted_score = calculate_boosted_score(base_score, entities, restaurant)
             
-            if boosted_score >= self.recommendation_config['min_similarity_score']:
+            if boosted_score >= min_score:
                 matching_features = self._find_matching_features(entities, restaurant)
                 recommendation = Recommendation(
                     restaurant=restaurant,
@@ -281,6 +302,51 @@ class ContentBasedRecommendationEngine:
                 recommendations.append(recommendation)
         recommendations.sort(key=lambda x: x.similarity_score, reverse=True)
         return recommendations[:top_n]
+
+    def _passes_hard_filters(self, entities: Dict[str, List[str]], restaurant: Restaurant) -> bool:
+        """Apply strict but safe pre-filters for high-signal entities."""
+        from config.settings import SYNONYM_MAP
+
+        location_terms = entities.get('location', [])
+        cuisine_terms = entities.get('cuisine', [])
+
+        # Location hard filter when user clearly specifies a location.
+        if location_terms:
+            restaurant_location = (restaurant.location or '').lower() if isinstance(restaurant.location, str) else ''
+            restaurant_address = (restaurant.address or '').lower() if isinstance(restaurant.address, str) else ''
+            matched_location = False
+            for loc in location_terms:
+                loc_lower = loc.lower()
+                if loc_lower in restaurant_location or loc_lower in restaurant_address:
+                    matched_location = True
+                    break
+                if 'gili' in loc_lower and ('gili' in restaurant_location or 'gili' in restaurant_address):
+                    matched_location = True
+                    break
+            if not matched_location:
+                return False
+
+        # Cuisine hard filter only when cuisine entities exist.
+        if cuisine_terms:
+            cuisines = [c.lower() for c in restaurant.cuisines] if isinstance(restaurant.cuisines, list) else []
+            name = restaurant.name.lower() if isinstance(restaurant.name, str) else ''
+            about = restaurant.about.lower() if isinstance(restaurant.about, str) else ''
+            text = ' '.join(cuisines + [name, about])
+
+            matched_cuisine = False
+            for term in cuisine_terms:
+                t = term.lower()
+                if t in text:
+                    matched_cuisine = True
+                    break
+                synonyms = SYNONYM_MAP.get(t, [])
+                if any(s in text for s in synonyms):
+                    matched_cuisine = True
+                    break
+            if not matched_cuisine:
+                return False
+
+        return True
     def _get_tfidf_recommendations(self, user_query: str, top_n: int) -> List[Recommendation]:
         try:
             processed_query = self.text_preprocessor.preprocess(
@@ -314,9 +380,11 @@ class ContentBasedRecommendationEngine:
             logger.error(f"Error in TF-IDF recommendations: {e}")
             return []
     def _combine_and_rank_recommendations(self, recommendations: List[Recommendation], 
-        top_n: int) -> List[Recommendation]:
+        top_n: int, entities: Optional[Dict[str, List[str]]] = None) -> List[Recommendation]:
         restaurant_scores = {}
         for rec in recommendations:
+            if entities and not self._passes_hard_filters(entities, rec.restaurant):
+                continue
             restaurant_id = rec.restaurant.id
             if restaurant_id not in restaurant_scores:
                 restaurant_scores[restaurant_id] = rec
@@ -348,8 +416,9 @@ class ContentBasedRecommendationEngine:
         
         # Check about field
         if 'about' in entities and hasattr(restaurant, 'about') and restaurant.about:
+            about_text = restaurant.about.lower() if isinstance(restaurant.about, str) else ''
             for term in entities['about']:
-                if term.lower() in restaurant.about.lower():
+                if about_text and term.lower() in about_text:
                     matching_features.append(f"Deskripsi: {term}")
         
         # Check cuisines field
