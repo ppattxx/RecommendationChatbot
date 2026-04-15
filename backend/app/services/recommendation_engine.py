@@ -337,19 +337,24 @@ class ContentBasedRecommendationEngine:
     def _find_matching_features(self, entities: Dict[str, List[str]],
         restaurant: Restaurant) -> List[str]:
         matching_features = []
+        about_text = restaurant.about.lower() if isinstance(getattr(restaurant, 'about', None), str) else ''
+        location_text = restaurant.location.lower() if isinstance(getattr(restaurant, 'location', None), str) else ''
+        address_text = restaurant.address.lower() if isinstance(getattr(restaurant, 'address', None), str) else ''
         
         # Check location field (HIGHEST PRIORITY)
-        if 'location' in entities and hasattr(restaurant, 'location') and restaurant.location:
+        if 'location' in entities:
             for loc in entities['location']:
-                if loc.lower() in restaurant.location.lower():
+                loc_text = str(loc).lower()
+                if loc_text and loc_text in location_text:
                     matching_features.append(f"Lokasi: {loc}")
-                elif hasattr(restaurant, 'address') and restaurant.address and loc.lower() in restaurant.address.lower():
+                elif loc_text and loc_text in address_text:
                     matching_features.append(f"Lokasi: {loc}")
         
         # Check about field
-        if 'about' in entities and hasattr(restaurant, 'about') and restaurant.about:
+        if 'about' in entities and about_text:
             for term in entities['about']:
-                if term.lower() in restaurant.about.lower():
+                term_text = str(term).lower()
+                if term_text and term_text in about_text:
                     matching_features.append(f"Deskripsi: {term}")
         
         # Check cuisines field

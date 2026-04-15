@@ -2,6 +2,7 @@
 import uuid
 from datetime import datetime
 import random
+import ast
 import pandas as pd
 from pathlib import Path
 import re
@@ -52,6 +53,43 @@ class ChatbotService:
             logger.error(f"Error loading restaurant data: {e}")
             self.restaurants_data = None
             self.entity_matcher = None
+        
+    def _get_location_from_row(self, restaurant_row) -> str:
+        """Resolve a displayable location from heterogeneous dataset columns."""
+        if restaurant_row is None:
+            return ""
+
+        for key in ("location", "entitas_lokasi", "address"):
+            value = None
+            try:
+                value = restaurant_row.get(key)
+            except Exception:
+                value = None
+
+            if value is None or (isinstance(value, float) and pd.isna(value)):
+                continue
+
+            if key == "entitas_lokasi":
+                if isinstance(value, list) and value:
+                    return ", ".join([str(v) for v in value if str(v).strip()])
+                if isinstance(value, str):
+                    stripped = value.strip()
+                    if stripped.startswith("[") and stripped.endswith("]"):
+                        try:
+                            parsed = ast.literal_eval(stripped)
+                            if isinstance(parsed, list) and parsed:
+                                return ", ".join([str(v) for v in parsed if str(v).strip()])
+                        except Exception:
+                            pass
+                    if stripped:
+                        return stripped
+            else:
+                text = str(value).strip()
+                if text:
+                    return text
+
+        return ""
+
     def start_conversation(self, user_id: str = None, device_token: str = None):
         if device_token:
             existing_session_id = self.session_manager.get_active_session_for_device(device_token)
@@ -64,6 +102,7 @@ class ChatbotService:
                         'user_id': session_info['device_token'], 
                         'device_token': device_token,
                         'messages': session_info['session_data'].get('messages', []),
+                        'history': session_info['session_data'].get('turns', []),
                         'context': {},
                         'preferences': session_info['history_data'].get('preferences', {})
                     }
@@ -79,6 +118,7 @@ class ChatbotService:
             'user_id': user_id,
             'device_token': device_token,
             'messages': [],
+            'history': [],
             'context': {},
             'preferences': {}
         }
@@ -99,6 +139,7 @@ class ChatbotService:
                     'user_id': session_info['device_token'],
                     'device_token': session_info['device_token'],
                     'messages': session_info['session_data'].get('messages', []),
+                    'history': session_info['session_data'].get('turns', []),
                     'context': {},
                     'preferences': session_info['history_data'].get('preferences', {})
                 }
@@ -132,14 +173,20 @@ class ChatbotService:
             not any(word in message for word in ['restoran', 'cari', 'mau', 'pizza', 'sushi', 'seafood', 'yang', 'di'])
         )
         if is_greeting_only:
-            return self._get_greeting_response()
+            bot_response = self._get_greeting_response()
+            self._save_conversation_to_session(session_id, message, bot_response)
+            return bot_response
         
         exit_pattern = r'\b(' + '|'.join(['bye', 'keluar', 'selesai', 'exit', 'sampai jumpa']) + r')\b'
         if re.search(exit_pattern, message.lower()):
-            return "Terima kasih telah menggunakan layanan kami! Sampai jumpa!"
+            bot_response = "Terima kasih telah menggunakan layanan kami! Sampai jumpa!"
+            self._save_conversation_to_session(session_id, message, bot_response)
+            return bot_response
         
         if any(word in message for word in ['help', 'bantuan', 'gimana', 'cara']):
-            return self._get_help_response()
+            bot_response = self._get_help_response()
+            self._save_conversation_to_session(session_id, message, bot_response)
+            return bot_response
         
         try:
             intent, entities = self._extract_intent_and_entities(message)
@@ -270,6 +317,55 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
                     if word in ['restoran', 'restaurant'] and i < len(words) - 1:
                         extended_entities['restaurant_name'] = words[i + 1]
                         break
+
+            # Normalize + deduplicate entities so terms do not appear repeated
+            # across categories (common with dataset-driven pattern overlap).
+            alias_map = {
+                'romantic': 'romantis',
+                'family': 'keluarga',
+                'casual': 'santai',
+            }
+
+            def _clean_unique(values):
+                if not isinstance(values, list):
+                    return []
+                seen = set()
+                cleaned = []
+                for raw in values:
+                    token = str(raw).strip().lower()
+                    if not token:
+                        continue
+                    token = alias_map.get(token, token)
+                    if token not in seen:
+                        seen.add(token)
+                        cleaned.append(token)
+                return cleaned
+
+            for key in ['cuisine', 'location', 'menu', 'mood', 'features', 'price_range', 'price']:
+                extended_entities[key] = _clean_unique(extended_entities.get(key, []))
+
+            # Remove cross-category duplicates with clear precedence.
+            cuisine_set = set(extended_entities.get('cuisine', []))
+            location_set = set(extended_entities.get('location', []))
+            extended_entities['menu'] = [
+                item for item in extended_entities.get('menu', [])
+                if item not in cuisine_set and item not in location_set
+            ]
+
+            blocked_for_mood = cuisine_set | location_set | set(extended_entities.get('menu', []))
+            extended_entities['mood'] = [
+                mood for mood in extended_entities.get('mood', [])
+                if mood not in blocked_for_mood
+            ]
+
+            # Fallback mood keywords for Indonesian queries if pattern model misses them.
+            msg = message.lower()
+            if any(k in msg for k in ['romantis', 'romantic', 'date', 'couple']) and 'romantis' not in extended_entities['mood']:
+                extended_entities['mood'].append('romantis')
+            if any(k in msg for k in ['keluarga', 'family', 'kids']) and 'keluarga' not in extended_entities['mood']:
+                extended_entities['mood'].append('keluarga')
+            if any(k in msg for k in ['santai', 'casual', 'relax']) and 'santai' not in extended_entities['mood']:
+                extended_entities['mood'].append('santai')
             
             logger.info(f"Extracted - Intent: {intent}, Entities: {extended_entities}")
             return intent, extended_entities
@@ -362,9 +458,11 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
                 
                 matching_rows = self.restaurants_data[self.restaurants_data['name'] == restaurant.name]
                 if not matching_rows.empty:
-                    restaurant_row = matching_rows.iloc[0]
+                    restaurant_row = matching_rows.iloc[0].copy()
                 else:
                     continue
+
+                restaurant_row['location'] = self._get_location_from_row(restaurant_row)
                 
                 bonus_score = self._calculate_entity_bonus(restaurant_row, entities)
                 
@@ -646,7 +744,7 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
             rating = restaurant.get('rating', 'N/A')
             if pd.notna(rating) and rating != 'N/A':
                 stars = '⭐' * int(rating)
-                response += f"   {stars} {rating}/5.0"
+                response += f"   ⭐ Rating: {rating}/5.0 {stars}"
             else:
                 response += f"   Rating: Belum tersedia"
             
@@ -929,7 +1027,26 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
             logger.error(f"Error in smart fallback response: {e}")
             return "Maaf, saya tidak dapat memproses permintaan Anda saat ini. Silakan coba dengan kata kunci yang lebih sederhana seperti 'pizza Kuta' atau 'seafood murah'."
     def get_conversation_history(self, session_id: str):
-        return []
+        if session_id in self.sessions:
+            history = self.sessions[session_id].get('history', [])
+            if history:
+                return history
+
+        session_info = self.session_manager.get_session(session_id)
+        if not session_info:
+            return []
+
+        session_data = session_info.get('session_data', {})
+        messages = session_data.get('messages', [])
+        last_response = session_data.get('recommendations_given', '')
+        reconstructed = []
+        for msg in messages:
+            reconstructed.append({
+                'timestamp': msg.get('timestamp', datetime.now().isoformat()),
+                'user_query': msg.get('user', ''),
+                'bot_response': last_response
+            })
+        return reconstructed
     def get_restaurant_details(self, name: str):
         if self.restaurants_data is None:
             return "Data restoran tidak tersedia."
@@ -945,18 +1062,43 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
             details += f"Tentang: {restaurant['about']}\n\n"
         if pd.notna(restaurant.get('cuisines')):
             details += f"Jenis Masakan: {restaurant['cuisines']}\n"
-        if pd.notna(restaurant.get('location')):
-            details += f"Lokasi: {restaurant['location']}\n"
+        location_text = self._get_location_from_row(restaurant)
+        if location_text:
+            details += f"Lokasi: {location_text}\n"
         if pd.notna(restaurant.get('price_range')):
             details += f"Harga: {restaurant['price_range']}\n"
         return details
+
     def get_recommendations_by_category(self, category: str):
         if self.restaurants_data is None:
             return "Data restoran tidak tersedia."
-        matches = self.restaurants_data[
-            self.restaurants_data['cuisines'].str.contains(category, case=False, na=False) |
-            self.restaurants_data['location'].str.contains(category, case=False, na=False)
-        ]
+
+        category = (category or '').strip()
+        if not category:
+            return "Silakan masukkan kategori yang ingin dicari."
+
+        # Preferred path: use engine-level category matcher that already supports address/location fallbacks.
+        engine_matches = self.recommendation_engine.get_recommendations_by_category(category, top_n=5)
+        if engine_matches:
+            response = f"Rekomendasi Restoran untuk kategori '{category}':\n\n"
+            for i, rec in enumerate(engine_matches, 1):
+                restaurant = rec.restaurant
+                response += f"{i}. {restaurant.name} (Rating: {restaurant.rating}/5.0)\n"
+                if restaurant.cuisines:
+                    response += f"   {', '.join(restaurant.cuisines[:4])}\n"
+                loc = (restaurant.location or restaurant.address or '').strip()
+                if loc:
+                    response += f"   Lokasi: {loc}\n"
+                response += "\n"
+            return response
+
+        cuisine_mask = self.restaurants_data['cuisines'].astype(str).str.contains(category, case=False, na=False) if 'cuisines' in self.restaurants_data.columns else False
+        location_mask = self.restaurants_data['entitas_lokasi'].astype(str).str.contains(category, case=False, na=False) if 'entitas_lokasi' in self.restaurants_data.columns else False
+        address_mask = self.restaurants_data['address'].astype(str).str.contains(category, case=False, na=False) if 'address' in self.restaurants_data.columns else False
+        pref_mask = self.restaurants_data['preferences'].astype(str).str.contains(category, case=False, na=False) if 'preferences' in self.restaurants_data.columns else False
+        feature_mask = self.restaurants_data['features'].astype(str).str.contains(category, case=False, na=False) if 'features' in self.restaurants_data.columns else False
+
+        matches = self.restaurants_data[cuisine_mask | location_mask | address_mask | pref_mask | feature_mask]
         if matches.empty:
             return f"Maaf, tidak ditemukan restoran untuk kategori '{category}'."
         response = f"Rekomendasi Restoran untuk kategori '{category}':\n\n"
@@ -964,6 +1106,9 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
             response += f"{i}. {restaurant.get('name', 'Unknown')} (Rating: {restaurant.get('rating', 'N/A')}/5.0)\n"
             if pd.notna(restaurant.get('cuisines')):
                 response += f"   {restaurant['cuisines']}\n"
+            location_text = self._get_location_from_row(restaurant)
+            if location_text:
+                response += f"   Lokasi: {location_text}\n"
             response += "\n"
         return response
     def get_statistics(self):
@@ -1023,7 +1168,7 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
             'id': restaurant.get('id', ''),
             'name': restaurant.get('name', ''),
             'cuisines': restaurant.get('cuisines', ''),
-            'location': restaurant.get('location', ''),
+            'location': self._get_location_from_row(restaurant),
             'about': restaurant.get('about', ''),
             'price_range': restaurant.get('price_range', ''),
             'rating': restaurant.get('rating', 0)
@@ -1032,6 +1177,15 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
     
     def _save_conversation_to_session(self, session_id: str, user_message: str, bot_response: str):
         try:
+            if session_id in self.sessions:
+                if 'history' not in self.sessions[session_id]:
+                    self.sessions[session_id]['history'] = []
+                self.sessions[session_id]['history'].append({
+                    'timestamp': datetime.now().isoformat(),
+                    'user_query': user_message,
+                    'bot_response': bot_response
+                })
+
             self.session_manager.update_session(session_id, user_message, bot_response)
         except Exception as e:
             pass

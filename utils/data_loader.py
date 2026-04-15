@@ -59,6 +59,14 @@ class DataLoader:
                 # Get location from entitas_lokasi column
                 location_list = DataLoader.parse_list_column(row.get('entitas_lokasi', []))
                 location = ', '.join(location_list) if location_list else None
+
+                images = []
+                for image_col in ['img1_url', 'img2_url', 'img3_url', 'img', 'image']:
+                    raw_val = row.get(image_col)
+                    if pd.notna(raw_val):
+                        val = str(raw_val).strip()
+                        if val and val.lower() != 'nan' and val not in images:
+                            images.append(val)
                 
                 restaurant = Restaurant(
                     id=int(row.get('id', 0)),
@@ -70,7 +78,8 @@ class DataLoader:
                     price_range=row.get('price_range'),
                     cuisines=DataLoader.parse_list_column(row.get('cuisines', [])),
                     features=DataLoader.parse_list_column(row.get('features', [])),
-                    preferences=DataLoader.parse_list_column(row.get('preferences', []))
+                    preferences=DataLoader.parse_list_column(row.get('preferences', [])),
+                    images=images
                 )
                 restaurants.append(restaurant)
             except Exception as e:

@@ -9,6 +9,7 @@ const STORAGE_KEYS = {
   SESSION_ID: 'session_id',
   DEVICE_TOKEN: 'device_token',
   CHAT_HISTORY: 'chat_history',
+  LATEST_USER_QUERY: 'latest_user_query',
   PREFERENCES_CACHE: 'preferences_cache',
   LAST_SYNC: 'last_sync_timestamp',
 };
@@ -34,11 +35,13 @@ export const PersonalizationProvider = ({ children }) => {
       return [];
     }
   });
+  const [latestUserQuery, setLatestUserQuery] = useState(() => localStorage.getItem(STORAGE_KEYS.LATEST_USER_QUERY) || '');
 
   const [isLoadingPreferences, setIsLoadingPreferences] = useState(false);
   const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [error, setError] = useState(null);
+  const [personalizationVersion, setPersonalizationVersion] = useState(0);
 
   // Sync chat history to localStorage whenever it changes
   useEffect(() => {
@@ -153,6 +156,20 @@ export const PersonalizationProvider = ({ children }) => {
       synced: false,
     };
     setChatHistory((prev) => [...prev, newMessage]);
+    if (newMessage.type === 'user' && newMessage.text?.trim()) {
+      setLatestUserQuery(newMessage.text.trim());
+      localStorage.setItem(STORAGE_KEYS.LATEST_USER_QUERY, newMessage.text.trim());
+    }
+  }, []);
+
+  const updateLatestUserQuery = useCallback((queryText) => {
+    const q = (queryText || '').trim();
+    setLatestUserQuery(q);
+    if (q) {
+      localStorage.setItem(STORAGE_KEYS.LATEST_USER_QUERY, q);
+    } else {
+      localStorage.removeItem(STORAGE_KEYS.LATEST_USER_QUERY);
+    }
   }, []);
 
   const clearChatHistory = useCallback(async () => {
@@ -173,11 +190,16 @@ export const PersonalizationProvider = ({ children }) => {
 
   const updateSession = useCallback((newSessionId) => {
     setSessionId(newSessionId);
-    localStorage.setItem(STORAGE_KEYS.SESSION_ID, newSessionId);
+    if (newSessionId) {
+      localStorage.setItem(STORAGE_KEYS.SESSION_ID, newSessionId);
+    } else {
+      localStorage.removeItem(STORAGE_KEYS.SESSION_ID);
+    }
 
     setTimeout(() => {
       fetchPreferences();
       fetchTopRecommendations();
+      setPersonalizationVersion((v) => v + 1);
     }, 500);
   }, [fetchPreferences, fetchTopRecommendations]);
 
@@ -186,6 +208,8 @@ export const PersonalizationProvider = ({ children }) => {
       fetchPreferences(),
       fetchTopRecommendations(),
     ]);
+    localStorage.setItem(STORAGE_KEYS.LAST_SYNC, String(Date.now()));
+    setPersonalizationVersion((v) => v + 1);
     return results;
   }, [fetchPreferences, fetchTopRecommendations]);
 
@@ -203,16 +227,25 @@ export const PersonalizationProvider = ({ children }) => {
       setPreferences(null);
       setTopRecommendations([]);
       setChatHistory([]);
+      setLatestUserQuery('');
+
+      // Force remove identity keys before creating fresh token
+      localStorage.removeItem(STORAGE_KEYS.SESSION_ID);
+      localStorage.removeItem(STORAGE_KEYS.DEVICE_TOKEN);
+      localStorage.removeItem(STORAGE_KEYS.LATEST_USER_QUERY);
 
       // Generate new device token
       const newToken = `web_${Math.random().toString(36).substring(2, 11)}`;
       setDeviceToken(newToken);
       localStorage.setItem(STORAGE_KEYS.DEVICE_TOKEN, newToken);
 
-      return true;
+      localStorage.setItem(STORAGE_KEYS.LAST_SYNC, String(Date.now()));
+      setPersonalizationVersion((v) => v + 1);
+
+      return { success: true, newToken };
     } catch (err) {
       console.error('Error resetting all data:', err);
-      return false;
+      return { success: false, newToken: null };
     }
   }, []);
 
@@ -235,9 +268,11 @@ export const PersonalizationProvider = ({ children }) => {
 
     // Chat History
     chatHistory,
+    latestUserQuery,
     isLoadingHistory,
     fetchChatHistory,
     addChatMessage,
+    updateLatestUserQuery,
     clearChatHistory,
 
     // Global actions
@@ -247,6 +282,9 @@ export const PersonalizationProvider = ({ children }) => {
     // Error state
     error,
     clearError: () => setError(null),
+
+    // Realtime sync marker
+    personalizationVersion,
   };
 
   return (

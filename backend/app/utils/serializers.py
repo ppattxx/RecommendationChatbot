@@ -23,10 +23,17 @@ def serialize_restaurant_from_object(rest_obj):
         'review_count': getattr(rest_obj, 'review_count', 0),
         'price_range': str(rest_obj.price_range) if rest_obj.price_range else '$$',
         'cuisine': ', '.join(rest_obj.cuisines[:3]) if rest_obj.cuisines else 'Restaurant',
-        'image_url': rest_obj.images[0] if rest_obj.images else '',
+        'cuisines_list': rest_obj.cuisines if rest_obj.cuisines else [],
+        'image_url': rest_obj.images[0] if rest_obj.images and len(rest_obj.images) > 0 else '',
+        'img1_url': rest_obj.images[0] if rest_obj.images and len(rest_obj.images) > 0 else '',
+        'img2_url': rest_obj.images[1] if rest_obj.images and len(rest_obj.images) > 1 else '',
+        'img3_url': rest_obj.images[2] if rest_obj.images and len(rest_obj.images) > 2 else '',
         'description': about_text,
+        'about': str(rest_obj.about) if rest_obj.about else '',
         'opening_hours': rest_obj.hours.get('monday', 'Contact for hours') if rest_obj.hours else 'Contact for hours',
-        'popular_dishes': [],
+        'schedule': rest_obj.hours if rest_obj.hours else {},
+        'features': rest_obj.features if rest_obj.features else [],
+        'popular_dishes': rest_obj.preferences if hasattr(rest_obj, 'preferences') and rest_obj.preferences else [],
         'category': _determine_category(rest_obj.cuisines or []),
         'personalization_score': 0,
         'url': '',
@@ -58,6 +65,14 @@ def serialize_restaurant_from_row(row):
     if pd.notna(about) and isinstance(about, str):
         description = about[:200] + '...' if len(about) > 200 else about
 
+    image_url = ''
+    raw_img1 = row.get('img1_url')
+    raw_img = row.get('img')
+    if pd.notna(raw_img1):
+        image_url = str(raw_img1)
+    elif pd.notna(raw_img):
+        image_url = str(raw_img)
+
     return {
         'id': int(row['id']),
         'name': str(row['name']) if pd.notna(row['name']) else 'Unknown',
@@ -65,9 +80,24 @@ def serialize_restaurant_from_row(row):
         'rating': float(row['rating']) if pd.notna(row['rating']) else 4.0,
         'price_range': str(row['price_range']) if pd.notna(row.get('price_range')) else '$$',
         'cuisine': cuisine_str,
-        'image_url': str(row['img1_url']) if pd.notna(row.get('img1_url')) else '',
+        'cuisines_list': cuisines,
+        'image_url': image_url,
+        'img1_url': image_url,
+        'img2_url': str(row['img2_url']) if pd.notna(row.get('img2_url')) else '',
+        'img3_url': str(row['img3_url']) if pd.notna(row.get('img3_url')) else '',
         'description': description,
+        'about': about if pd.notna(about) else '',
         'opening_hours': _get_opening_hours(row),
+        'schedule': {
+            'monday': str(row.get('monday_hours', '')) if pd.notna(row.get('monday_hours')) else '',
+            'tuesday': str(row.get('tuesday_hours', '')) if pd.notna(row.get('tuesday_hours')) else '',
+            'wednesday': str(row.get('wednesday_hours', '')) if pd.notna(row.get('wednesday_hours')) else '',
+            'thursday': str(row.get('thursday_hours', '')) if pd.notna(row.get('thursday_hours')) else '',
+            'friday': str(row.get('friday_hours', '')) if pd.notna(row.get('friday_hours')) else '',
+            'saturday': str(row.get('saturday_hours', '')) if pd.notna(row.get('saturday_hours')) else '',
+            'sunday': str(row.get('sunday_hours', '')) if pd.notna(row.get('sunday_hours')) else '',
+        },
+        'features': _parse_list_field(row.get('features')),
         'popular_dishes': popular_dishes,
         'category': _determine_category(cuisines),
         'personalization_score': 0,

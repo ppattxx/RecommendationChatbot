@@ -1,11 +1,14 @@
 """
 Script untuk mengukur response time dari berbagai operasi sistem chatbot
 """
+import pytest
 import requests
 import time
 import statistics
 from typing import List, Dict
 import json
+
+pytestmark = pytest.mark.skip(reason="Manual performance script; excluded from automated pytest suite")
 
 BASE_URL = "http://127.0.0.1:5500"
 

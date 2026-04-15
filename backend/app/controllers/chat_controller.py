@@ -2,7 +2,7 @@
 Chat Controller – handles request validation, calls services, and formats responses.
 Uses: DTO validation, @handle_errors decorator, DI via container.
 """
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from flask import request, jsonify, current_app
 
@@ -32,7 +32,7 @@ def handle_chat():
             'data': {
                 'bot_response': greeting,
                 'session_id': session_id,
-                'timestamp': datetime.utcnow().isoformat(),
+                'timestamp': datetime.now(timezone.utc).isoformat(),
                 'is_new_session': True
             }
         }), 200
@@ -56,7 +56,7 @@ def handle_chat():
         device_token=dto.device_token,
         user_message=dto.message,
         bot_response=bot_response,
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.now(timezone.utc),
         extracted_cuisine=', '.join(entities.get('cuisine', [])) or None,
         extracted_location=', '.join(entities.get('location', [])) or None,
         extracted_mood=', '.join(entities.get('mood', [])) or None,
@@ -72,7 +72,7 @@ def handle_chat():
         'data': {
             'bot_response': bot_response,
             'session_id': session_id,
-            'timestamp': datetime.utcnow().isoformat(),
+            'timestamp': datetime.now(timezone.utc).isoformat(),
             'is_new_session': False
         }
     }), 200
@@ -265,8 +265,8 @@ def _ensure_session_exists(session_id, device_token):
             db.session.add(UserSession(
                 session_id=session_id,
                 device_token=device_token,
-                created_at=datetime.utcnow(),
-                last_activity=datetime.utcnow(),
+                created_at=datetime.now(timezone.utc),
+                last_activity=datetime.now(timezone.utc),
                 is_active=True
             ))
             db.session.commit()
@@ -278,7 +278,7 @@ def _update_or_create_session(session_id, device_token):
     """Update last_activity or create session if missing."""
     session = UserSession.query.filter_by(session_id=session_id).first()
     if session:
-        session.last_activity = datetime.utcnow()
+        session.last_activity = datetime.now(timezone.utc)
         try:
             db.session.commit()
         except Exception:

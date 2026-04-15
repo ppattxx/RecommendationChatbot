@@ -566,11 +566,20 @@ class ContentBasedRecommendationEngine:
             if hasattr(restaurant, 'features') and restaurant.features:
                 all_features.extend(restaurant.features)
         unique_features = len(set(all_features))
+
+        all_locations = []
+        for restaurant in self.restaurants_objects:
+            if hasattr(restaurant, 'location') and restaurant.location:
+                all_locations.extend([
+                    loc.strip() for loc in str(restaurant.location).split(',') if loc.strip()
+                ])
+        unique_locations = len(set(all_locations))
         
         return {
             'total_restaurants': total_restaurants,
             'average_rating': round(avg_rating, 2),
             'unique_cuisines': unique_cuisines,
+            'unique_locations': unique_locations,
             'unique_features': unique_features,
             'tfidf_features': self.tfidf_matrix.shape[1] if self.tfidf_matrix is not None else 0
         }

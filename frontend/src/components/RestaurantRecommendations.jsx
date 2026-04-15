@@ -110,6 +110,7 @@ const RestaurantRecommendations = ({ userPreferences }) => {
   const [error, setError] = useState(null);
   const [isPersonalized, setIsPersonalized] = useState(false);
   const [queryUsed, setQueryUsed] = useState('');
+  const [personalizationInsights, setPersonalizationInsights] = useState(null);
   
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -154,6 +155,7 @@ const RestaurantRecommendations = ({ userPreferences }) => {
         setRestaurants(response.data.restaurants);
         setIsPersonalized(response.data.personalized || false);
         setQueryUsed(response.data.query || '');
+        setPersonalizationInsights(response.data.personalization_insights || null);
         
         // Update pagination state
         if (response.data.pagination) {
@@ -293,6 +295,40 @@ const RestaurantRecommendations = ({ userPreferences }) => {
           </button>
         </div>
       </div>
+
+      {/* Personalization Insights */}
+      {isPersonalized && personalizationInsights && (
+        <div className="bg-white border border-green-100 rounded-xl p-4">
+          <p className="text-sm font-semibold text-green-800 mb-2">
+            Profil personalisasi aktif
+          </p>
+          <p className="text-xs text-gray-600 mb-3">
+            Sistem membaca histori interaksi Anda dan menggabungkan frekuensi + recency untuk menentukan ranking.
+          </p>
+          <div className="flex flex-wrap gap-2 text-xs">
+            {(personalizationInsights.top_preferences?.cuisines || []).slice(0, 3).map((c) => (
+              <span key={`c-${c}`} className="px-2 py-1 rounded-full bg-orange-50 text-orange-700 border border-orange-200">
+                Cuisine: {c}
+              </span>
+            ))}
+            {(personalizationInsights.top_preferences?.locations || []).slice(0, 2).map((l) => (
+              <span key={`l-${l}`} className="px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                Lokasi: {l}
+              </span>
+            ))}
+            {(personalizationInsights.top_preferences?.moods || []).slice(0, 2).map((m) => (
+              <span key={`m-${m}`} className="px-2 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-200">
+                Mood: {m}
+              </span>
+            ))}
+            {(personalizationInsights.top_preferences?.prices || []).slice(0, 2).map((p) => (
+              <span key={`p-${p}`} className="px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                Harga: {p}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Restaurant Grid - All Restaurants, Top 5 with special label */}
       {restaurants.length > 0 ? (

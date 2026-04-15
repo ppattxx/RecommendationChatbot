@@ -2,7 +2,7 @@
 Recommendation Controller – handles request/response for recommendation endpoints.
 Uses: DTO validation, @handle_errors decorator, DI via container.
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from collections import Counter
 from flask import request, jsonify, current_app
 
@@ -33,10 +33,12 @@ def _extract_user_preferences(session_id=None, device_token=None):
     accumulated user behavior while still adapting to recent intent.
     """
     query = ChatHistory.query
-    if session_id:
-        query = query.filter_by(session_id=session_id)
-    elif device_token:
+    # Personalization is user-centric: prefer device token (cross-session history)
+    # and fallback to session when device token is unavailable.
+    if device_token:
         query = query.filter_by(device_token=device_token)
+    elif session_id:
+        query = query.filter_by(session_id=session_id)
     else:
         return None
 
@@ -54,13 +56,17 @@ def _extract_user_preferences(session_id=None, device_token=None):
     mood_scores = Counter()
     price_scores = Counter()
 
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     for idx, chat in enumerate(chat_history):
         # Recency weight: newer interactions contribute more.
         base_weight = max(0.35, 1.0 - (idx * 0.015))
 
         # Light time decay to avoid overfitting old history.
         chat_ts = chat.timestamp or now
+        if chat_ts.tzinfo is None:
+            chat_ts = chat_ts.replace(tzinfo=timezone.utc)
+        else:
+            chat_ts = chat_ts.astimezone(timezone.utc)
         age_days = max((now - chat_ts).total_seconds() / 86400.0, 0.0)
         time_weight = max(0.5, 1.0 / (1.0 + (age_days * 0.05)))
 
@@ -87,9 +93,32 @@ def _extract_user_preferences(session_id=None, device_token=None):
     }
 
 
+def _has_meaningful_preferences(user_prefs):
+    """Return True only when there is actual preference signal.
+
+    This prevents a just-reset user with 1 fresh interaction from being
+    labeled as fully personalized.
+    """
+    if not user_prefs:
+        return False
+
+    has_entity_signal = any([
+        bool(user_prefs.get('preferred_cuisines')),
+        bool(user_prefs.get('preferred_locations')),
+        bool(user_prefs.get('preferred_moods')),
+        bool(user_prefs.get('price_preferences')),
+    ])
+
+    # Realtime sync requirement: as soon as user has at least one interaction,
+    # web cards should start reflecting chatbot-extracted preferences.
+    enough_history = user_prefs.get('total_conversations', 0) >= 1
+    return has_entity_signal and enough_history
+
+
 def _extract_recent_query_context(session_id=None, device_token=None, limit=8):
     """Extract recent query context so card ranking follows latest chat intent."""
     query = ChatHistory.query
+    # Keep recent-intent local to active conversation when available.
     if session_id:
         query = query.filter_by(session_id=session_id)
     elif device_token:
@@ -153,11 +182,68 @@ def _build_hybrid_query(explicit_query=None, user_preferences=None, recent_conte
     profile_query = _build_query_from_preferences(user_preferences) if user_preferences else ''
     latest_message = (recent_context or {}).get('latest_message', '').strip() if recent_context else ''
 
-    if latest_message and profile_query:
-        return f"{latest_message} {profile_query}".strip()
+    # Blend latest intent with historical profile signal (frequency-based),
+    # but avoid noisy duplication.
     if latest_message:
+        latest_lower = latest_message.lower()
+        profile_tokens = []
+
+        if user_preferences:
+            top_cuisines = list((user_preferences.get('preferred_cuisines') or {}).keys())[:2]
+            top_locations = list((user_preferences.get('preferred_locations') or {}).keys())[:1]
+            top_moods = list((user_preferences.get('preferred_moods') or {}).keys())[:1]
+            for token in [*top_cuisines, *top_locations, *top_moods]:
+                t = str(token).strip().lower()
+                if t and t not in latest_lower:
+                    profile_tokens.append(t)
+
+        if profile_tokens:
+            return f"{latest_message} {' '.join(profile_tokens[:2])}".strip()
         return latest_message
+
     return profile_query
+
+
+def _build_personalization_insights(user_preferences=None, recent_context=None):
+    """Build compact personalization insights for UI/chat explainability."""
+    user_preferences = user_preferences or {}
+    recent_context = recent_context or {}
+
+    pref_cuisines = list((user_preferences.get('preferred_cuisines') or {}).keys())[:3]
+    pref_locations = list((user_preferences.get('preferred_locations') or {}).keys())[:3]
+    pref_moods = list((user_preferences.get('preferred_moods') or {}).keys())[:2]
+    pref_prices = list((user_preferences.get('price_preferences') or {}).keys())[:2]
+
+    recent_cuisines = list(recent_context.get('recent_cuisines') or [])[:3]
+    recent_locations = list(recent_context.get('recent_locations') or [])[:2]
+    recent_moods = list(recent_context.get('recent_moods') or [])[:2]
+
+    profile_strength = 0
+    if pref_cuisines:
+        profile_strength += 1
+    if pref_locations:
+        profile_strength += 1
+    if pref_moods:
+        profile_strength += 1
+    if pref_prices:
+        profile_strength += 1
+
+    return {
+        'profile_strength': profile_strength,
+        'total_conversations': int(user_preferences.get('total_conversations', 0) or 0),
+        'top_preferences': {
+            'cuisines': pref_cuisines,
+            'locations': pref_locations,
+            'moods': pref_moods,
+            'prices': pref_prices,
+        },
+        'recent_intent': {
+            'latest_message': str(recent_context.get('latest_message', '') or ''),
+            'cuisines': recent_cuisines,
+            'locations': recent_locations,
+            'moods': recent_moods,
+        }
+    }
 
 
 def _serialize_recommendation(rec):
@@ -179,6 +265,9 @@ def _serialize_recommendation(rec):
         'price_range': str(rest.price_range) if rest.price_range else '$$',
         'cuisine': ', '.join(rest.cuisines[:3]) if rest.cuisines else 'Restaurant',
         'image_url': rest.images[0] if rest.images else '',
+        'img1_url': rest.images[0] if rest.images else '',
+        'img2_url': rest.images[1] if rest.images and len(rest.images) > 1 else '',
+        'img3_url': rest.images[2] if rest.images and len(rest.images) > 2 else '',
         'description': about_text,
         'similarity_score': round(rec.similarity_score, 4),
         'matching_features': rec.matching_features,
@@ -205,11 +294,64 @@ def _serialize_restaurant_obj(rest_obj, default_score=None):
         'price_range': str(rest_obj.price_range) if rest_obj.price_range else '$$',
         'cuisine': ', '.join(rest_obj.cuisines[:3]) if rest_obj.cuisines else 'Restaurant',
         'image_url': rest_obj.images[0] if rest_obj.images else '',
+        'img1_url': rest_obj.images[0] if rest_obj.images else '',
+        'img2_url': rest_obj.images[1] if rest_obj.images and len(rest_obj.images) > 1 else '',
+        'img3_url': rest_obj.images[2] if rest_obj.images and len(rest_obj.images) > 2 else '',
         'description': about_text,
         'similarity_score': default_score if default_score is not None else 0.5 + (rest_obj.rating / 10.0),
         'matching_features': ['popular', 'highly rated'],
         'explanation': f'Restoran populer dengan rating {rest_obj.rating}/5.0',
         'address': str(rest_obj.address) if isinstance(rest_obj.address, str) else ''
+    }
+
+
+def _serialize_chatbot_ranked_row(rec):
+    """Serialize chatbot-ranked row dict into API-response shape."""
+    row = rec.get('restaurant', {})
+    cuisines_raw = row.get('cuisines', '')
+    cuisine_text = str(cuisines_raw)
+    about_text = str(row.get('about', '') or '')
+    if len(about_text) > 200:
+        about_text = about_text[:200] + '...'
+
+    def _to_int(v, default=0):
+        try:
+            return int(v)
+        except Exception:
+            return default
+
+    def _to_float(v, default=0.0):
+        try:
+            return float(v)
+        except Exception:
+            return default
+
+    image_url = ''
+    for image_key in ['img1_url', 'image_url', 'image', 'img']:
+        raw_img = row.get(image_key)
+        if raw_img is not None:
+            img_val = str(raw_img).strip()
+            if img_val and img_val.lower() != 'nan':
+                image_url = img_val
+                break
+
+    return {
+        'id': _to_int(row.get('id', 0), 0),
+        'name': str(row.get('name', 'Unknown')),
+        'location': str(row.get('location', 'Lombok')),
+        'rating': _to_float(row.get('rating', 0), 0.0),
+        'review_count': _to_int(row.get('reviews_count', 0), 0),
+        'price_range': str(row.get('price_range', '$$')),
+        'cuisine': cuisine_text,
+        'image_url': image_url,
+        'img1_url': image_url,
+        'img2_url': str(row.get('img2_url', '') or ''),
+        'img3_url': str(row.get('img3_url', '') or ''),
+        'description': about_text,
+        'similarity_score': float(rec.get('similarity', rec.get('total_score', 0))),
+        'matching_features': [],
+        'explanation': 'Ranked by chatbot recommendation pipeline',
+        'address': str(row.get('address', '') or ''),
     }
 
 
@@ -313,13 +455,13 @@ def handle_get_recommendations():
     user_prefs = None
     if dto.session_id or dto.device_token:
         user_prefs = _extract_user_preferences(dto.session_id, dto.device_token)
-    is_personalized = bool(user_prefs)
+    is_personalized = _has_meaningful_preferences(user_prefs)
 
     # Get all restaurants as dicts
     all_recs = [serialize_restaurant_from_object(r) for r in engine.restaurants_objects]
 
     # Apply personalization
-    if user_prefs:
+    if is_personalized:
         all_recs = _apply_personalization_scoring(all_recs, user_prefs)
 
     # Category filter
@@ -392,13 +534,44 @@ def handle_get_top5():
     user_prefs = None
     if dto.session_id or dto.device_token:
         user_prefs = _extract_user_preferences(dto.session_id, dto.device_token)
+    is_personalized = _has_meaningful_preferences(user_prefs)
     recent_context = _extract_recent_query_context(dto.session_id, dto.device_token)
+    personalization_insights = _build_personalization_insights(
+        user_preferences=user_prefs if user_prefs else None,
+        recent_context=recent_context,
+    )
 
     user_query = _build_hybrid_query(
         explicit_query=dto.query,
-        user_preferences=user_prefs,
+        user_preferences=user_prefs if is_personalized else None,
         recent_context=recent_context,
     )
+
+    # Always align top-5 cards with chatbot conversational ranking
+    # when there is an active user query.
+    if user_query:
+        chatbot = current_app.container.chatbot_service
+        _, entities = chatbot._extract_intent_and_entities(user_query)
+        ranked = chatbot.get_ranked_recommendations(
+            query=user_query,
+            entities=entities,
+            session_id=dto.session_id,
+            device_token=dto.device_token,
+            top_n=5,
+        )
+        if ranked:
+            top5 = [_serialize_chatbot_ranked_row(rec) for rec in ranked]
+            return jsonify({
+                'success': True,
+                'data': {
+                    'restaurants': top5,
+                    'query': user_query,
+                    'personalized': is_personalized,
+                    'personalization_insights': personalization_insights,
+                    'algorithm': 'chatbot_ranked_pipeline',
+                    'tie_breaker': 'chatbot_scoring'
+                }
+            }), 200
 
     top5 = []
     if user_query:
@@ -421,7 +594,8 @@ def handle_get_top5():
         'data': {
             'restaurants': top5,
             'query': user_query,
-            'personalized': bool(user_prefs),
+            'personalized': is_personalized,
+            'personalization_insights': personalization_insights,
             'algorithm': 'cosine_similarity',
             'tie_breaker': 'rating_and_review_count'
         }
@@ -437,13 +611,24 @@ def handle_get_all_ranked():
     user_prefs = None
     if dto.session_id or dto.device_token:
         user_prefs = _extract_user_preferences(dto.session_id, dto.device_token)
+    is_personalized = _has_meaningful_preferences(user_prefs)
     recent_context = _extract_recent_query_context(dto.session_id, dto.device_token)
-
-    user_query = _build_hybrid_query(
-        explicit_query=dto.query,
-        user_preferences=user_prefs,
+    personalization_insights = _build_personalization_insights(
+        user_preferences=user_prefs if user_prefs else None,
         recent_context=recent_context,
     )
+
+    explicit_query = (dto.query or '').strip()
+    hybrid_query = _build_hybrid_query(
+        explicit_query=explicit_query,
+        user_preferences=user_prefs if is_personalized else None,
+        recent_context=recent_context,
+    )
+
+    # IMPORTANT:
+    # - If there is an explicit query from frontend/chat, use query-based ranking.
+    # - If not, return ALL restaurants and personalize order from accumulated history.
+    user_query = hybrid_query if explicit_query else ''
 
     all_recs = []
     if user_query:
@@ -455,26 +640,49 @@ def handle_get_all_ranked():
         all_recs = [_serialize_restaurant_obj(r) for r in sorted_objs]
 
     # Re-rank by accumulated preference profile when available.
-    if user_prefs:
+    chatbot_top_count = 5
+    pinned_chatbot_top = False
+    if is_personalized:
         all_recs = _apply_personalization_scoring(all_recs, user_prefs, recent_context=recent_context)
 
-    # Sort by similarity
-    all_recs.sort(
-        key=lambda x: (
-            x.get('has_recent_intent_match', False),
-            x.get('has_preference_match', False),
-            x.get('personalization_score', 0),
-            x.get('similarity_score', 0),
-            x.get('rating', 0),
-            x.get('review_count', 0)
-        ),
-        reverse=True
-    )
+    # For any active query, force top-5 to follow chatbot ranking
+    # so web card order stays consistent with chatbot response.
+    if user_query:
+        chatbot = current_app.container.chatbot_service
+        _, entities = chatbot._extract_intent_and_entities(user_query)
+        ranked_top5 = chatbot.get_ranked_recommendations(
+            query=user_query,
+            entities=entities,
+            session_id=dto.session_id,
+            device_token=dto.device_token,
+            top_n=5,
+        )
+        if ranked_top5:
+            top5_cards = [_serialize_chatbot_ranked_row(rec) for rec in ranked_top5]
+            chatbot_top_count = len(top5_cards)
+            top5_names = {str(x.get('name', '')).strip().lower() for x in top5_cards}
+            remaining = [r for r in all_recs if str(r.get('name', '')).strip().lower() not in top5_names]
+            all_recs = top5_cards + remaining
+            pinned_chatbot_top = True
+
+    # Sort by similarity unless top order is intentionally pinned to chatbot output.
+    if not pinned_chatbot_top:
+        all_recs.sort(
+            key=lambda x: (
+                x.get('has_recent_intent_match', False),
+                x.get('has_preference_match', False),
+                x.get('personalization_score', 0),
+                x.get('similarity_score', 0),
+                x.get('rating', 0),
+                x.get('review_count', 0)
+            ),
+            reverse=True
+        )
 
     # Add rank & top5 flag
     for idx, r in enumerate(all_recs):
         r['rank'] = idx + 1
-        r['is_top5'] = idx < 5
+        r['is_top5'] = idx < chatbot_top_count
 
     # Paginate
     total = len(all_recs)
@@ -495,9 +703,10 @@ def handle_get_all_ranked():
                 'has_prev': dto.page > 1,
             },
             'query': user_query,
-            'personalized': bool(user_prefs),
-            'algorithm': 'cosine_similarity',
-            'tie_breaker': 'rating_and_review_count'
+            'personalized': is_personalized,
+            'personalization_insights': personalization_insights,
+            'algorithm': 'chatbot_ranked_pipeline' if user_query else 'cosine_similarity',
+            'tie_breaker': 'chatbot_scoring' if user_query else 'rating_and_review_count'
         }
     }), 200
 

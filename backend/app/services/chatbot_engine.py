@@ -1,13 +1,16 @@
 ﻿from typing import List, Dict, Any, Optional, Tuple
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 import random
+from collections import Counter
 import pandas as pd
 from pathlib import Path
 import re
+import hashlib
 from backend.app.services.device_token_service import DeviceTokenService
 from backend.app.services.recommendation_engine import ContentBasedRecommendationEngine
 from backend.app.utils.session_manager import SessionManager
+from backend.app.models.database import ChatHistory
 from backend.config.settings import RESTAURANTS_ENTITAS_CSV, RESTAURANTS_CSV
 from backend.app.utils.logger import get_logger
 from backend.app.utils.entity_builder import EntityBuilder
@@ -309,6 +312,35 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
         for price_type, keywords in price_patterns.items():
             if any(kw in message_lower for kw in keywords):
                 entities['price'].append(price_type)
+
+        # Fallback mood keywords if dataset patterns miss common Indonesian terms.
+        if any(k in message_lower for k in ['romantis', 'romantic', 'date', 'couple']) and 'romantis' not in entities['mood']:
+            entities['mood'].append('romantis')
+        if any(k in message_lower for k in ['keluarga', 'family', 'kids']) and 'keluarga' not in entities['mood']:
+            entities['mood'].append('keluarga')
+        if any(k in message_lower for k in ['santai', 'casual', 'relax']) and 'santai' not in entities['mood']:
+            entities['mood'].append('santai')
+
+        # Final dedup to avoid repeated entities in outputs/logs.
+        alias_map = {
+            'romantic': 'romantis',
+            'family': 'keluarga',
+            'casual': 'santai',
+        }
+        for key in ['cuisine', 'location', 'mood', 'price']:
+            if isinstance(entities.get(key), list):
+                normalized = []
+                for raw in entities[key]:
+                    token = str(raw).strip().lower()
+                    if not token:
+                        continue
+                    normalized.append(alias_map.get(token, token))
+                entities[key] = list(dict.fromkeys(normalized))
+
+        # Avoid cross-category duplicates (e.g., same term in cuisine and mood).
+        blocked_mood_terms = set(entities.get('cuisine', [])) | set(entities.get('location', []))
+        entities['mood'] = [m for m in entities.get('mood', []) if m not in blocked_mood_terms]
+
         if 'restoran' in message or 'restaurant' in message:
             words = message.split()
             for i, word in enumerate(words):
@@ -324,90 +356,28 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
             return "Maaf, data restoran belum tersedia. Silakan coba lagi nanti."
         
         try:
-            
-            recommendations_objects = self.recommendation_engine.get_recommendations(query, top_n=15)
-            
-            if not recommendations_objects:
-                logger.warning(f"No recommendations found for query: '{query}'")
-                device_token = None
-                if session_id and session_id in self.sessions:
-                    device_token = self.sessions[session_id].get('device_token')
-                return self._get_smart_fallback_response(query, entities, session_id, device_token)
-            
-            recommendations = []
             device_token = None
             if session_id and session_id in self.sessions:
                 device_token = self.sessions[session_id].get('device_token')
-            
-            for rec_obj in recommendations_objects:
-                restaurant = rec_obj.restaurant
-                
-                matching_rows = self.restaurants_data[self.restaurants_data['name'] == restaurant.name]
-                if not matching_rows.empty:
-                    restaurant_row = matching_rows.iloc[0]
-                else:
-                    continue
-                
-                bonus_score = self._calculate_entity_bonus(restaurant_row, entities)
-                
-                preference_boost = 0.0
-                if device_token:
-                    restaurant_data = self._extract_restaurant_data(restaurant_row)
-                    preference_boost = self.device_token_service.get_personalized_boost(device_token, restaurant_data)
-                
-                rating = float(restaurant_row.get('rating', 0))
-                rating_factor = (rating / 5.0) * 0.5
-                
-                reviews_count = int(restaurant_row.get('reviews_count', 0))
-                popularity_factor = min(reviews_count / 1000.0, 0.3)
-                
-                total_score = rec_obj.similarity_score + bonus_score + (preference_boost * 1.5) + rating_factor + popularity_factor
-                
-                if entities.get('location'):
-                    restaurant_location = restaurant_row['entitas_lokasi'] if 'entitas_lokasi' in restaurant_row.index else 'UNKNOWN'
-                
-                recommendations.append({
-                    'restaurant': restaurant_row,
-                    'similarity': rec_obj.similarity_score,
-                    'bonus_score': bonus_score,
-                    'preference_boost': preference_boost,
-                    'total_score': total_score,
-                    'device_token': device_token,
-                    'base_score': rec_obj.similarity_score + bonus_score
-                })
-            
-            if not recommendations:
-                logger.warning("No matching restaurants found in DataFrame")
-                return self._get_smart_fallback_response(query, entities, session_id, device_token)
-            if entities.get('location'):
-                initial_count = len(recommendations)
-                recommendations = [rec for rec in recommendations if rec['total_score'] > 0]
-                filtered_count = initial_count - len(recommendations)
-            
-            if not recommendations:
-                logger.warning("No recommendations after filtering negative scores")
-                return self._get_smart_fallback_response(query, entities, session_id, device_token)
-            
-            if device_token:
-                self.device_token_service.update_user_preferences_from_interaction(device_token, query)
-            
-            for rec in recommendations:
-                rec['tie_breaker'] = random.random() * 0.01
-            
-            recommendations.sort(
-                key=lambda x: (
-                    x['total_score'], 
-                    x.get('preference_boost', 0),
-                    x['restaurant'].get('rating', 0),
-                    x['restaurant'].get('reviews_count', 0),
-                    x.get('similarity', 0),
-                    x.get('tie_breaker', 0)
-                ), 
-                reverse=True
+
+            effective_query = self._build_effective_query(query, entities, session_id, device_token)
+            effective_entities = entities
+            raw_entity_count = sum(len(v) for k, v in (entities or {}).items() if isinstance(v, list) and k in ['cuisine', 'location', 'mood', 'price'])
+            if raw_entity_count == 0 and effective_query != query:
+                _, effective_entities = self._extract_intent_and_entities(effective_query)
+
+            recommendations = self.get_ranked_recommendations(
+                query=effective_query,
+                entities=effective_entities,
+                session_id=session_id,
+                device_token=device_token,
+                top_n=10,
+                update_preferences=True,
             )
-            
-            recommendations = self._apply_diversity_ranking(recommendations[:10])
-            
+
+            if not recommendations:
+                return self._get_smart_fallback_response(query, entities, session_id, device_token)
+
             return self._format_recommendations_nlp(recommendations[:5], query, entities, session_id)
                 
         except Exception as e:
@@ -418,7 +388,278 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
             if session_id and session_id in self.sessions:
                 device_token = self.sessions[session_id].get('device_token')
             return self._get_smart_fallback_response(query, entities, session_id, device_token)
-    def _calculate_entity_bonus(self, restaurant, entities):
+
+    def _build_effective_query(self, query: str, entities: dict, session_id: str = None, device_token: str = None) -> str:
+        """Build effective query for ranking by blending generic input with historical frequent entities."""
+        q = (query or '').strip()
+        if not q:
+            return q
+
+        entity_count = sum(len(v) for k, v in (entities or {}).items() if isinstance(v, list) and k in ['cuisine', 'location', 'mood', 'price'])
+        if entity_count > 0:
+            return q
+
+        historical_profile = self._get_historical_entity_profile(
+            session_id=session_id,
+            device_token=device_token,
+        )
+
+        extra_tokens = []
+        token_plan = [
+            ('cuisine', 2),
+            ('location', 1),
+            ('mood', 1),
+        ]
+        for bucket, limit in token_plan:
+            weighted = historical_profile.get(bucket, {})
+            for token in list(weighted.keys())[:limit]:
+                t = str(token).strip().lower()
+                if t and t not in q.lower() and t not in extra_tokens:
+                    extra_tokens.append(t)
+
+        if not extra_tokens:
+            return q
+
+        return f"{q} {' '.join(extra_tokens[:2])}".strip()
+
+    def get_ranked_recommendations(
+        self,
+        query: str,
+        entities: dict = None,
+        session_id: str = None,
+        device_token: str = None,
+        top_n: int = 10,
+        update_preferences: bool = False,
+    ):
+        """Return ranked recommendation rows using the same pipeline as chatbot response."""
+        if self.restaurants_data is None:
+            return []
+
+        if entities is None:
+            _, entities = self._extract_intent_and_entities(query)
+
+        recommendations_objects = self.recommendation_engine.get_recommendations(query, top_n=15)
+        if not recommendations_objects:
+            return []
+
+        recommendations = []
+        resolved_device_token = device_token
+        if not resolved_device_token and session_id and session_id in self.sessions:
+            resolved_device_token = self.sessions[session_id].get('device_token')
+
+        historical_profile = self._get_historical_entity_profile(
+            session_id=session_id,
+            device_token=resolved_device_token,
+        )
+
+        requested_cuisines = entities.get('cuisine', []) if isinstance(entities, dict) else []
+        cuisine_filtered_out = 0
+
+        for rec_obj in recommendations_objects:
+            restaurant = rec_obj.restaurant
+            matching_rows = self.restaurants_data[self.restaurants_data['name'] == restaurant.name]
+            if matching_rows.empty:
+                continue
+
+            restaurant_row = matching_rows.iloc[0]
+
+            # Hard filter cuisine when user explicitly requests one.
+            if requested_cuisines and not self._matches_requested_cuisine(restaurant_row, requested_cuisines):
+                cuisine_filtered_out += 1
+                continue
+
+            bonus_score = self._calculate_entity_bonus(restaurant_row, entities, historical_profile)
+
+            preference_boost = 0.0
+            if resolved_device_token:
+                restaurant_data = self._extract_restaurant_data(restaurant_row)
+                preference_boost = self.device_token_service.get_personalized_boost(resolved_device_token, restaurant_data)
+
+            rating = float(restaurant_row.get('rating', 0))
+            rating_factor = (rating / 5.0) * 0.5
+
+            reviews_count = int(restaurant_row.get('reviews_count', 0))
+            popularity_factor = min(reviews_count / 1000.0, 0.3)
+
+            total_score = rec_obj.similarity_score + bonus_score + (preference_boost * 1.5) + rating_factor + popularity_factor
+
+            recommendations.append({
+                'restaurant': restaurant_row,
+                'restaurant_id': str(restaurant_row.get('id', restaurant_row.get('name', ''))),
+                'similarity': rec_obj.similarity_score,
+                'bonus_score': bonus_score,
+                'preference_boost': preference_boost,
+                'total_score': total_score,
+                'device_token': resolved_device_token,
+                'base_score': rec_obj.similarity_score + bonus_score,
+            })
+
+        # If strict cuisine filter removes everything, fallback gracefully.
+        if not recommendations and requested_cuisines and cuisine_filtered_out > 0:
+            for rec_obj in recommendations_objects:
+                restaurant = rec_obj.restaurant
+                matching_rows = self.restaurants_data[self.restaurants_data['name'] == restaurant.name]
+                if matching_rows.empty:
+                    continue
+                restaurant_row = matching_rows.iloc[0]
+                bonus_score = self._calculate_entity_bonus(restaurant_row, entities, historical_profile)
+
+                preference_boost = 0.0
+                if resolved_device_token:
+                    restaurant_data = self._extract_restaurant_data(restaurant_row)
+                    preference_boost = self.device_token_service.get_personalized_boost(resolved_device_token, restaurant_data)
+
+                rating = float(restaurant_row.get('rating', 0))
+                rating_factor = (rating / 5.0) * 0.5
+                reviews_count = int(restaurant_row.get('reviews_count', 0))
+                popularity_factor = min(reviews_count / 1000.0, 0.3)
+                total_score = rec_obj.similarity_score + bonus_score + (preference_boost * 1.5) + rating_factor + popularity_factor
+
+                recommendations.append({
+                    'restaurant': restaurant_row,
+                    'restaurant_id': str(restaurant_row.get('id', restaurant_row.get('name', ''))),
+                    'similarity': rec_obj.similarity_score,
+                    'bonus_score': bonus_score,
+                    'preference_boost': preference_boost,
+                    'total_score': total_score,
+                    'device_token': resolved_device_token,
+                    'base_score': rec_obj.similarity_score + bonus_score,
+                })
+
+        if not recommendations:
+            return []
+
+        if entities.get('location'):
+            location_matched = [
+                rec for rec in recommendations
+                if self._matches_requested_location(rec['restaurant'], entities.get('location', []))
+            ]
+            if location_matched:
+                recommendations = location_matched
+        if not recommendations:
+            return []
+
+        if resolved_device_token and update_preferences:
+            self.device_token_service.update_user_preferences_from_interaction(resolved_device_token, query)
+
+        for rec in recommendations:
+            restaurant_name = str(rec['restaurant'].get('name', ''))
+            tie_key = f"{query.lower().strip()}::{restaurant_name.lower().strip()}"
+            digest = hashlib.md5(tie_key.encode('utf-8')).hexdigest()[:8]
+            rec['tie_breaker'] = (int(digest, 16) / 0xFFFFFFFF) * 0.01
+
+        recommendations.sort(
+            key=lambda x: (
+                x['total_score'],
+                x.get('preference_boost', 0),
+                x['restaurant'].get('rating', 0),
+                x['restaurant'].get('reviews_count', 0),
+                x.get('similarity', 0),
+                x.get('tie_breaker', 0),
+            ),
+            reverse=True,
+        )
+
+        recommendations = self._apply_diversity_ranking(recommendations[: max(top_n, 10)])
+        return recommendations[:top_n]
+
+    def _matches_requested_cuisine(self, restaurant, requested_cuisines):
+        if not requested_cuisines:
+            return True
+        text_parts = []
+        for col in ['entitas_jenis_makanan', 'cuisines', 'name', 'about']:
+            if col in restaurant.index and pd.notna(restaurant[col]):
+                text_parts.append(str(restaurant[col]).lower())
+        cuisine_text = ' '.join(text_parts)
+        if not cuisine_text:
+            return False
+        return any(str(c).replace('_', ' ').lower() in cuisine_text for c in requested_cuisines)
+
+    def _matches_requested_location(self, restaurant, requested_locations):
+        if not requested_locations:
+            return True
+        text_parts = []
+        for col in ['entitas_lokasi', 'location', 'address', 'about']:
+            if col in restaurant.index and pd.notna(restaurant[col]):
+                text_parts.append(str(restaurant[col]).lower())
+        location_text = ' '.join(text_parts)
+        if not location_text:
+            return False
+        return any(str(loc).replace('_', ' ').lower() in location_text for loc in requested_locations)
+
+    def _get_historical_entity_profile(self, session_id: str = None, device_token: str = None, limit: int = 120):
+        empty_profile = {
+            'cuisine': {},
+            'location': {},
+            'mood': {},
+            'price': {},
+        }
+
+        try:
+            query = ChatHistory.query
+            # User-level personalization should aggregate across sessions.
+            if device_token:
+                query = query.filter_by(device_token=device_token)
+            elif session_id:
+                query = query.filter_by(session_id=session_id)
+            else:
+                return empty_profile
+
+            rows = query.order_by(ChatHistory.timestamp.desc()).limit(limit).all()
+            if not rows:
+                return empty_profile
+
+            cuisine_scores = Counter()
+            location_scores = Counter()
+            mood_scores = Counter()
+            price_scores = Counter()
+
+            now = datetime.now(timezone.utc)
+
+            def _split_values(raw):
+                if not raw:
+                    return []
+                return [v.strip().lower() for v in str(raw).split(',') if v and v.strip()]
+
+            for idx, row in enumerate(rows):
+                base_weight = max(0.35, 1.0 - (idx * 0.02))
+                row_ts = row.timestamp or now
+                if row_ts.tzinfo is None:
+                    row_ts = row_ts.replace(tzinfo=timezone.utc)
+                else:
+                    row_ts = row_ts.astimezone(timezone.utc)
+                age_days = max((now - row_ts).total_seconds() / 86400.0, 0.0)
+                time_weight = max(0.5, 1.0 / (1.0 + (age_days * 0.05)))
+                w = base_weight * time_weight
+
+                for c in _split_values(row.extracted_cuisine):
+                    cuisine_scores[c] += w
+                for l in _split_values(row.extracted_location):
+                    location_scores[l] += w
+                for m in _split_values(row.extracted_mood):
+                    mood_scores[m] += w
+                for p in _split_values(row.extracted_price):
+                    price_scores[p] += w
+
+            def _top_weighted(counter_obj, limit_items):
+                top = counter_obj.most_common(limit_items)
+                if not top:
+                    return {}
+                max_score = top[0][1] if top[0][1] > 0 else 1.0
+                return {k: round(v / max_score, 4) for k, v in top}
+
+            return {
+                'cuisine': _top_weighted(cuisine_scores, 6),
+                'location': _top_weighted(location_scores, 6),
+                'mood': _top_weighted(mood_scores, 6),
+                'price': _top_weighted(price_scores, 4),
+            }
+
+        except Exception as e:
+            logger.error(f"Error building historical entity profile: {e}")
+            return empty_profile
+
+    def _calculate_entity_bonus(self, restaurant, entities, historical_profile=None):
         bonus = 0.0
         match_count = 0
         
@@ -437,7 +678,7 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
                         break
                 
                 if not location_match:
-                    bonus -= 3.0
+                    bonus -= 1.0
         
         cuisine_matches = 0
         for cuisine in entities.get('cuisine', []):
@@ -450,6 +691,33 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
         
         if cuisine_matches > 0:
             bonus += 0.5 + (cuisine_matches * 0.2)
+
+        # Mood relevance from text-rich columns.
+        mood_matches = 0
+        requested_moods = entities.get('mood', [])
+        if requested_moods:
+            text_parts = []
+            for col in ['about', 'preferences', 'features', 'entitas_features', 'entitas_preferensi']:
+                if col in restaurant.index and pd.notna(restaurant[col]):
+                    text_parts.append(str(restaurant[col]).lower())
+            mood_text = ' '.join(text_parts)
+
+            mood_aliases = {
+                'romantis': ['romantis', 'romantic', 'intimate', 'cozy', 'date', 'couple'],
+                'keluarga': ['keluarga', 'family', 'kids', 'children'],
+                'santai': ['santai', 'casual', 'relax', 'laid-back'],
+            }
+
+            for mood in requested_moods:
+                m = str(mood).replace('_', ' ').lower()
+                variants = mood_aliases.get(m, [m])
+                if any(v in mood_text for v in variants):
+                    mood_matches += 1
+
+            if mood_matches > 0:
+                bonus += 0.4 + (mood_matches * 0.15)
+            else:
+                bonus -= 0.35
         
         if entities.get('price'):
             restaurant_price = restaurant['price_range'] if 'price_range' in restaurant.index else None
@@ -459,6 +727,51 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
                     if (price == 'cheap' and any(word in price_text for word in ['$', 'budget', 'cheap'])) or \
                        (price == 'expensive' and any(word in price_text for word in ['$$$', 'premium', 'expensive'])):
                         bonus += 0.2
+
+        # Accumulated personalization from historical entities (lightweight boost).
+        if historical_profile:
+            hist_cuisines = historical_profile.get('cuisine', {})
+            hist_locations = historical_profile.get('location', {})
+            hist_moods = historical_profile.get('mood', {})
+            hist_prices = historical_profile.get('price', {})
+
+            if hist_cuisines:
+                cuisine_tokens = list(hist_cuisines.keys())
+                if self._matches_requested_cuisine(restaurant, cuisine_tokens[:4]):
+                    strongest = max(hist_cuisines.values()) if hist_cuisines else 0.0
+                    bonus += min(0.35 * strongest, 0.35)
+
+            if hist_locations:
+                location_tokens = list(hist_locations.keys())
+                if self._matches_requested_location(restaurant, location_tokens[:4]):
+                    strongest = max(hist_locations.values()) if hist_locations else 0.0
+                    bonus += min(0.30 * strongest, 0.30)
+
+            if hist_moods:
+                text_parts = []
+                for col in ['about', 'preferences', 'features', 'entitas_features', 'entitas_preferensi']:
+                    if col in restaurant.index and pd.notna(restaurant[col]):
+                        text_parts.append(str(restaurant[col]).lower())
+                mood_text = ' '.join(text_parts)
+                matched_weight = 0.0
+                for mood_token, weight in list(hist_moods.items())[:4]:
+                    mt = str(mood_token).replace('_', ' ').lower()
+                    if mt and mt in mood_text:
+                        matched_weight = max(matched_weight, float(weight))
+                if matched_weight > 0:
+                    bonus += min(0.22 * matched_weight, 0.22)
+
+            if hist_prices:
+                restaurant_price = restaurant['price_range'] if 'price_range' in restaurant.index else None
+                if pd.notna(restaurant_price):
+                    price_text = str(restaurant_price).lower()
+                    matched_weight = 0.0
+                    for price, weight in hist_prices.items():
+                        if (price == 'cheap' and any(word in price_text for word in ['$', 'budget', 'cheap'])) or \
+                           (price == 'expensive' and any(word in price_text for word in ['$$$', 'premium', 'expensive'])):
+                            matched_weight = max(matched_weight, float(weight))
+                    if matched_weight > 0:
+                        bonus += min(0.12 * matched_weight, 0.12)
         
         return bonus
     
@@ -523,6 +836,20 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
             device_token = self.sessions[session_id].get('device_token')
         
         response = ""
+
+        historical_profile = self._get_historical_entity_profile(
+            session_id=session_id,
+            device_token=device_token,
+        )
+
+        def _top_labels(weighted: dict, limit: int = 2):
+            if not isinstance(weighted, dict) or not weighted:
+                return []
+            return [str(k).replace('_', ' ') for k in list(weighted.keys())[:limit]]
+
+        profile_cuisines = _top_labels(historical_profile.get('cuisine', {}), 3)
+        profile_locations = _top_labels(historical_profile.get('location', {}), 2)
+        profile_moods = _top_labels(historical_profile.get('mood', {}), 2)
         
         if has_personal_recs and device_token:
             history = self.device_token_service.get_or_create_user_history(device_token)
@@ -545,6 +872,16 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
                 response = f"Berdasarkan pencarian '{query}', "
         else:
             response = f"Berdasarkan pencarian '{query}', "
+
+        profile_parts = []
+        if profile_cuisines:
+            profile_parts.append(f"sering memilih {', '.join(profile_cuisines[:2])}")
+        if profile_locations:
+            profile_parts.append(f"aktif di area {', '.join(profile_locations[:2])}")
+        if profile_moods:
+            profile_parts.append(f"gaya pencarian {', '.join(profile_moods[:2])}")
+        if profile_parts:
+            response += f"Saya juga membaca histori Anda: {', '.join(profile_parts)}. "
         
         response += f"saya menemukan {len(recommendations)} restoran terbaik untuk Anda:\n\n"
         
@@ -569,7 +906,7 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
             response += f" | Kecocokan: {match_percentage}%"
             
             if preference_boost > 0.15:
-                response += " "
+                response += " (Sangat sesuai preferensi Anda)"
             elif preference_boost > 0.05:
                 response += " (Sesuai preferensi Anda) "
             response += "\n"

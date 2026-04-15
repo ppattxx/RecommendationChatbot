@@ -3,7 +3,18 @@
 Test script untuk memverifikasi 4 entitas sudah berfungsi dengan benar
 """
 
-from services.recommendation_engine import ContentBasedRecommendationEngine
+import sys
+from pathlib import Path
+
+# Ensure project root is importable when pytest is executed from different CWDs.
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+try:
+    from services.recommendation_engine import ContentBasedRecommendationEngine
+except ModuleNotFoundError:
+    from backend.app.services.recommendation_engine import ContentBasedRecommendationEngine
 
 def test_4_entities():
     print("=" * 60)
