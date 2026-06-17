@@ -306,11 +306,16 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
                     entities['mood'].append(mood)
         
         price_patterns = {
-            'cheap': ['murah', 'terjangkau', 'budget'],
-            'expensive': ['mahal', 'mewah', 'premium']
+            'cheap': [
+                'murah', 'murrah', 'murahh', 'murce', 'murcee', 'murmer', 'murmeran',
+                'terjangkau', 'budget', 'hemat', 'ekonomis', 'budget friendly', 'kantong pelajar', 'cheap',
+            ],
+            'expensive': [
+                'mahal', 'mewah', 'premium', 'mehong', 'mehongg', 'mehel', 'pricy', 'pricey', 'overpriced', 'expensive',
+            ],
         }
         for price_type, keywords in price_patterns.items():
-            if any(kw in message_lower for kw in keywords):
+            if any(re.search(r'\b' + re.escape(kw) + r'\b', message_lower) for kw in keywords):
                 entities['price'].append(price_type)
 
         # Fallback mood keywords if dataset patterns miss common Indonesian terms.
@@ -470,25 +475,21 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
 
             bonus_score = self._calculate_entity_bonus(restaurant_row, entities, historical_profile)
 
-            preference_boost = 0.0
-            if resolved_device_token:
-                restaurant_data = self._extract_restaurant_data(restaurant_row)
-                preference_boost = self.device_token_service.get_personalized_boost(resolved_device_token, restaurant_data)
-
             rating = float(restaurant_row.get('rating', 0))
-            rating_factor = (rating / 5.0) * 0.5
+            rating_factor = (rating / 5.0) * 0.3
 
             reviews_count = int(restaurant_row.get('reviews_count', 0))
-            popularity_factor = min(reviews_count / 1000.0, 0.3)
+            popularity_factor = min(reviews_count / 1000.0, 0.2)
 
-            total_score = rec_obj.similarity_score + bonus_score + (preference_boost * 1.5) + rating_factor + popularity_factor
+            total_score = rec_obj.similarity_score + bonus_score + rating_factor + popularity_factor
+            raw_similarity = rec_obj.raw_similarity_score if rec_obj.raw_similarity_score is not None else rec_obj.similarity_score
 
             recommendations.append({
                 'restaurant': restaurant_row,
                 'restaurant_id': str(restaurant_row.get('id', restaurant_row.get('name', ''))),
                 'similarity': rec_obj.similarity_score,
+                'raw_similarity': raw_similarity,
                 'bonus_score': bonus_score,
-                'preference_boost': preference_boost,
                 'total_score': total_score,
                 'device_token': resolved_device_token,
                 'base_score': rec_obj.similarity_score + bonus_score,
@@ -504,23 +505,19 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
                 restaurant_row = matching_rows.iloc[0]
                 bonus_score = self._calculate_entity_bonus(restaurant_row, entities, historical_profile)
 
-                preference_boost = 0.0
-                if resolved_device_token:
-                    restaurant_data = self._extract_restaurant_data(restaurant_row)
-                    preference_boost = self.device_token_service.get_personalized_boost(resolved_device_token, restaurant_data)
-
                 rating = float(restaurant_row.get('rating', 0))
-                rating_factor = (rating / 5.0) * 0.5
+                rating_factor = (rating / 5.0) * 0.3
                 reviews_count = int(restaurant_row.get('reviews_count', 0))
-                popularity_factor = min(reviews_count / 1000.0, 0.3)
-                total_score = rec_obj.similarity_score + bonus_score + (preference_boost * 1.5) + rating_factor + popularity_factor
+                popularity_factor = min(reviews_count / 1000.0, 0.2)
+                total_score = rec_obj.similarity_score + bonus_score + rating_factor + popularity_factor
+                raw_similarity = rec_obj.raw_similarity_score if rec_obj.raw_similarity_score is not None else rec_obj.similarity_score
 
                 recommendations.append({
                     'restaurant': restaurant_row,
                     'restaurant_id': str(restaurant_row.get('id', restaurant_row.get('name', ''))),
                     'similarity': rec_obj.similarity_score,
+                    'raw_similarity': raw_similarity,
                     'bonus_score': bonus_score,
-                    'preference_boost': preference_boost,
                     'total_score': total_score,
                     'device_token': resolved_device_token,
                     'base_score': rec_obj.similarity_score + bonus_score,
@@ -551,7 +548,6 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
         recommendations.sort(
             key=lambda x: (
                 x['total_score'],
-                x.get('preference_boost', 0),
                 x['restaurant'].get('rating', 0),
                 x['restaurant'].get('reviews_count', 0),
                 x.get('similarity', 0),
@@ -796,17 +792,8 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
             if len(group) > 1:
                 seen_cuisines = set()
                 diverse_group = []
-                personalized_group = []
-                
-                for rec in sorted(group, key=lambda x: x['preference_boost'], reverse=True):
-                    if rec['preference_boost'] > 0.1:
-                        personalized_group.append(rec)
-                
-                personalized_ids = {r.get('restaurant_id') for r in personalized_group}
                 
                 for rec in group:
-                    if rec.get('restaurant_id') in personalized_ids:
-                        continue
                     cuisines = str(rec['restaurant'].get('cuisines', '')).lower()
                     is_diverse = True
                     for seen in seen_cuisines:
@@ -818,11 +805,9 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
                         seen_cuisines.add(cuisines)
                 
                 diverse_ids = {r.get('restaurant_id') for r in diverse_group}
-                all_selected_ids = personalized_ids | diverse_ids
                 
-                final_recommendations.extend(personalized_group)
-                final_recommendations.extend([r for r in diverse_group if r.get('restaurant_id') not in personalized_ids])
-                final_recommendations.extend([r for r in group if r.get('restaurant_id') not in all_selected_ids])
+                final_recommendations.extend(diverse_group)
+                final_recommendations.extend([r for r in group if r.get('restaurant_id') not in diverse_ids])
             else:
                 final_recommendations.extend(group)
         

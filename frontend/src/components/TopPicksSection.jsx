@@ -38,7 +38,7 @@ const TopPicksSection = ({ onViewDetail }) => {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
-  const { deviceToken, sessionId, preferences, personalizationVersion } = usePersonalization();
+  const { deviceToken, sessionId, preferences, personalizationVersion, latestUserQuery } = usePersonalization();
 
   const fetchRestaurants = useCallback(async () => {
     setIsLoading(true);
@@ -49,8 +49,9 @@ const TopPicksSection = ({ onViewDetail }) => {
       const pageSize = 100;
       const allRows = [];
       let currentPage = 1;
-      let totalPages = 1;
+      let hasMore = true;
 
+      // Fetch ALL pages (no limit, allows full 1163 restaurant dataset)
       do {
         const params = {
           device_token: token,
@@ -58,6 +59,11 @@ const TopPicksSection = ({ onViewDetail }) => {
           limit: pageSize,
         };
         if (sessionId) params.session_id = sessionId;
+        
+        // Pass latest user query so backend can rank consistently with chatbot
+        if (latestUserQuery && latestUserQuery.trim()) {
+          params.query = latestUserQuery.trim();
+        }
 
         const response = await recommendationsAPI.getAllRankedRecommendations(params);
         if (!(response.success && response.data?.restaurants)) {
@@ -65,9 +71,11 @@ const TopPicksSection = ({ onViewDetail }) => {
         }
 
         allRows.push(...response.data.restaurants);
-        totalPages = response.data?.pagination?.total_pages || 1;
+        
+        // Check if there are more pages
+        hasMore = response.data.pagination?.has_next || false;
         currentPage += 1;
-      } while (currentPage <= totalPages);
+      } while (hasMore);
 
       setRestaurants(allRows);
 
@@ -81,7 +89,7 @@ const TopPicksSection = ({ onViewDetail }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [deviceToken, sessionId]);
+  }, [deviceToken, sessionId, latestUserQuery]);
 
   useEffect(() => {
     fetchRestaurants();

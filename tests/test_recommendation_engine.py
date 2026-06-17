@@ -3,9 +3,8 @@ import sys
 from pathlib import Path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
-from services.recommendation_engine import ContentBasedRecommendationEngine
-from models.data_models import Restaurant
-from utils.text_processing import EntityExtractor
+from backend.app.services.recommendation_engine import ContentBasedRecommendationEngine
+from backend.app.utils.text_processing import EntityExtractor
 class TestRecommendationEngine(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

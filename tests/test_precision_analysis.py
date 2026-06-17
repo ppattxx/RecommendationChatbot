@@ -9,8 +9,8 @@ from pathlib import Path
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from services.chatbot_service import ChatbotService
-from services.recommendation_engine import ContentBasedRecommendationEngine
+from backend.app.services.chatbot_engine import ChatbotService
+from backend.app.services.recommendation_engine import ContentBasedRecommendationEngine
 from query_case_generator import DynamicQueryCaseGenerator
 import time
 
@@ -309,7 +309,7 @@ class PrecisionAnalyzer:
     
     def _is_restaurant_relevant(self, restaurant, expected_keywords, expected_location):
         """Check if restaurant matches criteria with ADVANCED MULTI-TIER SCORING for optimal accuracy"""
-        from config.settings import SYNONYM_MAP
+        from backend.config.settings import SYNONYM_MAP
         
         name = self._to_text(getattr(restaurant, 'name', ''))
         cuisines = ' '.join(self._to_list(getattr(restaurant, 'cuisines', [])))

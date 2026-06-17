@@ -99,8 +99,15 @@ SYNONYM_MAP = {
     'beer': ['beer', 'craft beer', 'brewery', 'ale', 'lager', 'pub'],
     
     # Price & Value
-    'murah': ['murah', 'cheap', 'affordable', 'budget', 'inexpensive', 'economical', 'terjangkau', 'value'],
-    'mahal': ['mahal', 'expensive', 'upscale', 'fine dining', 'luxury', 'premium', 'high-end'],
+    'murah': [
+        'murah', 'cheap', 'affordable', 'budget', 'inexpensive', 'economical', 'terjangkau', 'value',
+        'murce', 'murcee', 'murrah', 'murahh', 'murmer', 'murmeran', 'hemat', 'ekonomis',
+        'budget friendly', 'kantong pelajar'
+    ],
+    'mahal': [
+        'mahal', 'expensive', 'upscale', 'fine dining', 'luxury', 'premium', 'high-end',
+        'mehong', 'mehongg', 'mehel', 'pricy', 'pricey', 'overpriced'
+    ],
     'fine dining': ['fine dining', 'upscale', 'elegant', 'gourmet', 'haute cuisine', 'luxury dining'],
     
     # Ambiance & Style

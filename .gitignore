@@ -50,3 +50,8 @@ yarn-error.log*
 # User data
 device_tokens/
 user_histories/
+
+# Generated test artifacts
+tests/test_query_cases.csv
+tests/query_trial_table.csv
+tests/query_trial_table.md

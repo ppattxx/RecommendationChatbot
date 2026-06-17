@@ -53,12 +53,14 @@ class UserQuery:
 class Recommendation:
     restaurant: Restaurant
     similarity_score: float
+    raw_similarity_score: Optional[float] = None
     matching_features: List[str] = field(default_factory=list)
     explanation: Optional[str] = None
     def to_dict(self) -> Dict[str, Any]:
         return {
             'restaurant': self.restaurant.to_dict(),
             'similarity_score': self.similarity_score,
+            'raw_similarity_score': self.raw_similarity_score if self.raw_similarity_score is not None else self.similarity_score,
             'matching_features': self.matching_features,
             'explanation': self.explanation
         }

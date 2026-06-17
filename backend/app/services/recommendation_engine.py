@@ -201,12 +201,15 @@ class ContentBasedRecommendationEngine:
         try:
             query_result = self._process_user_query(user_query)
             recommendations = []
+            # Use a stable candidate pool independent from requested top_n.
+            # This avoids ranking drift where top-1 changes when caller asks top-20.
+            candidate_pool = len(self.restaurants_objects)
             entity_recommendations = self._get_entity_based_recommendations(
-                query_result.entities, top_n * 2
+                query_result.entities, candidate_pool
             )
             recommendations.extend(entity_recommendations)
             tfidf_recommendations = self._get_tfidf_recommendations(
-                user_query, top_n * 2
+                user_query, candidate_pool
             )
             recommendations.extend(tfidf_recommendations)
             final_recommendations = self._combine_and_rank_recommendations(
@@ -241,6 +244,7 @@ class ContentBasedRecommendationEngine:
                 return [Recommendation(
                     restaurant=r,
                     similarity_score=0.5 + (r.rating / 10.0),
+                    raw_similarity_score=0.5 + (r.rating / 10.0),
                     matching_features=['popular', 'highly rated'],
                     explanation=f"Restoran populer di {location} dengan rating tinggi"
                 ) for r in filtered[:top_n]]
@@ -250,6 +254,7 @@ class ContentBasedRecommendationEngine:
         return [Recommendation(
             restaurant=r,
             similarity_score=0.5 + (r.rating / 10.0),
+            raw_similarity_score=0.5 + (r.rating / 10.0),
             matching_features=['popular', 'highly rated'],
             explanation="Restoran populer dengan rating tinggi"
         ) for r in sorted_restaurants[:top_n]]
@@ -275,6 +280,7 @@ class ContentBasedRecommendationEngine:
                 recommendation = Recommendation(
                     restaurant=restaurant,
                     similarity_score=boosted_score,
+                    raw_similarity_score=base_score,
                     matching_features=matching_features,
                     explanation=self._generate_explanation(entities, restaurant, matching_features)
                 )
@@ -305,6 +311,7 @@ class ContentBasedRecommendationEngine:
                     recommendation = Recommendation(
                         restaurant=restaurant,
                         similarity_score=boosted_score,
+                        raw_similarity_score=base_score,
                         matching_features=[],
                         explanation=f"Kecocokan berdasarkan analisis konten: {boosted_score:.2f}"
                     )
@@ -415,6 +422,7 @@ class ContentBasedRecommendationEngine:
                     recommendation = Recommendation(
                         restaurant=restaurant,
                         similarity_score=float(similarities[idx]),
+                        raw_similarity_score=float(similarities[idx]),
                         matching_features=[],
                         explanation=f"Mirip dengan {target_restaurant.name}"
                     )
@@ -469,6 +477,7 @@ class ContentBasedRecommendationEngine:
                     recommendation = Recommendation(
                         restaurant=restaurant,
                         similarity_score=score,
+                        raw_similarity_score=score,
                         matching_features=matching_features,
                         explanation=f"Kategori yang cocok: {category}"
                     )

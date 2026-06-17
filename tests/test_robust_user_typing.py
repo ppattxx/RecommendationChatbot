@@ -134,3 +134,43 @@ def test_personalization_signal_after_mixed_typing(client):
     top_pref = insights.get("top_preferences", {})
     pref_count = sum(len(top_pref.get(k, [])) for k in ["cuisines", "locations", "moods", "prices"])
     assert pref_count >= 1
+
+
+@pytest.mark.parametrize(
+    "query,expected_price",
+    [
+        ("pizza yang murce di kuta", "cheap"),
+        ("dinner mehong di senggigi", "expensive"),
+    ],
+)
+def test_price_slang_is_extracted_and_saved(client, query, expected_price):
+    token = f"web_price_slang_{expected_price}"
+
+    init_resp = client.post("/api/chat", json={"message": "halo", "device_token": token})
+    assert init_resp.status_code == 200
+    init_data = init_resp.get_json()
+    assert init_data.get("success") is True
+    session_id = init_data.get("data", {}).get("session_id")
+    assert session_id
+
+    resp = client.post(
+        "/api/chat",
+        json={"message": query, "session_id": session_id, "device_token": token},
+    )
+    assert resp.status_code == 200
+    payload = resp.get_json()
+    assert payload.get("success") is True
+
+    history_resp = client.get(f"/api/chat/history/{session_id}")
+    assert history_resp.status_code == 200
+    history_data = history_resp.get_json()
+    assert history_data.get("success") is True
+
+    messages = history_data.get("data", {}).get("messages", [])
+    assert len(messages) >= 1
+
+    # Check the latest user message record contains extracted price entity from slang term.
+    latest = next((m for m in reversed(messages) if m.get("user_message") == query), None)
+    assert latest is not None
+    extracted_price = (latest.get("extracted_entities", {}) or {}).get("price") or ""
+    assert expected_price in extracted_price

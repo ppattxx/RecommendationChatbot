@@ -106,7 +106,7 @@ export const PersonalizationProvider = ({ children }) => {
 
   const fetchChatHistory = useCallback(async () => {
     if (!sessionId) {
-      return chatHistory;
+      return;
     }
 
     setIsLoadingHistory(true);
@@ -137,17 +137,13 @@ export const PersonalizationProvider = ({ children }) => {
           setChatHistory(backendMessages);
           localStorage.setItem(STORAGE_KEYS.CHAT_HISTORY, JSON.stringify(backendMessages));
         }
-        return backendMessages;
       }
-      return chatHistory;
     } catch (err) {
       console.error('Error fetching chat history:', err);
-      // Return local storage data as fallback
-      return chatHistory;
     } finally {
       setIsLoadingHistory(false);
     }
-  }, [sessionId, chatHistory]);
+  }, [sessionId]);
 
   const addChatMessage = useCallback((message) => {
     const newMessage = {

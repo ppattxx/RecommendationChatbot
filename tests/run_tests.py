@@ -72,25 +72,24 @@ def check_test_environment():
     issues = []
     if sys.version_info < (3, 8):
         issues.append(f"Python version {sys.version_info.major}.{sys.version_info.minor} is too old. Need 3.8+")
-    required_dirs = ['data', 'src', 'config', 'models', 'services', 'utils', 'interfaces']
+    required_dirs = ['data', 'backend', 'backend/app', 'backend/config', 'tests']
     for dir_name in required_dirs:
         dir_path = project_root / dir_name
         if not dir_path.exists():
             issues.append(f"Required directory missing: {dir_name}")
     required_files = [
-        'data/restaurants.csv',
-        'data/restaurants_processed.csv',
-        'config/settings.py',
-        'main.py'
+        'data/restaurants_entitas.csv',
+        'backend/config/settings.py',
+        'backend/main.py'
     ]
     for file_path in required_files:
         full_path = project_root / file_path
         if not full_path.exists():
             issues.append(f"Required file missing: {file_path}")
     try:
-        from services.chatbot_service import ChatbotService
-        from services.recommendation_engine import ContentBasedRecommendationEngine
-        from config.settings import MODEL_CONFIG, CHATBOT_CONFIG
+        from backend.app.services.chatbot_engine import ChatbotService
+        from backend.app.services.recommendation_engine import ContentBasedRecommendationEngine
+        from backend.config.settings import MODEL_CONFIG, CHATBOT_CONFIG
     except ImportError as e:
         issues.append(f"Import error: {e}")
     if issues:

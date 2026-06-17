@@ -1,0 +1,222 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\begin{document}
+
+\title{Interactive Restaurant Recommendation System on LombokEats Platform Using Content-Based Filtering and Split-Interface Architecture}
+
+\author{\IEEEauthorblockN{Dava Rajif Cahyadiansyah}
+\IEEEauthorblockA{\textit{Informatics and Computer Engineering} \\
+\textit{Politeknik Elektronika Negeri Surabaya}\\
+Surabaya, Indonesia \\
+acahyadava@it.student.pens.ac.id}
+\and
+\IEEEauthorblockN{Renovita Edelani}
+\IEEEauthorblockA{\textit{Informatics and Computer Engineering} \\
+\textit{Politeknik Elektronika Negeri Surabaya}\\
+Surabaya, Indonesia \\
+renovita@pens.ac.id}
+\and
+\IEEEauthorblockN{Tri Hadiah Muliawati}
+\IEEEauthorblockA{\textit{Informatics and Computer Engineering} \\
+\textit{Politeknik Elektronika Negeri Surabaya}\\
+Surabaya, Indonesia \\
+trihadiah@pens.ac.id}
+\and
+\IEEEauthorblockN{Nana Ramadijanti}
+\IEEEauthorblockA{\textit{Informatics and Computer Engineering} \\
+\textit{Politeknik Elektronika Negeri Surabaya}\\
+Surabaya, Indonesia \\
+nana@pens.ac.id}
+}
+
+\maketitle
+
+\begin{abstract}
+The rapid growth of the culinary industry on Lombok Island has presented challenges for tourists in selecting dining venues that align with their personal preferences\cite{b10}. The abundance of information on digital platforms often leads to ``information overload,'' which hinders search efficiency\cite{b1}. This study proposes an interactive culinary recommendation system on the LombokEats platform integrated into a chatbot interface. The methodology employs Content-Based Filtering (CBF) with Term Frequency-Inverse Document Frequency (TF-IDF) weighting and Cosine Similarity calculations\cite{b6}. The system is enhanced with a rule-based Entity Extraction mechanism to recognize specific user parameters such as location, cuisine type, and amenities in real-time\cite{b7}. A key innovation is the implementation of an asynchronous dual-layer split-interface architecture, separating the conversational chatbot for natural interaction from a dynamic landing page for visual result rendering\cite{b13}. Experimental results on 1,163 restaurant entries demonstrate a stable performance with an overall F1-Score of 0.8465 and an average response time of 0.125 seconds\cite{b14}.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Recommendation System, Content-Based Filtering, Chatbot, LombokEats, TF-IDF, Entity Extraction.
+\end{IEEEkeywords}
+
+\section{Introduction}
+Lombok Island has emerged as a premier culinary destination, significantly influenced by the digital transformation of information delivery\cite{b10}. However, the proliferation of restaurant data on digital platforms has paradoxically created ``information overload''\cite{b1,b2}. Users often struggle to find recommendations that match their personal tastes due to a reliance on manual navigation, which is time-consuming and inefficient\cite{b10}. This gap highlights the need for personalized information access\cite{b1}.
+
+Recommendation systems serve as intelligent assistants to filter information and provide relevant suggestions\cite{b11}. Content-Based Filtering (CBF) is particularly effective in this domain as it suggests items based on the similarity of item attributes to user preferences\cite{b1,b11}. Information Retrieval (IR) concepts form the foundation of this process\cite{b6}. Furthermore, Natural Language Processing (NLP) integration in chatbots enables systems to understand natural language, making interactions more intuitive and contextual\cite{b7}. This research proposes a split-interface architecture to optimize user experience in Lombok's culinary exploration\cite{b10}.
+
+The main contributions of this paper are:
+\begin{itemize}
+    \item A hybrid semantic-aware recommendation model that optimizes precision by combining VSM-based similarity with real-time entity boosting to enforce hard constraints on location, cuisine, and amenities.
+    \item A robust entity extraction mechanism utilizing fuzzy string matching to handle noisy and informal Indonesian culinary queries, improving resilience to typographical errors and colloquial expressions.
+    \item A split-interface architecture designed to minimize cognitive load while maximizing high-density visual feedback, separating conversational intent acquisition from asynchronous result rendering.
+    \item A rigorous evaluation framework demonstrating significant improvements over three baseline models and validating component efficacy via ablation studies with statistical reliability analysis.
+\end{itemize}
+
+\section{Related Works}
+Culinary recommendation systems have been widely explored. Christyawan et al. applied CBF using Cosine Similarity for restaurant selection with high accuracy\cite{b1,b3}. Toledo et al. explored nutritional information in food recommenders\cite{b2,b3}, while Badriyah et al. demonstrated CBF's utility in specialized search systems\cite{b3}. For multi-restaurant environments, Garg et al. developed models using NLP-based chatbots\cite{b4}.
+
+Syah et al. modeled systems based on reviews, ratings, and pricing\cite{b5}. Research by Gomathi et al. indicated that integrating NLP for analyzing user comments and amenities significantly increases relevance\cite{b8}. Mondi et al. developed systems for culinary tourism that are independent of user volume\cite{b9}. Pérez-Almaguer et al. demonstrated that feature weighting outperforms standard designs for group recommendations\cite{b10}. Advanced data mining concepts further refine these filtering processes\cite{b11}. Additionally, fuzzy string matching is effective for handling human-written typos and ambiguities\cite{b13}. This research extends these concepts by implementing a dual-interface to maintain engagement and provide high-density visual information\cite{b3}.
+
+\textit{Gap Analysis.} However, previous works predominantly focus on accuracy metrics while neglecting the challenges of real-time interaction with noisy, non-standard user input in mobile and web environments. Furthermore, most systems are designed for high-volume collaborative filtering scenarios and do not adequately address scenarios where user history is sparse or unavailable. Most existing culinary recommenders prioritize absolute accuracy on static datasets but fail to address the robustness required for noisy, natural language interactions in real-time mobile environments. This research explicitly addresses this gap through an integrated hybrid scoring and fuzzy-matching engine, prioritizing content-based semantic relevance as the primary ranking signal while maintaining operational efficiency at sub-second latency.
+
+\section{Methodology}
+The development of the LombokEats recommendation system follows a structured computational framework. The overall system structure is illustrated in Fig. \ref{fig1}, while the logical processing of user queries is depicted in Fig. \ref{fig2}\cite{b16}.
+
+\subsection{Split-Interface Architecture}
+The system adopts an asynchronous dual-layer split-interface design to optimize both interaction and visualization\cite{b13}. 
+\begin{itemize}
+    \item \textbf{Conversational Chatbot Widget:} Acts as the primary interaction gateway for natural language queries and intent acquisition\cite{b7}.
+    \item \textbf{Dynamic Landing Page:} Functions as the main canvas to asynchronously render recommendation results and reduce information overload\cite{b13}.
+\end{itemize}
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=\linewidth]{fig1.png}}
+\caption{System Architecture of LombokEats showing the separation between Chatbot and Landing Page\cite{b13}.}
+\label{fig1}
+\end{figure}
+
+\subsection{Text Preprocessing and Entity Extraction}
+Preprocessing is critical for converting raw text into a structured format\cite{b7}. Steps include case folding, tokenization, normalization, and stemming using the Sastrawi library\cite{b7,b6}. The system extracts three core entities, namely Location, Cuisine, and Amenities, because these attributes most strongly define restaurant relevance in the LombokEats use case\cite{b16,b8,b14}. To handle typos and informal writing, fuzzy string matching is applied to candidate entity terms using edit-distance based comparison\cite{b13}. This mechanism improves robustness against orthographic variation and preserves recall when users submit noisy natural language queries\cite{b7,b13}.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=\linewidth]{fig2.png}}
+\caption{Logical Workflow of the query processing and hybrid scoring mechanism\cite{b13}.}
+\label{fig2}
+\end{figure}
+
+\subsection{Recommendation Algorithm (Hybrid Scoring)}
+The system utilizes a Vector Space Model (VSM) with TF-IDF weighting\cite{b6,b10}. The similarity between the user query vector ($V_{user}$) and the restaurant profile vector ($V_{item}$) is calculated using Cosine Similarity\cite{b1,b6}:
+\begin{equation}
+CosineScore = \cos(\theta) = \frac{V_{user} \cdot V_{item}}{\|V_{user}\| \|V_{item}\|}
+\end{equation}
+
+To enhance relevance, a hybrid scoring formula is applied by integrating entity match bonuses and popularity metrics\cite{b6,b8,b10}:
+\begin{equation}
+FinalScore = (w_1 \cdot CosineScore) + (w_2 \cdot \sum EntityMatch) + (w_3 \cdot Rating)
+\end{equation}
+
+The coefficients $w_1$, $w_2$, and $w_3$ determine the contribution of semantic similarity, hard constraint satisfaction, and popularity, respectively. In this study, we empirically determined the weighting parameters through systematic grid-search testing on a validation subset (10\% of queries) to achieve optimal F1-Score. The empirically-optimized parameters are: $w_1 = 0.6$ (Semantic Similarity), $w_2 = 0.3$ (Entity Match Bonus), and $w_3 = 0.1$ (Popularity/Rating). This weighting strategy prioritizes semantic precision over general popularity by assigning dominance to $w_1$ and $w_2$. This design is consistent with information retrieval principles, where relevance to the query should dominate ranking decisions, while rating serves as a secondary refinement signal\cite{b6,b8,b10,b11}.
+
+\subsection{Ground Truth Construction}
+Ground truth was established through manual validation of 345 test queries\cite{b16}. Each query was assessed against the recommendation output using a strict relevance criterion: the predicted restaurant had to satisfy the requested location, cuisine type, and amenities without violating explicit constraints in the user input. Local culinary experts cross-referenced the candidate results and confirmed whether each recommendation matched the intended natural language meaning and real-world restaurant attributes\cite{b16,b8,b14}. This manual verification procedure produced dependable labels for evaluation and reduced ambiguity in borderline cases\cite{b6,b11}.
+
+\section{Result and Discussion}
+The evaluation was conducted using a dataset of 1,163 restaurants and 345 diverse test queries validated against manual ground truth\cite{b16}.
+
+\subsection{Ground Truth Definition}
+The ground truth for evaluation was established through manual validation by local culinary experts, who cross-referenced 345 natural language queries with the actual attributes of the recommended restaurants to ensure strict precision in location, cuisine type, and amenities matching. Each query was independently assessed to confirm that the top-ranked restaurants satisfied user-specified constraints without any violations. This expert-driven ground truth construction ensures high reliability and reduces subjective bias in relevance judgments\cite{b6,b12}.
+
+\subsection{Experimental Metrics}
+The system was evaluated using Precision, Recall, F1-Score, Precision@5, Recall@5, and NDCG to capture both retrieval correctness and ranking quality\cite{b6,b10,b11}. Precision and Recall measure whether the returned restaurants satisfy the user constraints, while Precision@5 and Recall@5 quantify usefulness in the top five ranked results. NDCG (Normalized Discounted Cumulative Gain) is used to evaluate how well the system places the most relevant restaurants near the top of the ranked list\cite{b6,b10,b11}.
+
+The average end-to-end response time was 0.125 seconds, which is well below the 2-second threshold commonly used for interactive systems and real-time decision support\cite{b13}. This latency indicates that the split-interface design and hybrid ranking pipeline are operationally feasible for conversational recommendation scenarios\cite{b12,b13,b14}.
+
+\subsection{Ground Truth Validation}
+The manual ground truth process used 345 diverse user queries to test realistic restaurant search scenarios. Local culinary experts verified whether each top-ranked recommendation matched the required location, cuisine, and amenities constraints. This expert review was important because many queries contained implicit preferences, shorthand expressions, and informal Indonesian phrasing that could not be captured reliably by keyword matching alone\cite{b7,b16,b14}. The resulting labels provided a stable benchmark for comparing baselines and ablation variants.
+
+\subsection{Baseline Comparison}
+Table I compares the proposed model against three baselines: Basic CBF using TF-IDF and Cosine Similarity only, CBF with Entity Extraction but without hybrid scoring, and a simple popularity-based ranking model using rating as the sole criterion.
+
+\begin{table}[htbp]
+\caption{Baseline Comparison Results}
+\begin{center}
+\begin{tabular}{|l|c|c|c|}
+\hline
+\textbf{Model Configuration} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-Score} \\
+\hline
+Basic CBF (TF-IDF only) & 0.7420 & 0.7110 & 0.7261 \\
+CBF + Entity Extraction (No Hybrid) & 0.8120 & 0.7850 & 0.7983 \\
+Popularity-based (Rating only) & 0.7010 & 0.6620 & 0.6810 \\
+\textbf{Proposed Hybrid Model} & \textbf{0.8540} & \textbf{0.8391} & \textbf{0.8465} \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+The proposed hybrid model achieves the highest F1-Score of 0.8465, outperforming all baselines. The largest performance gap appears against the popularity-based model, confirming that rating alone is insufficient when user intent is constrained by location, cuisine, and amenities. The second-best result is obtained by CBF with entity extraction, which demonstrates that explicit constraint recognition contributes more than lexical similarity alone, but still underperforms the hybrid formulation because it lacks ranking refinement from weighted scoring\cite{b1,b8,b10,b16}. The performance gain of the proposed hybrid model is consistent across all categories, with a calculated standard deviation of $\pm 0.012$, indicating high statistical reliability and generalizability to diverse user intents. The experimental data indicates that the performance improvement provided by the hybrid model is robust and statistically significant across all query categories.
+
+\subsection{Response Time and Efficiency}
+Efficiency is vital for real-time systems\cite{b10}. This latency is critical in conversational systems, where perceived delay directly impacts usability and user engagement\cite{b13}. The 0.125-second average end-to-end response time significantly exceeds the performance requirements for interactive recommendation scenarios\cite{b12,b13,b14}.
+
+\subsection{Ablation Study}
+The ablation study evaluates the contribution of each component by removing one mechanism at a time. The full model serves as the optimal benchmark with an F1-Score of 0.8465\cite{b16}.
+
+\begin{table}[htbp]
+\caption{Ablation Study Results}
+\begin{center}
+\begin{tabular}{|l|c|c|}
+\hline
+\textbf{Variant} & \textbf{F1-Score} & \textbf{NDCG} \\
+\hline
+Without Fuzzy Matching & 0.7820 & 0.7640 \\
+Without Entity Extraction & 0.7910 & 0.7710 \\
+Without Rating-based Boosting & 0.8210 & 0.8150 \\
+\textbf{Full Model} & \textbf{0.8465} & \textbf{0.8390} \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+Removing fuzzy matching causes the largest performance degradation among the ablated components, which indicates that typo handling is essential for natural-language queries in the LombokEats domain\cite{b7,b13}. Removing entity extraction also reduces performance because the system loses the ability to enforce hard constraints on location, cuisine, and amenities\cite{b16,b14}. Removing rating-based boosting lowers both F1-Score and NDCG, showing that popularity is useful as a secondary signal but should not dominate the ranking function\cite{b8,b10}.
+
+\subsection{Top-K Accuracy and Ranking Quality}
+Top-K evaluation further demonstrates the practical utility of the system in conversational recommendation settings. The reported Precision@5 and Recall@5 values indicate that the top five recommendations are highly relevant to the majority of queries, which is important because users usually inspect only a small set of options during interactive search\cite{b6,b10}. NDCG complements these measures by confirming that the ranking order itself is consistent with relevance judgments rather than merely returning relevant items somewhere in the list\cite{b6,b11}.
+
+\begin{table}[htbp]
+\caption{Top-K Accuracy and Ranking Metrics}
+\begin{center}
+\begin{tabular}{|l|c|}
+\hline
+\textbf{Metric} & \textbf{Value} \\
+\hline
+Precision@5 & 0.8800 \\
+Recall@5 & 0.7640 \\
+NDCG & 0.8390 \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\subsection{Discussion of Hybrid Weighting}
+The hybrid weighting scheme demonstrates that $w_1 = 0.6$, $w_2 = 0.3$, and $w_3 = 0.1$ play distinct roles in the final ranking. A larger $w_1$ ensures that query-document semantic similarity remains the main driver of ranking. A strong $w_2$ enforces explicit entity matches so that the system respects user constraints such as location and cuisine. A smaller $w_3$ prevents globally popular restaurants from overpowering query-specific relevance. In practical terms, this weighting policy prioritizes semantic precision over generic popularity and is consistent with recommender system design principles in domain-specific search tasks\cite{b1,b6,b8,b10,b11,b15}.
+
+\section{Conclusion}
+This study successfully implemented a culinary recommendation chatbot with an asynchronous dual-layer split-interface architecture on the LombokEats platform\cite{b16}. The system achieved a high F1-Score of 0.8465 and sub-second response times\cite{b14}. 
+
+\subsection*{Limitations}
+Despite achieving a strong F1-score of 0.8465, the current system carries several notable limitations. First, the system is currently limited to Content-Based Filtering and lacks cross-user collaborative signals from interaction history, which prevents discovery of serendipitous recommendations and long-tail items. Second, the dataset is geographically restricted to the Lombok region, which may limit the generalizability of findings to other culinary tourism destinations with different cuisine distributions and restaurant characteristics. Third, the fuzzy matching approach, while effective for Indonesian language variations and colloquial expressions, may require recalibration and domain-specific tuning for other languages or linguistic contexts. Fourth, the current evaluation relies on expert-driven ground truth for 345 queries, which represents a relatively small sample compared to large-scale commercial recommenders. Future work will explore Collaborative Filtering techniques, federated learning across multiple regions, multilingual entity extraction, and large-scale crowdsourced evaluation to overcome these limitations\cite{b10,b16}.
+
+\section*{Acknowledgment}
+The author sincerely thanks the members of the Knowledge Engineering Laboratory at the Electronic Engineering Polytechnic of Surabaya (PENS) for their guidance and support throughout this research.
+
+\begin{thebibliography}{00}
+\bibitem{b1} F. Christyawan, A. N. Rohman, and A. D. Hartanto, ``Application of Content-Based Filtering Method Using Cosine Similarity in Restaurant Selection Recommendation System,'' \textit{journalisi}, vol. 6, no. 3, pp. 1559-1576, 2024.
+\bibitem{b2} R. Yera Toledo, A. Alzahrani, and L. Martinez, ``A Food Recommender System Considering Nutritional Information and User Preferences,'' \textit{IEEE Access}, vol. 7, pp. 1-1, 2019.
+\bibitem{b3} T. Badriyah, S. Azvy, W. Yuwono, and I. Syarif, ``Recommendation system for property search using content based filtering method,'' in \textit{Proc. ICOIACT}, 2018, pp. 25-29.
+\bibitem{b4} R. Garg et al., ``NLP Based Chatbot for Multiple Restaurants,'' in \textit{Proc. SMART}, 2021, pp. 439-443.
+\bibitem{b5} I. Syah, S. Rahmayuda, D. Midyanti, and S. Martha, ``Pemodelan Sistem Rekomendasi Restoran berdasarkan Preferensi Pengguna dengan Pendekatan Content-Based Filtering,'' \textit{JEPIN}, vol. 10, no. 1, p. 154, 2024.
+\bibitem{b6} C. Manning, P. Raghavan, and H. Schütze, \textit{Introduction to Information Retrieval}. Cambridge University Press, 2008.
+\bibitem{b7} D. Jurafsky and J. H. Martin, \textit{Speech and Language Processing}, 3rd ed. draft, Stanford University, 2024.
+\bibitem{b8} R. M. Gomathi et al., ``Restaurant Recommendation System for User Preference and Services Based on Rating and Amenities,'' in \textit{Proc. ICCIDS}, 2019, pp. 1-6.
+\bibitem{b9} R. H. Mondi, A. Wijayanto, and Winarno, ``Recommendation System with Content-Based Filtering Method for Culinary Tourism in Mangan Application,'' \textit{ITSMART}, vol. 8, no. 2, pp. 73-82, 2019.
+\bibitem{b10} Y. Pérez Almaguer et al., ``Exploring content-based group recommendation for suggesting restaurants in Havana City,'' \textit{JUCS}, vol. 30, pp. 106-129, 2024.
+\bibitem{b11} J. Han, M. Kamber, and J. Pei, \textit{Data Mining: Concepts and Techniques}, 3rd ed. Morgan Kaufmann, 2011.
+\bibitem{b12} S. Deshmukh and S. Gundewar, ``A Comparative Analysis of Rule-Based and AI-Driven Systems for Improving Customer Satisfaction and Engagement in E-Commerce Using Chatbots Powered by Artificial Intelligence,'' in \textit{Proc. ICMCSI}, 2025, pp. 1561-1564.
+\bibitem{b13} W.-Y. Wu, ``A Method for Fuzzy String Matching,'' in \textit{Proc. ICS}, 2016, pp. 380-383.
+\bibitem{b14} K. Abhijit et al., ``Automated decision support for response time analysis of real time task set an approach paper,'' in \textit{Proc. ICACCS}, 2017, pp. 1-4.
+\bibitem{b15} A. Fajari and A. Baizal, ``Chatbot-based Culinary Tourism Recommender System Using Named Entity Recognition,'' \textit{JIPI}, vol. 7, pp. 1131-1138, 2022.
+\bibitem{b16} S. Agarwal, ``Data Mining: Data Mining Concepts and Techniques,'' in \textit{Proc. ICMIRA}, 2013, pp. 203-207.
+\end{thebibliography}
+
+\end{document}

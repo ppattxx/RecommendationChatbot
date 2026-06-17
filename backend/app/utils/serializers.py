@@ -45,8 +45,10 @@ def serialize_recommendation(rec):
     """Convert a Recommendation object (with similarity score) to API response dict"""
     rest = rec.restaurant
     base = serialize_restaurant_from_object(rest)
+    raw_score = rec.raw_similarity_score if getattr(rec, 'raw_similarity_score', None) is not None else rec.similarity_score
     base.update({
         'similarity_score': round(rec.similarity_score, 4),
+        'raw_similarity_score': round(raw_score, 4),
         'matching_features': rec.matching_features,
         'explanation': rec.explanation
     })

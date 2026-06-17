@@ -3,9 +3,9 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from config.settings import ENTITY_FIELD_MAPPING, ENTITY_BONUS_WEIGHTS
-from utils.data_loader import DataLoader
-from services.recommendation_engine import ContentBasedRecommendationEngine
+from backend.config.settings import ENTITY_FIELD_MAPPING, ENTITY_BONUS_WEIGHTS
+from backend.app.utils.data_loader import DataLoader
+from backend.app.services.recommendation_engine import ContentBasedRecommendationEngine
 
 def test_location_entity_config():
     """Test if location entity is configured properly"""

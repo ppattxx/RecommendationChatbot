@@ -77,21 +77,39 @@ class EntityExtractor:
         self.entity_keywords = ENTITY_KEYWORDS
         self.preprocessor = TextPreprocessor()
         self.synonym_map = SYNONYM_MAP
+
+    def _contains_phrase(self, text: str, phrase: str) -> bool:
+        phrase = (phrase or '').strip().lower()
+        if not phrase:
+            return False
+        pattern = r'\b' + re.escape(phrase) + r'\b'
+        return re.search(pattern, text) is not None
     
     def extract_entities(self, text: str) -> Dict[str, List[str]]:
         if not text:
             return {}
         clean_text = self.preprocessor.normalize_text(text.lower())
+        tokens = set(re.findall(r"\b\w+\b", clean_text))
+        low_signal_keywords = {
+            'di', 'dekat', 'sekitar', 'makan', 'makanan', 'restoran', 'restaurant', 'tempat makan'
+        }
         entities = {}
         
         # Standard entity extraction
         for entity_type, keywords in self.entity_keywords.items():
             found_entities = []
             for keyword in keywords:
-                if keyword in clean_text:
-                    found_entities.append(keyword)
-                elif any(part in clean_text for part in keyword.split()):
-                    found_entities.append(keyword)
+                keyword_norm = keyword.strip().lower()
+                if not keyword_norm or keyword_norm in low_signal_keywords:
+                    continue
+
+                parts = keyword_norm.split()
+                if len(parts) == 1:
+                    if keyword_norm in tokens:
+                        found_entities.append(keyword_norm)
+                else:
+                    if self._contains_phrase(clean_text, keyword_norm) or all(part in tokens for part in parts):
+                        found_entities.append(keyword_norm)
             if found_entities:
                 entities[entity_type] = list(set(found_entities))
         
@@ -101,13 +119,16 @@ class EntityExtractor:
         
         for main_term, synonyms in self.synonym_map.items():
             for synonym in synonyms:
-                if synonym.lower() in clean_text:
+                synonym_norm = synonym.strip().lower()
+                if not synonym_norm:
+                    continue
+                if self._contains_phrase(clean_text, synonym_norm):
                     # Add the main term if found via synonym
                     if main_term not in entities['jenis_makanan']:
                         entities['jenis_makanan'].append(main_term)
                     # Also add the matched synonym
-                    if synonym not in entities['jenis_makanan']:
-                        entities['jenis_makanan'].append(synonym)
+                    if synonym_norm not in entities['jenis_makanan']:
+                        entities['jenis_makanan'].append(synonym_norm)
                     break
         
         # Remove empty lists

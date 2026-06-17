@@ -123,7 +123,7 @@ const RestaurantRecommendations = ({ userPreferences }) => {
   });
   
   // Get context for seamless updates
-  const { sessionId, deviceToken } = usePersonalization();
+  const { sessionId, deviceToken, latestUserQuery } = usePersonalization();
 
   /**
    * Fetch ALL ranked recommendations with pagination
@@ -146,6 +146,11 @@ const RestaurantRecommendations = ({ userPreferences }) => {
 
       if (sessionId) {
         params.session_id = sessionId;
+      }
+
+      // Pass latest user query so backend can rank consistently with chatbot
+      if (latestUserQuery && latestUserQuery.trim()) {
+        params.query = latestUserQuery.trim();
       }
 
       // Use ALL-RANKED endpoint with Cosine Similarity sorting
@@ -197,7 +202,7 @@ const RestaurantRecommendations = ({ userPreferences }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [deviceToken, sessionId]);
+  }, [deviceToken, sessionId, latestUserQuery]);
 
   // Fetch on mount and when preferences/context changes
   useEffect(() => {
