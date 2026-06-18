@@ -1,0 +1,31 @@
+services:
+  # ─── Backend (Flask API) ───────────────────────────────────
+  - type: web
+    name: recommendation-chatbot-api
+    runtime: python
+    region: singapore          # Pilih region terdekat
+    plan: free
+    rootDir: .                 # Root project
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --chdir backend "main:app" --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.0"
+      - key: API_HOST
+        value: "0.0.0.0"
+      - key: API_DEBUG
+        value: "False"
+      - key: LOG_LEVEL
+        value: "INFO"
+      - key: SECRET_KEY
+        generateValue: true      # Render auto-generate secret key
+      - key: DATABASE_URL
+        value: "sqlite:///chatbot.db"
+      - key: DEFAULT_TOP_N
+        value: "5"
+      - key: MAX_RECOMMENDATIONS
+        value: "10"
+      - key: MIN_SIMILARITY_SCORE
+        value: "0.1"
+      - key: ALLOWED_HOSTS
+        value: "*"
