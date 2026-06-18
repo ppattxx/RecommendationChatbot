@@ -1,0 +1,65 @@
+name: 🚀 Deploy Frontend ke VPS
+
+on:
+  push:
+    branches:
+      - main          # Trigger otomatis setiap push ke branch main
+    paths:
+      - 'frontend/**' # Hanya jalan kalau ada perubahan di folder frontend
+
+jobs:
+  deploy:
+    name: Build & Deploy Frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout kode terbaru
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Setup Node.js
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      # 3. Install dependencies
+      - name: 📦 Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      # 4. Build production bundle (output: frontend/dist/)
+      - name: 🔨 Build Vite production bundle
+        working-directory: frontend
+        run: npm run build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}   # URL backend Anda di VPS
+
+      # 5. Upload hasil build ke VPS via SCP (rsync)
+      - name: 📤 Upload dist ke VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}           # IP atau domain VPS Anda
+          username: ${{ secrets.VPS_USER }}        # User SSH VPS (misal: ubuntu, root)
+          key: ${{ secrets.VPS_SSH_KEY }}          # Isi SSH private key Anda
+          port: ${{ secrets.VPS_PORT }}            # Port SSH (default: 22)
+          source: "frontend/dist/"
+          target: ${{ secrets.VPS_TARGET_PATH }}   # Path di VPS, misal: /var/www/lombokEats
+          strip_components: 2                      # Hapus prefix "frontend/dist" dari path
+
+      # 6. (Opsional) Restart web server di VPS setelah upload selesai
+      - name: 🔄 Reload web server di VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            echo "✅ Deploy selesai pada $(date)"
+            # Jika pakai Nginx, reload konfigurasi:
+            sudo systemctl reload nginx
+            # Jika pakai PM2 untuk serve static, uncomment baris berikut:
+            # pm2 reload all
