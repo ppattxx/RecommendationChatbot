@@ -15,7 +15,7 @@ const STORAGE_KEYS = {
 };
 
 export const PersonalizationProvider = ({ children }) => {
-  const [sessionId, setSessionId] = useState(() => localStorage.getItem(STORAGE_KEYS.SESSION_ID));
+  const [sessionId, setSessionId] = useState(() => sessionStorage.getItem(STORAGE_KEYS.SESSION_ID));
   const [deviceToken, setDeviceToken] = useState(() => {
     let token = localStorage.getItem(STORAGE_KEYS.DEVICE_TOKEN);
     if (!token) {
@@ -29,13 +29,13 @@ export const PersonalizationProvider = ({ children }) => {
   const [topRecommendations, setTopRecommendations] = useState([]);
   const [chatHistory, setChatHistory] = useState(() => {
     try {
-      const stored = localStorage.getItem(STORAGE_KEYS.CHAT_HISTORY);
+      const stored = sessionStorage.getItem(STORAGE_KEYS.CHAT_HISTORY);
       return stored ? JSON.parse(stored) : [];
     } catch {
       return [];
     }
   });
-  const [latestUserQuery, setLatestUserQuery] = useState(() => localStorage.getItem(STORAGE_KEYS.LATEST_USER_QUERY) || '');
+  const [latestUserQuery, setLatestUserQuery] = useState(() => sessionStorage.getItem(STORAGE_KEYS.LATEST_USER_QUERY) || '');
 
   const [isLoadingPreferences, setIsLoadingPreferences] = useState(false);
   const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false);
@@ -43,17 +43,17 @@ export const PersonalizationProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [personalizationVersion, setPersonalizationVersion] = useState(0);
 
-  // Sync chat history to localStorage whenever it changes
+  // Sync chat history to sessionStorage whenever it changes
   useEffect(() => {
     if (chatHistory.length > 0) {
-      localStorage.setItem(STORAGE_KEYS.CHAT_HISTORY, JSON.stringify(chatHistory));
+      sessionStorage.setItem(STORAGE_KEYS.CHAT_HISTORY, JSON.stringify(chatHistory));
     }
   }, [chatHistory]);
 
-  // Update session ID in localStorage
+  // Update session ID in sessionStorage
   useEffect(() => {
     if (sessionId) {
-      localStorage.setItem(STORAGE_KEYS.SESSION_ID, sessionId);
+      sessionStorage.setItem(STORAGE_KEYS.SESSION_ID, sessionId);
     }
   }, [sessionId]);
 
@@ -135,7 +135,7 @@ export const PersonalizationProvider = ({ children }) => {
 
         if (backendMessages.length > 0) {
           setChatHistory(backendMessages);
-          localStorage.setItem(STORAGE_KEYS.CHAT_HISTORY, JSON.stringify(backendMessages));
+          sessionStorage.setItem(STORAGE_KEYS.CHAT_HISTORY, JSON.stringify(backendMessages));
         }
       }
     } catch (err) {
@@ -154,7 +154,7 @@ export const PersonalizationProvider = ({ children }) => {
     setChatHistory((prev) => [...prev, newMessage]);
     if (newMessage.type === 'user' && newMessage.text?.trim()) {
       setLatestUserQuery(newMessage.text.trim());
-      localStorage.setItem(STORAGE_KEYS.LATEST_USER_QUERY, newMessage.text.trim());
+      sessionStorage.setItem(STORAGE_KEYS.LATEST_USER_QUERY, newMessage.text.trim());
     }
   }, []);
 
@@ -162,9 +162,9 @@ export const PersonalizationProvider = ({ children }) => {
     const q = (queryText || '').trim();
     setLatestUserQuery(q);
     if (q) {
-      localStorage.setItem(STORAGE_KEYS.LATEST_USER_QUERY, q);
+      sessionStorage.setItem(STORAGE_KEYS.LATEST_USER_QUERY, q);
     } else {
-      localStorage.removeItem(STORAGE_KEYS.LATEST_USER_QUERY);
+      sessionStorage.removeItem(STORAGE_KEYS.LATEST_USER_QUERY);
     }
   }, []);
 
@@ -175,7 +175,7 @@ export const PersonalizationProvider = ({ children }) => {
       }
 
       setChatHistory([]);
-      localStorage.removeItem(STORAGE_KEYS.CHAT_HISTORY);
+      sessionStorage.removeItem(STORAGE_KEYS.CHAT_HISTORY);
 
       return true;
     } catch (err) {
@@ -187,9 +187,9 @@ export const PersonalizationProvider = ({ children }) => {
   const updateSession = useCallback((newSessionId) => {
     setSessionId(newSessionId);
     if (newSessionId) {
-      localStorage.setItem(STORAGE_KEYS.SESSION_ID, newSessionId);
+      sessionStorage.setItem(STORAGE_KEYS.SESSION_ID, newSessionId);
     } else {
-      localStorage.removeItem(STORAGE_KEYS.SESSION_ID);
+      sessionStorage.removeItem(STORAGE_KEYS.SESSION_ID);
     }
 
     setTimeout(() => {
@@ -213,9 +213,10 @@ export const PersonalizationProvider = ({ children }) => {
     try {
       await chatAPI.resetAllChatHistory();
 
-      // Clear all local storage
+      // Clear all local storage and session storage
       Object.values(STORAGE_KEYS).forEach((key) => {
         localStorage.removeItem(key);
+        sessionStorage.removeItem(key);
       });
 
       // Reset states
@@ -226,9 +227,9 @@ export const PersonalizationProvider = ({ children }) => {
       setLatestUserQuery('');
 
       // Force remove identity keys before creating fresh token
-      localStorage.removeItem(STORAGE_KEYS.SESSION_ID);
+      sessionStorage.removeItem(STORAGE_KEYS.SESSION_ID);
       localStorage.removeItem(STORAGE_KEYS.DEVICE_TOKEN);
-      localStorage.removeItem(STORAGE_KEYS.LATEST_USER_QUERY);
+      sessionStorage.removeItem(STORAGE_KEYS.LATEST_USER_QUERY);
 
       // Generate new device token
       const newToken = `web_${Math.random().toString(36).substring(2, 11)}`;

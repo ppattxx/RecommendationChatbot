@@ -1,4 +1,4 @@
-﻿from typing import List, Dict, Any, Optional, Tuple
+from typing import List, Dict, Any, Optional, Tuple
 import uuid
 from datetime import datetime, timezone
 import random
@@ -50,23 +50,21 @@ class ChatbotService:
         except Exception as e:
             logger.error(f"Error loading restaurant data: {e}")
             self.restaurants_data = None
-    def start_conversation(self, user_id: str = None, device_token: str = None):
-        if device_token:
-            existing_session_id = self.session_manager.get_active_session_for_device(device_token)
-            if existing_session_id:
-                session_info = self.session_manager.get_session(existing_session_id)
-                if session_info:
-                    greeting = self._get_personalized_greeting(device_token, session_info)
-                    
-                    self.sessions[existing_session_id] = {
-                        'user_id': session_info['device_token'], 
-                        'device_token': device_token,
-                        'messages': session_info['session_data'].get('messages', []),
-                        'context': {},
-                        'preferences': session_info['history_data'].get('preferences', {})
-                    }
-                    
-                    return existing_session_id, greeting
+    def start_conversation(self, user_id: str = None, device_token: str = None, session_id: str = None):
+        if session_id:
+            session_info = self.session_manager.get_session(session_id)
+            if session_info:
+                greeting = self._get_personalized_greeting(device_token, session_info)
+                
+                self.sessions[session_id] = {
+                    'user_id': session_info['device_token'], 
+                    'device_token': device_token or session_info['device_token'],
+                    'messages': session_info['session_data'].get('messages', []),
+                    'context': {},
+                    'preferences': session_info['history_data'].get('preferences', {})
+                }
+                
+                return session_id, greeting
         
         session_id, greeting = self.session_manager.create_session(device_token, user_id)
         
@@ -130,7 +128,9 @@ class ChatbotService:
             not any(word in message for word in ['restoran', 'cari', 'mau', 'pizza', 'sushi', 'seafood', 'yang', 'di'])
         )
         if is_greeting_only:
-            return self._get_greeting_response()
+            bot_response = self._get_greeting_response()
+            self._save_conversation_to_session(session_id, message, bot_response)
+            return bot_response
         
         exit_pattern = r'\b(' + '|'.join(['bye', 'keluar', 'selesai', 'exit', 'sampai jumpa']) + r')\b'
         if re.search(exit_pattern, message.lower()):
@@ -1146,6 +1146,8 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
             logger.error(f"Error in smart fallback response: {e}")
             return "Maaf, saya tidak dapat memproses permintaan Anda saat ini. Silakan coba dengan kata kunci yang lebih sederhana seperti 'pizza Kuta' atau 'seafood murah'."
     def get_conversation_history(self, session_id: str):
+        if session_id in self.sessions and 'history' in self.sessions[session_id]:
+            return self.sessions[session_id]['history']
         return []
     def get_restaurant_details(self, name: str):
         if self.restaurants_data is None:
@@ -1170,10 +1172,16 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
     def get_recommendations_by_category(self, category: str):
         if self.restaurants_data is None:
             return "Data restoran tidak tersedia."
-        matches = self.restaurants_data[
-            self.restaurants_data['cuisines'].str.contains(category, case=False, na=False) |
-            self.restaurants_data['location'].str.contains(category, case=False, na=False)
-        ]
+        location_col = 'address' if 'address' in self.restaurants_data.columns else ('entitas_lokasi' if 'entitas_lokasi' in self.restaurants_data.columns else '')
+        if location_col:
+            matches = self.restaurants_data[
+                self.restaurants_data['cuisines'].str.contains(category, case=False, na=False) |
+                self.restaurants_data[location_col].str.contains(category, case=False, na=False)
+            ]
+        else:
+            matches = self.restaurants_data[
+                self.restaurants_data['cuisines'].str.contains(category, case=False, na=False)
+            ]
         if matches.empty:
             return f"Maaf, tidak ditemukan restoran untuk kategori '{category}'."
         response = f"Rekomendasi Restoran untuk kategori '{category}':\n\n"
@@ -1249,6 +1257,14 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
     
     def _save_conversation_to_session(self, session_id: str, user_message: str, bot_response: str):
         try:
+            if session_id in self.sessions:
+                if 'history' not in self.sessions[session_id]:
+                    self.sessions[session_id]['history'] = []
+                self.sessions[session_id]['history'].append({
+                    'timestamp': datetime.now().isoformat(),
+                    'user_query': user_message,
+                    'bot_response': bot_response
+                })
             self.session_manager.update_session(session_id, user_message, bot_response)
         except Exception as e:
             pass

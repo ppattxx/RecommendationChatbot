@@ -25,7 +25,7 @@ def handle_chat():
 
     # Handle initialization (empty or greeting)
     if dto.is_greeting:
-        session_id, greeting = chatbot.start_conversation(device_token=dto.device_token)
+        session_id, greeting = chatbot.start_conversation(device_token=dto.device_token, session_id=dto.session_id)
         _ensure_session_exists(session_id, dto.device_token)
         return jsonify({
             'success': True,

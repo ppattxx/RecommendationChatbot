@@ -66,6 +66,30 @@ class SessionManager:
         if session_id in self.memory_sessions:
             return self.memory_sessions[session_id]
         
+        # Try fast database lookup first
+        try:
+            from backend.app.models.database import UserSession
+            session_row = UserSession.query.filter_by(session_id=session_id).first()
+            if session_row:
+                device_token = session_row.device_token
+                history_data = self._get_user_history(device_token)
+                if history_data:
+                    for session in history_data.get('chat_sessions', []):
+                        if session.get('session_id') == session_id:
+                            session_time = datetime.fromisoformat(session['timestamp'])
+                            if datetime.now() - session_time > self.session_timeout:
+                                return None
+                            
+                            self.memory_sessions[session_id] = {
+                                'device_token': device_token,
+                                'session_data': session,
+                                'history_data': history_data
+                            }
+                            return self.memory_sessions[session_id]
+        except Exception as e:
+            logger.error(f"Error querying database for session {session_id}: {e}")
+        
+        # Fallback to scanning all history files
         for history_file in self.histories_dir.glob("*_history.json"):
             try:
                 with open(history_file, 'r', encoding='utf-8') as f:

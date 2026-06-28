@@ -123,9 +123,9 @@ const FloatingChatbot = ({ forceOpen, onClose, onViewDetail }) => {
   useEffect(() => {
     if (messages.length > 0) {
       try {
-        localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(messages));
+        sessionStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(messages));
       } catch (error) {
-        console.error('Error saving chat to localStorage:', error);
+        console.error('Error saving chat to sessionStorage:', error);
       }
     }
   }, [messages]);
@@ -157,7 +157,7 @@ const FloatingChatbot = ({ forceOpen, onClose, onViewDetail }) => {
   const loadChatHistory = useCallback(async () => {
     setIsLoadingHistory(true);
     try {
-      const localHistory = localStorage.getItem(CHAT_STORAGE_KEY);
+      const localHistory = sessionStorage.getItem(CHAT_STORAGE_KEY);
       if (localHistory) {
         const parsedHistory = JSON.parse(localHistory);
         if (Array.isArray(parsedHistory) && parsedHistory.length > 0) {
@@ -183,7 +183,7 @@ const FloatingChatbot = ({ forceOpen, onClose, onViewDetail }) => {
 
           if (backendMessages.length > 0) {
             setMessages(backendMessages);
-            localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(backendMessages));
+            sessionStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(backendMessages));
             setHistoryLoaded(true);
             setIsLoadingHistory(false);
             return;
@@ -243,7 +243,21 @@ const FloatingChatbot = ({ forceOpen, onClose, onViewDetail }) => {
   };
 
   const handleResetHistory = async () => {
+<<<<<<< Updated upstream
     if (!confirm('Reset semua riwayat chat dan preferensi? Aksi ini membuat session baru dan mengganti device token.')) return;
+=======
+    if (
+      confirm(
+        'Yakin ingin mereset SEMUA riwayat chat dan preferensi?\n\nAksi ini juga akan membuat session baru dan mengganti device token.'
+      )
+    ) {
+      try {
+        const result = await resetAllData();
+        if (result?.success) {
+          setMessages([]);
+          setHistoryLoaded(false);
+          sessionStorage.removeItem(CHAT_STORAGE_KEY);
+>>>>>>> Stashed changes
 
     try {
       const result = await resetAllData();
