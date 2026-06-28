@@ -243,21 +243,7 @@ const FloatingChatbot = ({ forceOpen, onClose, onViewDetail }) => {
   };
 
   const handleResetHistory = async () => {
-<<<<<<< Updated upstream
     if (!confirm('Reset semua riwayat chat dan preferensi? Aksi ini membuat session baru dan mengganti device token.')) return;
-=======
-    if (
-      confirm(
-        'Yakin ingin mereset SEMUA riwayat chat dan preferensi?\n\nAksi ini juga akan membuat session baru dan mengganti device token.'
-      )
-    ) {
-      try {
-        const result = await resetAllData();
-        if (result?.success) {
-          setMessages([]);
-          setHistoryLoaded(false);
-          sessionStorage.removeItem(CHAT_STORAGE_KEY);
->>>>>>> Stashed changes
 
     try {
       const result = await resetAllData();
