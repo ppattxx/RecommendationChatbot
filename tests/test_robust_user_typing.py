@@ -174,3 +174,39 @@ def test_price_slang_is_extracted_and_saved(client, query, expected_price):
     assert latest is not None
     extracted_price = (latest.get("extracted_entities", {}) or {}).get("price") or ""
     assert expected_price in extracted_price
+
+def test_chat_session_recovers_from_database_without_local_cache(client):
+    token = "web_production_multi_session"
+
+    init_resp = client.post("/api/chat", json={"message": "halo", "device_token": token})
+    assert init_resp.status_code == 200
+    init_data = init_resp.get_json()
+    assert init_data.get("success") is True
+    session_id = init_data.get("data", {}).get("session_id")
+    assert session_id
+
+    first_resp = client.post(
+        "/api/chat",
+        json={"message": "pizza murah di kuta", "session_id": session_id, "device_token": token},
+    )
+    assert first_resp.status_code == 200
+    assert first_resp.get_json().get("success") is True
+
+    chatbot = client.application.container.chatbot_service
+    chatbot.sessions.pop(session_id, None)
+    chatbot.session_manager.memory_sessions.pop(session_id, None)
+
+    history_file = Path("user_histories") / f"{token}_history.json"
+    if history_file.exists():
+        history_file.unlink()
+
+    second_resp = client.post(
+        "/api/chat",
+        json={"message": "bagaimana dengan seafood?", "session_id": session_id, "device_token": token},
+    )
+    assert second_resp.status_code == 200
+    second_data = second_resp.get_json()
+    assert second_data.get("success") is True
+    bot_response = second_data.get("data", {}).get("bot_response", "")
+    assert "sesi Anda telah berakhir" not in bot_response
+    assert second_data.get("data", {}).get("session_id") == session_id

@@ -37,6 +37,30 @@ class TestChatbotService(unittest.TestCase):
                 response = self.chatbot.process_message(query, session_id)
                 self.assertIsInstance(response, str)
                 self.assertTrue(len(response) > 0)
+    def test_price_entity_normalization(self):
+        price_cases = [
+            ("seafood murah", "cheap"),
+            ("seafood cheap", "cheap"),
+            ("restoran terjangkau", "cheap"),
+            ("dinner mahal", "expensive"),
+        ]
+        for query, expected_price in price_cases:
+            with self.subTest(query=query):
+                _, entities = self.chatbot._extract_intent_and_entities(query)
+                self.assertIn(expected_price, entities.get('price', []))
+
+    def test_restaurant_price_category_normalization(self):
+        import pandas as pd
+        price_cases = [
+            ("$", "cheap"),
+            ("$$-$$$", "mid"),
+            ("$$ - $$$", "mid"),
+            ("$$$$", "expensive"),
+        ]
+        for raw_price, expected_category in price_cases:
+            with self.subTest(raw_price=raw_price):
+                row = pd.Series({'price_range': raw_price})
+                self.assertEqual(self.chatbot._restaurant_price_category(row), expected_category)
     def test_spatial_query_feedback(self):
         session_id, _ = self.chatbot.start_conversation()
         spatial_queries = [

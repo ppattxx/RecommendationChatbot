@@ -62,32 +62,96 @@ class SessionManager:
         
         return session_id, greeting
     
+    def _build_session_from_database(self, session_id: str) -> Optional[Dict]:
+        try:
+            from backend.app.models.database import ChatHistory, UserSession
+
+            session_row = UserSession.query.filter_by(session_id=session_id).first()
+            if not session_row:
+                return None
+
+            last_activity = session_row.last_activity or session_row.created_at
+            if last_activity:
+                now = datetime.now(last_activity.tzinfo) if last_activity.tzinfo else datetime.now()
+                if now - last_activity > self.session_timeout:
+                    return None
+
+            history_data = self._get_user_history(session_row.device_token)
+            if not history_data:
+                history_data = self._get_or_create_user_history(session_row.device_token)
+
+            rows = (ChatHistory.query
+                    .filter_by(session_id=session_id)
+                    .order_by(ChatHistory.timestamp.asc())
+                    .all())
+
+            messages = []
+            recommendations_given = ''
+            for row in rows:
+                messages.append({
+                    'user': row.user_message,
+                    'timestamp': row.timestamp.isoformat() if row.timestamp else datetime.now().isoformat(),
+                })
+                recommendations_given = row.bot_response or recommendations_given
+
+            session_data = {
+                'session_id': session_id,
+                'timestamp': (last_activity or datetime.now()).isoformat(),
+                'messages': messages,
+                'recommendations_given': recommendations_given,
+                'user_feedback': {},
+            }
+
+            existing_sessions = history_data.setdefault('chat_sessions', [])
+            found = False
+            for idx, chat_session in enumerate(existing_sessions):
+                if chat_session.get('session_id') == session_id:
+                    existing_sessions[idx] = session_data
+                    found = True
+                    break
+            if not found:
+                existing_sessions.append(session_data)
+
+            if 'interaction_stats' not in history_data:
+                history_data['interaction_stats'] = {
+                    'total_messages': 0,
+                    'total_sessions': len(existing_sessions),
+                    'favorite_restaurants': [],
+                    'search_patterns': {},
+                }
+            history_data['interaction_stats']['total_messages'] = max(
+                history_data['interaction_stats'].get('total_messages', 0),
+                len(messages),
+            )
+            history_data['interaction_stats']['total_sessions'] = max(
+                history_data['interaction_stats'].get('total_sessions', 0),
+                len(existing_sessions),
+            )
+            history_data['last_updated'] = datetime.now().isoformat()
+
+            session_info = {
+                'device_token': session_row.device_token,
+                'session_data': session_data,
+                'history_data': history_data,
+            }
+            self.memory_sessions[session_id] = session_info
+            return session_info
+
+        except Exception as e:
+            logger.error(f"Error rebuilding session {session_id} from database: {e}")
+            return None
+
+
     def get_session(self, session_id: str) -> Optional[Dict]:
         if session_id in self.memory_sessions:
             return self.memory_sessions[session_id]
         
-        # Try fast database lookup first
-        try:
-            from backend.app.models.database import UserSession
-            session_row = UserSession.query.filter_by(session_id=session_id).first()
-            if session_row:
-                device_token = session_row.device_token
-                history_data = self._get_user_history(device_token)
-                if history_data:
-                    for session in history_data.get('chat_sessions', []):
-                        if session.get('session_id') == session_id:
-                            session_time = datetime.fromisoformat(session['timestamp'])
-                            if datetime.now() - session_time > self.session_timeout:
-                                return None
-                            
-                            self.memory_sessions[session_id] = {
-                                'device_token': device_token,
-                                'session_data': session,
-                                'history_data': history_data
-                            }
-                            return self.memory_sessions[session_id]
-        except Exception as e:
-            logger.error(f"Error querying database for session {session_id}: {e}")
+        # Try fast database lookup first. This is required for production
+        # deployments where another worker may not have local JSON cache files.
+        db_session = self._build_session_from_database(session_id)
+        if db_session:
+            return db_session
+        
         
         # Fallback to scanning all history files
         for history_file in self.histories_dir.glob("*_history.json"):

@@ -13,6 +13,8 @@ services:
         value: "3.11.0"
       - key: API_HOST
         value: "0.0.0.0"
+      - key: API_PORT
+        value: "10000"          # Render menggunakan $PORT, ini hanya fallback
       - key: API_DEBUG
         value: "False"
       - key: LOG_LEVEL
@@ -29,3 +31,7 @@ services:
         value: "0.1"
       - key: ALLOWED_HOSTS
         value: "*"
+      # ⚠️  WAJIB DIISI MANUAL di Dashboard Render:
+      # https://dashboard.render.com → service → Environment
+      - key: OPENAI_API_KEY
+        sync: false              # Isi manual di dashboard Render (jangan hardcode!)

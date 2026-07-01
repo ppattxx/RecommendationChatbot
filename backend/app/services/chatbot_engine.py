@@ -360,7 +360,9 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
         }
         for price_type, keywords in price_patterns.items():
             if any(re.search(r'\b' + re.escape(kw) + r'\b', message_lower) for kw in keywords):
-                entities['price'].append(price_type)
+                normalized_price = self._normalize_price_entity(price_type)
+                if normalized_price and normalized_price not in entities['price']:
+                    entities['price'].append(normalized_price)
 
         # Fallback mood keywords if dataset patterns miss common Indonesian terms.
         if any(k in message_lower for k in ['romantis', 'romantic', 'date', 'couple']) and 'romantis' not in entities['mood']:
@@ -375,6 +377,21 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
             'romantic': 'romantis',
             'family': 'keluarga',
             'casual': 'santai',
+            'murah': 'cheap',
+            'murrah': 'cheap',
+            'murahh': 'cheap',
+            'murce': 'cheap',
+            'murcee': 'cheap',
+            'murmer': 'cheap',
+            'murmeran': 'cheap',
+            'terjangkau': 'cheap',
+            'hemat': 'cheap',
+            'ekonomis': 'cheap',
+            'mahal': 'expensive',
+            'mewah': 'expensive',
+            'mehong': 'expensive',
+            'mehongg': 'expensive',
+            'mehel': 'expensive',
         }
         for key in ['cuisine', 'location', 'mood', 'price']:
             if isinstance(entities.get(key), list):
@@ -627,6 +644,44 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
             return False
         return any(str(loc).replace('_', ' ').lower() in location_text for loc in requested_locations)
 
+    def _normalize_price_entity(self, value: str) -> str:
+        token = str(value or '').strip().lower()
+        if not token:
+            return ''
+
+        cheap_aliases = {
+            'cheap', 'murah', 'murrah', 'murahh', 'murce', 'murcee', 'murmer', 'murmeran',
+            'terjangkau', 'budget', 'hemat', 'ekonomis', 'affordable', 'inexpensive', 'value',
+            'budget friendly', 'kantong pelajar',
+        }
+        expensive_aliases = {
+            'expensive', 'mahal', 'mewah', 'premium', 'luxury', 'upscale', 'fine dining',
+            'high-end', 'mehong', 'mehongg', 'mehel', 'pricy', 'pricey', 'overpriced',
+        }
+
+        if token in cheap_aliases:
+            return 'cheap'
+        if token in expensive_aliases:
+            return 'expensive'
+        return token
+
+    def _restaurant_price_category(self, restaurant) -> str:
+        if 'price_range' not in restaurant.index or pd.isna(restaurant['price_range']):
+            return ''
+
+        price_text = str(restaurant['price_range']).strip().lower()
+        compact = re.sub(r'\s+', '', price_text)
+
+        if compact in {'$', 'cheap', 'budget', 'affordable', 'terjangkau', 'murah'}:
+            return 'cheap'
+        if compact in {'$$$$', 'premium', 'luxury', 'expensive', 'mahal', 'mewah'}:
+            return 'expensive'
+        if '$$$$' in compact or any(word in price_text for word in ['premium', 'luxury', 'expensive', 'mahal', 'mewah']):
+            return 'expensive'
+        if compact.startswith('$'):
+            return 'mid'
+        return self._normalize_price_entity(price_text)
+
     def _get_historical_entity_profile(self, session_id: str = None, device_token: str = None, limit: int = 120):
         empty_profile = {
             'cuisine': {},
@@ -760,14 +815,13 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
                 bonus -= 0.35
         
         if entities.get('price'):
-            restaurant_price = restaurant['price_range'] if 'price_range' in restaurant.index else None
-            if pd.notna(restaurant_price):
-                price_text = str(restaurant_price).lower()
-                for price in entities['price']:
-                    if (price == 'cheap' and any(word in price_text for word in ['$', 'budget', 'cheap'])) or \
-                       (price == 'expensive' and any(word in price_text for word in ['$$$', 'premium', 'expensive'])):
-                        bonus += 0.2
-
+            restaurant_price_category = self._restaurant_price_category(restaurant)
+            requested_prices = [self._normalize_price_entity(price) for price in entities['price']]
+            if restaurant_price_category and restaurant_price_category in requested_prices:
+                bonus += 0.45
+            elif restaurant_price_category and requested_prices:
+                bonus -= 0.15
+        
         # Accumulated personalization from historical entities (lightweight boost).
         if historical_profile:
             hist_cuisines = historical_profile.get('cuisine', {})
@@ -802,13 +856,11 @@ Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berik
                     bonus += min(0.22 * matched_weight, 0.22)
 
             if hist_prices:
-                restaurant_price = restaurant['price_range'] if 'price_range' in restaurant.index else None
-                if pd.notna(restaurant_price):
-                    price_text = str(restaurant_price).lower()
+                restaurant_price_category = self._restaurant_price_category(restaurant)
+                if restaurant_price_category:
                     matched_weight = 0.0
                     for price, weight in hist_prices.items():
-                        if (price == 'cheap' and any(word in price_text for word in ['$', 'budget', 'cheap'])) or \
-                           (price == 'expensive' and any(word in price_text for word in ['$$$', 'premium', 'expensive'])):
+                        if self._normalize_price_entity(price) == restaurant_price_category:
                             matched_weight = max(matched_weight, float(weight))
                     if matched_weight > 0:
                         bonus += min(0.12 * matched_weight, 0.12)
