@@ -17,6 +17,11 @@ from backend.app.utils.entity_builder import EntityBuilder
 
 logger = get_logger("chatbot_service")
 
+SPATIAL_SEARCH_UNAVAILABLE_RESPONSE = (
+    "Fitur pencarian berbasis jarak terdekat saat ini belum tersedia. "
+    "Boleh sebutkan spesifik nama wilayah atau kecamatan di Lombok agar saya bisa memberikan rekomendasi yang pas?"
+)
+
 class ChatbotService:
     def __init__(self, data_path: str = None):
         self.data_path = data_path or str(RESTAURANTS_ENTITAS_CSV)
@@ -107,6 +112,10 @@ class ChatbotService:
             message = message.lower().strip()
         except Exception as e:
             return "Maaf, terjadi kesalahan sistem. Silakan coba lagi."
+
+        if self._is_spatial_query(message):
+            self._save_conversation_to_session(session_id, message, SPATIAL_SEARCH_UNAVAILABLE_RESPONSE)
+            return SPATIAL_SEARCH_UNAVAILABLE_RESPONSE
         
         invalid_patterns = [
             r'^/api/',
@@ -232,6 +241,41 @@ Perintah Lain:
 • "help" - Menampilkan bantuan ini
 
 Tips: Semakin spesifik permintaan Anda, semakin baik rekomendasi yang saya berikan!""" 
+
+    def _is_spatial_query(self, message: str) -> bool:
+        """Detect distance/coordinate-based searches that are not supported yet."""
+        message_lower = (message or '').lower()
+
+        spatial_patterns = [
+            r'\bdata\s+spasial\b',
+            r'\bspatial\b',
+            r'\bspasial\b',
+            r'\bjarak\b',
+            r'\bradius\b',
+            r'\bkoordinat\b',
+            r'\bkoordinate\b',
+            r'\bcoordinate\b',
+            r'\bcoordinates\b',
+            r'\blatitude\b',
+            r'\blongitude\b',
+            r'\blat\b',
+            r'\blng\b',
+            r'\bgps\b',
+            r'\bmaps?\b',
+            r'\brute\b',
+            r'\bnear\s+me\b',
+            r'\bnearby\b',
+            r'\b\d+\s*(km|kilometer|meter)\b',
+            r'\bsekitar\s+(saya|sini|lokasi\s+saya|tempat\s+saya)\b',
+            r'\b(lokasi|posisi)\s+saya\b',
+            r'\bterdekat\b',
+            r'\bpaling\s+dekat\b',
+            r'\byang\s+dekat\s+(dari|dengan|sama)\b',
+            r'\bdekat\s+(saya|sini|lokasi\s+saya|posisi\s+saya|tempat\s+saya)\b',
+            r'\bdekat\s+(dari|dengan|sama)\s+(saya|lokasi\s+saya|posisi\s+saya|sini|tempat\s+saya)\b',
+        ]
+
+        return any(re.search(pattern, message_lower) for pattern in spatial_patterns)
     
     def _extract_intent_and_entities(self, message: str):
         entities = {

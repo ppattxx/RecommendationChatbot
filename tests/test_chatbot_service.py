@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
-from backend.app.services.chatbot_engine import ChatbotService
+from backend.app.services.chatbot_engine import ChatbotService, SPATIAL_SEARCH_UNAVAILABLE_RESPONSE
 class TestChatbotService(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -37,6 +37,18 @@ class TestChatbotService(unittest.TestCase):
                 response = self.chatbot.process_message(query, session_id)
                 self.assertIsInstance(response, str)
                 self.assertTrue(len(response) > 0)
+    def test_spatial_query_feedback(self):
+        session_id, _ = self.chatbot.start_conversation()
+        spatial_queries = [
+            "restoran terdekat dari lokasi saya",
+            "cari seafood radius 2 km",
+            "ada data spasial restoran di lombok?",
+            "tempat makan sekitar saya",
+        ]
+        for query in spatial_queries:
+            with self.subTest(query=query):
+                response = self.chatbot.process_message(query, session_id)
+                self.assertEqual(response, SPATIAL_SEARCH_UNAVAILABLE_RESPONSE)
     def test_greeting_detection(self):
         session_id, _ = self.chatbot.start_conversation()
         greetings = ["halo", "hai", "hello", "selamat pagi"]
